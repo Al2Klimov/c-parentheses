@@ -31,11 +31,15 @@
 // bool
 
 
-// Type for storing the (exact) type of a cprnths_obj_t instance
+struct cpintern_obj_t;
+
+// Types of some members of cprnths_obj_t (just for easy reusing)
 typedef unsigned short int cprnths_objtype_t;
+typedef void (*cprnths_objdestruct_t)(struct cpintern_obj_t*);
+typedef bool (*cprnths_objcopy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*);
 
 // A lot of datastructures are based on this.
-typedef struct {
+struct cpintern_obj_t {
     // The object's (exact) type
     cprnths_objtype_t obj_type;
 
@@ -58,13 +62,14 @@ typedef struct {
 
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
-    void (*obj_destruct)(void*);
+    cprnths_objdestruct_t obj_destruct;
 
     // Some objects REQUIRE some actions for deep copying.
     // This function SHALL return true if (and only if) the object was copied successfully
     // from the 1st argument to the 2nd one.
-    bool (*obj_copy)(void*, void*);
-} cprnths_obj_t;
+    cprnths_objcopy_t obj_copy;
+};
+typedef struct cpintern_obj_t cprnths_obj_t;
 
 
 /* About the following functions:

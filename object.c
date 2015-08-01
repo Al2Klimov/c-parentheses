@@ -37,12 +37,12 @@
 // memcpy()
 
 #include "object.h"
-// cprnths_obj_t
+// cprnths_*_t
 
 
 void cprnths_obj_destruct(cprnths_obj_t* o) {
     {
-        void (*f)(void*) = o->obj_destruct;
+        cprnths_objdestruct_t f = o->obj_destruct;
         if (f != NULL)
             (*f)(o);
     }
@@ -61,7 +61,7 @@ cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t* o) {
     }
 
     {
-        bool (*f)(void*, void*) = o->obj_copy;
+        cprnths_objcopy_t f = o->obj_copy;
         if (f == NULL || (*f)(o, c))
             goto Finish;
     }
