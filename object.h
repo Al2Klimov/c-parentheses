@@ -39,6 +39,7 @@ typedef void (*cprnths_objdestruct_t)(struct cpintern_obj_t*);
 typedef bool (*cprnths_objcopy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*);
 
 // A lot of datastructures are based on this.
+// (You know, the "base class" for everything else.)
 struct cpintern_obj_t {
     // The object's (exact) type
     cprnths_objtype_t obj_type;
@@ -81,10 +82,11 @@ typedef struct cpintern_obj_t cprnths_obj_t;
  * won't happen.
  */
 
-// Destruct and free() an object
+// Destruct and free() the given object.
 void cprnths_obj_destruct(cprnths_obj_t*);
 
-// Returns the copy of an object or NULL if the copying failed.
+// Make a deep copy of the given object and return a pointer to it.
+// Return NULL if something went wrong.
 cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t*);
 
 
