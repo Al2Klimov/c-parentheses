@@ -40,34 +40,25 @@
 // cprnths_*_t
 
 
-void cprnths_obj_destruct(cprnths_obj_t* o) {
-    {
-        cprnths_objdestruct_t f = o->obj_destruct;
-        if (f != NULL)
-            (*f)(o);
-    }
+void cprnths_obj_destruct(cprnths_obj_t *restrict o) {
+    if (o->obj_destruct != NULL)
+        (*o->obj_destruct)(o);
 
     free(o);
 }
 
-cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t* o) {
-    cprnths_obj_t* c;
+cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t *restrict o) {
+    cprnths_obj_t *restrict c = malloc(o->obj_size);
 
-    {
-        size_t s = o->obj_size;
-        if (( c = malloc(s) ) == NULL)
-            goto Finish;
-        memcpy(c, o, s);
+    if (c == NULL)
+        goto Finish;
+
+    memcpy(c, o, o->obj_size);
+
+    if (!(o->obj_copy == NULL || (*o->obj_copy)(o, c))) {
+        free(c);
+        c = NULL;
     }
-
-    {
-        cprnths_objcopy_t f = o->obj_copy;
-        if (f == NULL || (*f)(o, c))
-            goto Finish;
-    }
-
-    free(c);
-    c = NULL;
 
 Finish:
     return c;
