@@ -42,10 +42,10 @@ typedef bool (*cprnths_objcopy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*
 // (You know, the "base class" for everything else.)
 struct cpintern_obj_t {
     // The object's (exact) type
-    cprnths_objtype_t obj_type;
+    cprnths_objtype_t const obj_type;
 
     // The object's size (in bytes, MUST be > 0)
-    size_t obj_size;
+    size_t const obj_size;
 
 
     /* About the following "virtual methods":
@@ -63,12 +63,12 @@ struct cpintern_obj_t {
 
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
-    cprnths_objdestruct_t obj_destruct;
+    cprnths_objdestruct_t const obj_destruct;
 
     // Some objects REQUIRE some actions for deep copying.
     // This function SHALL return true if (and only if) the object was copied successfully
     // from the 1st argument to the 2nd one.
-    cprnths_objcopy_t obj_copy;
+    cprnths_objcopy_t const obj_copy;
 };
 typedef struct cpintern_obj_t cprnths_obj_t;
 

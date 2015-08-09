@@ -42,7 +42,7 @@
 // cprnths_garbtab_*ref()
 
 
-cprnths_ref_t* cprnths_ref_create(cprnths_obj_t *restrict o, cprnths_garbtab_t *restrict t) {
+cprnths_ref_t* cprnths_ref_create(cprnths_obj_t *restrict const o, cprnths_garbtab_t *restrict const t) {
     cprnths_ref_t *restrict r = malloc(sizeof(cprnths_ref_t));
 
     if (r == NULL)
@@ -61,7 +61,7 @@ Finish:
     return r;
 }
 
-void cprnths_ref_increment(cprnths_ref_t *restrict r, size_t i) {
+void cprnths_ref_increment(cprnths_ref_t *restrict const r, size_t const i) {
     if (( r->pcnt += i ))
         return;
 

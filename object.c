@@ -40,14 +40,14 @@
 // cprnths_*_t
 
 
-void cprnths_obj_destruct(cprnths_obj_t *restrict o) {
+void cprnths_obj_destruct(cprnths_obj_t *restrict const o) {
     if (o->obj_destruct != NULL)
         (*o->obj_destruct)(o);
 
     free(o);
 }
 
-cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t *restrict o) {
+cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t *restrict const o) {
     cprnths_obj_t *restrict c = malloc(o->obj_size);
 
     if (c == NULL)
