@@ -34,15 +34,15 @@
 struct cpintern_obj_t;
 
 // Types of some members of cprnths_obj_t (just for easy reusing)
-typedef unsigned short int cprnths_objtype_t;
-typedef void (*cprnths_objdestruct_t)(struct cpintern_obj_t*);
-typedef bool (*cprnths_objcopy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*);
+typedef unsigned short int cprnths_obj_type_t;
+typedef void (*cprnths_obj_destruct_t)(struct cpintern_obj_t*);
+typedef bool (*cprnths_obj_copy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*);
 
 // A lot of datastructures are based on this.
 // (You know, the "base class" for everything else.)
 struct cpintern_obj_t {
     // The object's (exact) type
-    cprnths_objtype_t const obj_type;
+    cprnths_obj_type_t const obj_type;
 
     // The object's size (in bytes, MUST be > 0)
     size_t const obj_size;
@@ -63,12 +63,12 @@ struct cpintern_obj_t {
 
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
-    cprnths_objdestruct_t const obj_destruct;
+    cprnths_obj_destruct_t const obj_destruct;
 
     // Some objects REQUIRE some actions for deep copying.
     // This function SHALL return true if (and only if) the object was copied successfully
     // from the 1st argument to the 2nd one.
-    cprnths_objcopy_t const obj_copy;
+    cprnths_obj_copy_t const obj_copy;
 };
 typedef struct cpintern_obj_t cprnths_obj_t;
 
