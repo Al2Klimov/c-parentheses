@@ -76,6 +76,10 @@ cprnths_copytab_t* cprnths_copytab_create(size_t);
 // Return true if (and only if) the references were added successfully.
 bool cprnths_copytab_addrefs(cprnths_copytab_t*, cprnths_ref_t*, cprnths_ref_t*);
 
+// If the given (original) reference is listed in the given copy table,
+// return a pointer to its copy. Otherwise, return NULL.
+cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t*, cprnths_ref_t*);
+
 // Destruct and free() the given copy table.
 void cprnths_copytab_destruct(cprnths_copytab_t*);
 
