@@ -82,7 +82,7 @@ void cprnths_ref_increment(cprnths_ref_t *restrict const r, size_t const i) {
     free(r);
 }
 
-cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t *restrict const r, cprnths_copytab_t *restrict const t) {
+cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t const *restrict const r, cprnths_copytab_t *restrict const t) {
     cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
 
     if (R != NULL) {
@@ -102,7 +102,7 @@ cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t *restrict const r, cprnths_copytab
     return NULL;
 }
 
-cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t *restrict const r) {
+cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t const *restrict const r) {
     cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
 
     if (t == NULL)

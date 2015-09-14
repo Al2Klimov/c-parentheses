@@ -70,11 +70,11 @@ void cprnths_ref_increment(cprnths_ref_t*, size_t);
 // Make a deep copy of the given reference and return a pointer to it.
 // Use the given copy table for clean deep copying.
 // Return NULL if something went wrong.
-cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t*, cprnths_copytab_t*);
+cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t const *, cprnths_copytab_t*);
 
 // Create a new copy table and use it
 // to copy the given reference with cprnths_ref_copy().
-cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t*);
+cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t const *);
 
 
 #endif

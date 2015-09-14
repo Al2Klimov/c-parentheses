@@ -41,7 +41,7 @@ typedef struct cpintern_obj_t cprnths_obj_t;
 // Types of some members of cprnths_obj_t (just for easy reusing)
 typedef unsigned short int cprnths_obj_type_t;
 typedef void (*cprnths_obj_destruct_t)(cprnths_obj_t*);
-typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t*, cprnths_obj_t*, cprnths_copytab_t*);
+typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t const *, cprnths_obj_t*, cprnths_copytab_t*);
 
 // A lot of datastructures are based on this.
 // (You know, the "base class" for everything else.)
@@ -91,7 +91,7 @@ void cprnths_obj_destruct(cprnths_obj_t*);
 
 // Make a deep copy of the given object and return a pointer to it.
 // Return NULL if something went wrong.
-cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t*, cprnths_copytab_t*);
+cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t const *, cprnths_copytab_t*);
 
 
 #endif

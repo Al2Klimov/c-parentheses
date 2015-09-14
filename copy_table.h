@@ -41,7 +41,7 @@ typedef struct cpintern_copytab_t cprnths_copytab_t;
 // A row of a copy table (just for easy reusing)
 typedef struct {
     // The original
-    cprnths_ref_t* orig;
+    cprnths_ref_t const * orig;
 
     // The copy
     cprnths_ref_t* copy;
@@ -74,11 +74,11 @@ cprnths_copytab_t* cprnths_copytab_create(size_t);
 
 // Add the given references (original and copy) to the given copy table.
 // Return true if (and only if) the references were added successfully.
-bool cprnths_copytab_addrefs(cprnths_copytab_t*, cprnths_ref_t*, cprnths_ref_t*);
+bool cprnths_copytab_addrefs(cprnths_copytab_t*, cprnths_ref_t const *, cprnths_ref_t*);
 
 // If the given (original) reference is listed in the given copy table,
 // return a pointer to its copy. Otherwise, return NULL.
-cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t*, cprnths_ref_t*);
+cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t const *, cprnths_ref_t const *);
 
 // Destruct and free() the given copy table.
 void cprnths_copytab_destruct(cprnths_copytab_t*);

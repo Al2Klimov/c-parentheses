@@ -70,7 +70,7 @@ Finish:
     return t;
 }
 
-bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t *const o, cprnths_ref_t *const c) {
+bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t const *const o, cprnths_ref_t *const c) {
     if (t->slots_free) {
         cprnths_copytab_row_t *restrict T = t->tab;
         while (T->orig != NULL)
@@ -109,9 +109,9 @@ bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t 
     return true;
 }
 
-cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t *restrict const t, cprnths_ref_t *const r) {
-    cprnths_copytab_row_t *restrict p = t->tab;
-    cprnths_copytab_row_t *const limit = t->tab + t->slots_total;
+cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t const *restrict const t, cprnths_ref_t const *const r) {
+    cprnths_copytab_row_t const *restrict p = t->tab;
+    cprnths_copytab_row_t const *const limit = t->tab + t->slots_total;
 
     do {
         if (p->orig == r)
