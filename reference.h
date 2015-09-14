@@ -37,6 +37,9 @@ typedef struct cpintern_ref_t cprnths_ref_t;
 #include "garbage_table.h"
 // cprnths_garbtab_t
 
+#include "copy_table.h"
+// cprnths_copytab_t
+
 
 // This is for referencing an object and cleaning it up automatically
 // when it's not being referenced anymore. (You know, garbage collection.)
@@ -63,6 +66,15 @@ cprnths_ref_t* cprnths_ref_create(cprnths_obj_t*, cprnths_garbtab_t*);
 // If the ->pcnt becomes 0, clean the reference up and remove it from
 // its garbage table (if any).
 void cprnths_ref_increment(cprnths_ref_t*, size_t);
+
+// Make a deep copy of the given reference and return a pointer to it.
+// Use the given copy table for clean deep copying.
+// Return NULL if something went wrong.
+cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t*, cprnths_copytab_t*);
+
+// Create a new copy table and use it
+// to copy the given reference with cprnths_ref_copy().
+cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t*);
 
 
 #endif

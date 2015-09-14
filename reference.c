@@ -32,6 +32,7 @@
 
 #include "object.h"
 // cprnths_obj_t
+// cprnths_obj_copy()
 // cprnths_obj_destruct()
 
 #include "reference.h"
@@ -40,6 +41,13 @@
 #include "garbage_table.h"
 // cprnths_garbtab_t
 // cprnths_garbtab_*ref()
+
+#include "copy_table.h"
+// cprnths_copytab_t
+// cprnths_copytab_create()
+// cprnths_copytab_addrefs()
+// cprnths_copytab_chkref()
+// cprnths_copytab_destruct()
 
 
 cprnths_ref_t* cprnths_ref_create(cprnths_obj_t *restrict const o, cprnths_garbtab_t *restrict const t) {
@@ -72,4 +80,37 @@ void cprnths_ref_increment(cprnths_ref_t *restrict const r, size_t const i) {
         cprnths_garbtab_delref(r->garbtab, r);
 
     free(r);
+}
+
+cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t *restrict const r, cprnths_copytab_t *restrict const t) {
+    cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
+
+    if (R != NULL) {
+        cprnths_ref_increment(R, 1u);
+        return R;
+    }
+
+    if (NULL == ( R = cprnths_ref_create(NULL, r->garbtab) ))
+        return NULL;
+
+    if (cprnths_copytab_addrefs(t, r, R) && (
+        r->obj == NULL || NULL != ( R->obj = cprnths_obj_copy(r->obj, t) )
+    ))
+        return R;
+
+    cprnths_ref_increment(R, -1);
+    return NULL;
+}
+
+cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t *restrict const r) {
+    cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
+
+    if (t == NULL)
+        return NULL;
+
+    cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
+
+    cprnths_copytab_destruct(t);
+
+    return R;
 }

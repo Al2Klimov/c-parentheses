@@ -24,19 +24,24 @@
 #define CPARENTHESES_INCLUDE_OBJECT
 
 
+struct cpintern_obj_t;
+typedef struct cpintern_obj_t cprnths_obj_t;
+
+
 #include <stddef.h>
 // size_t
 
 #include <stdbool.h>
 // bool
 
+#include "copy_table.h"
+// cprnths_copytab_t
 
-struct cpintern_obj_t;
 
 // Types of some members of cprnths_obj_t (just for easy reusing)
 typedef unsigned short int cprnths_obj_type_t;
-typedef void (*cprnths_obj_destruct_t)(struct cpintern_obj_t*);
-typedef bool (*cprnths_obj_copy_t)(struct cpintern_obj_t*, struct cpintern_obj_t*);
+typedef void (*cprnths_obj_destruct_t)(cprnths_obj_t*);
+typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t*, cprnths_obj_t*, cprnths_copytab_t*);
 
 // A lot of datastructures are based on this.
 // (You know, the "base class" for everything else.)
@@ -70,7 +75,6 @@ struct cpintern_obj_t {
     // from the 1st argument to the 2nd one.
     cprnths_obj_copy_t const obj_copy;
 };
-typedef struct cpintern_obj_t cprnths_obj_t;
 
 
 /* About the following functions:
@@ -87,7 +91,7 @@ void cprnths_obj_destruct(cprnths_obj_t*);
 
 // Make a deep copy of the given object and return a pointer to it.
 // Return NULL if something went wrong.
-cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t*);
+cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t*, cprnths_copytab_t*);
 
 
 #endif
