@@ -110,8 +110,11 @@ bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t 
 }
 
 cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t const *restrict const t, cprnths_ref_t const *const r) {
+    if (t->slots_total == t->slots_free)
+        return NULL;
+
     cprnths_copytab_row_t const *restrict p = t->tab;
-    cprnths_copytab_row_t const *const limit = t->tab + t->slots_total;
+    cprnths_copytab_row_t const *const limit = t->tab + (t->slots_total - t->slots_free);
 
     do {
         if (p->orig == r)
