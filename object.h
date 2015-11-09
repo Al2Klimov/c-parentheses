@@ -28,52 +28,18 @@ struct cpintern_obj_t;
 typedef struct cpintern_obj_t cprnths_obj_t;
 
 
-#include <stddef.h>
-// size_t
-
-#include <stdbool.h>
-// bool
+#include "class.h"
+// cprnths_class_t
 
 #include "copy_table.h"
 // cprnths_copytab_t
 
 
-// Types of some members of cprnths_obj_t (just for easy reusing)
-typedef unsigned short int cprnths_obj_type_t;
-typedef void (*cprnths_obj_destruct_t)(cprnths_obj_t*);
-typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t const *, cprnths_obj_t*, cprnths_copytab_t*);
-
 // A lot of datastructures are based on this.
 // (You know, the "base class" for everything else.)
 struct cpintern_obj_t {
-    // The object's (exact) type
-    cprnths_obj_type_t const obj_type;
-
-    // The object's size (in bytes, MUST be > 0)
-    size_t const obj_size;
-
-
-    /* About the following "virtual methods":
-     *
-     * Each function pointer MAY be NULL when there's nothing to do.
-     * This is absolutely equivalent to (but a little bit faster than)
-     * a function which does nothing at all.
-     *
-     * The pointer arguments MUST NOT be NULL.
-     *
-     * If a function MAY fail, it SHOULD fail as gracefully as possible.
-     * Things like program termination, memory leaks and printings to stderr
-     * MUST NOT happen!
-     */
-
-    // Some objects REQUIRE some cleanup actions at the end of their lifetime.
-    // This function SHALL be called with the object's address as the only argument.
-    cprnths_obj_destruct_t const obj_destruct;
-
-    // Some objects REQUIRE some actions for deep copying.
-    // This function SHALL return true if (and only if) the object was copied successfully
-    // from the 1st argument to the 2nd one.
-    cprnths_obj_copy_t const obj_copy;
+    // The object's type (MUST NOT be NULL)
+    cprnths_class_t const * const cls;
 };
 
 

@@ -41,21 +41,21 @@
 
 
 void cprnths_obj_destruct(cprnths_obj_t *restrict const o) {
-    if (o->obj_destruct != NULL)
-        (*o->obj_destruct)(o);
+    if (o->cls->obj_destruct != NULL)
+        (*o->cls->obj_destruct)(o);
 
     free(o);
 }
 
 cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t const *restrict const o, cprnths_copytab_t *restrict const t) {
-    cprnths_obj_t *restrict c = malloc(o->obj_size);
+    cprnths_obj_t *restrict c = malloc(o->cls->obj_size);
 
     if (c == NULL)
         goto Finish;
 
-    memcpy(c, o, o->obj_size);
+    memcpy(c, o, o->cls->obj_size);
 
-    if (!(o->obj_copy == NULL || (*o->obj_copy)(o, c, t))) {
+    if (!(o->cls->obj_copy == NULL || (*o->cls->obj_copy)(o, c, t))) {
         free(c);
         c = NULL;
     }
