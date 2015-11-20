@@ -49,7 +49,7 @@ typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t const *, cprnths_obj_t*, cprnth
 // (You know, a lot of objects of a type, almost out of memory ...)
 struct cpintern_class_t {
     // An object's size (in bytes, MUST be > 0)
-    size_t const obj_size;
+    size_t obj_size;
 
 
     /* About the following "virtual methods":
@@ -67,12 +67,12 @@ struct cpintern_class_t {
 
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
-    cprnths_obj_destruct_t const obj_destruct;
+    cprnths_obj_destruct_t obj_destruct;
 
     // Some objects REQUIRE some actions for deep copying.
     // This function SHALL return true if (and only if) the object was copied successfully
     // from the 1st argument to the 2nd one.
-    cprnths_obj_copy_t const obj_copy;
+    cprnths_obj_copy_t obj_copy;
 };
 
 
