@@ -47,7 +47,7 @@ struct cpintern_obj_t {
 // Usage: cprnths_obj_cls_lval(x) = c
 // x MUST be a pointer to the target object.
 // This works only if the target's storage was allocated with malloc() or realloc().
-#define cprnths_obj_cls_lval(x) (*(cprnths_class_t const **)&((cprnths_obj_t*)(void*)(x))->cls)
+#define cprnths_obj_cls_lval(x) (*(cprnths_class_t const **)&((cprnths_obj_t*)(x))->cls)
 
 
 /* About the following functions:
