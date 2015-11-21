@@ -55,6 +55,10 @@ typedef struct {
 // Return NULL if something went wrong.
 cprnths_string_t* cprnths_string_create(char const *, size_t);
 
+// Make a copy of the given string and return a pointer to it.
+// Return NULL if something went wrong.
+cprnths_string_t* cprnths_string_copy(cprnths_string_t const *);
+
 // Compare two strings and report whether they're equal.
 bool cprnths_string_equal(cprnths_string_t const *, cprnths_string_t const *);
 

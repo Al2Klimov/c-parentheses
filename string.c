@@ -70,6 +70,26 @@ Finish:
     return s;
 }
 
+cprnths_string_t* cprnths_string_copy(cprnths_string_t const *restrict const S) {
+    cprnths_string_t *restrict s = malloc(sizeof(cprnths_string_t));
+
+    if (s == NULL)
+        goto Finish;
+
+    if (NULL == ( s->str = malloc(S->length + 1u) )) {
+        free(s);
+        s = NULL;
+        goto Finish;
+    }
+
+    s->length = S->length;
+    s->hash = S->hash;
+    memcpy((char*)s->str, S->str, S->length + 1u);
+
+Finish:
+    return s;
+}
+
 bool cprnths_string_equal(cprnths_string_t const *restrict const a, cprnths_string_t const *restrict const b) {
     return a->length == b->length && a->hash == b->hash && !memcmp(a->str, b->str, a->length);
 }
