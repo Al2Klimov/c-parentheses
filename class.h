@@ -42,8 +42,19 @@ typedef struct cpintern_class_t cprnths_class_t;
 
 
 // Types of some members of cprnths_class_t (just for easy reusing)
-typedef void (*cprnths_obj_destruct_t)(cprnths_obj_t*);
-typedef bool (*cprnths_obj_copy_t)(cprnths_obj_t const *, cprnths_obj_t*, cprnths_copytab_t*);
+typedef
+void
+(*cprnths_obj_destruct_t)(
+    cprnths_obj_t*
+);
+
+typedef
+bool
+(*cprnths_obj_copy_t)(
+    cprnths_obj_t const *,
+    cprnths_obj_t*,
+    cprnths_copytab_t*
+);
 
 // This is for storing information about datatypes non-redundandly.
 // (You know, a lot of objects of a type, almost out of memory ...)

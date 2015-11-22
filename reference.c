@@ -50,7 +50,11 @@
 // cprnths_copytab_destruct()
 
 
-cprnths_ref_t* cprnths_ref_create(cprnths_obj_t *restrict const o, cprnths_garbtab_t *restrict const t) {
+cprnths_ref_t*
+cprnths_ref_create(
+    cprnths_obj_t *restrict const o,
+    cprnths_garbtab_t *restrict const t
+) {
     cprnths_ref_t *restrict r = malloc(sizeof(cprnths_ref_t));
 
     if (r == NULL)
@@ -69,7 +73,11 @@ Finish:
     return r;
 }
 
-void cprnths_ref_increment(cprnths_ref_t *restrict const r, size_t const i) {
+void
+cprnths_ref_increment(
+    cprnths_ref_t *restrict const r,
+    size_t const i
+) {
     if (( r->pcnt += i ))
         return;
 
@@ -82,7 +90,11 @@ void cprnths_ref_increment(cprnths_ref_t *restrict const r, size_t const i) {
     free(r);
 }
 
-cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t const *restrict const r, cprnths_copytab_t *restrict const t) {
+cprnths_ref_t*
+cprnths_ref_copy(
+    cprnths_ref_t const *restrict const r,
+    cprnths_copytab_t *restrict const t
+) {
     cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
 
     if (R != NULL) {
@@ -102,7 +114,10 @@ cprnths_ref_t* cprnths_ref_copy(cprnths_ref_t const *restrict const r, cprnths_c
     return NULL;
 }
 
-cprnths_ref_t* cprnths_ref_copy_newtab(cprnths_ref_t const *restrict const r) {
+cprnths_ref_t*
+cprnths_ref_copy_newtab(
+    cprnths_ref_t const *restrict const r
+) {
     cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
 
     if (t == NULL)

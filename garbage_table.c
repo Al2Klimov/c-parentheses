@@ -45,7 +45,10 @@
 // cprnths_obj_destruct()
 
 
-cprnths_garbtab_t* cprnths_garbtab_create(size_t const s) {
+cprnths_garbtab_t*
+cprnths_garbtab_create(
+    size_t const s
+) {
     cprnths_garbtab_t *restrict t = malloc(sizeof(cprnths_garbtab_t));
 
     if (t == NULL)
@@ -71,7 +74,11 @@ Finish:
     return t;
 }
 
-bool cprnths_garbtab_addref(cprnths_garbtab_t *restrict const t, cprnths_ref_t *const r) {
+bool
+cprnths_garbtab_addref(
+    cprnths_garbtab_t *restrict const t,
+    cprnths_ref_t *const r
+) {
     if (t->slots_free) {
         cprnths_ref_t* *restrict T = t->tab;
         while (*T != NULL)
@@ -108,7 +115,11 @@ bool cprnths_garbtab_addref(cprnths_garbtab_t *restrict const t, cprnths_ref_t *
     return true;
 }
 
-void cprnths_garbtab_delref(cprnths_garbtab_t *restrict const t, cprnths_ref_t *const r) {
+void
+cprnths_garbtab_delref(
+    cprnths_garbtab_t *restrict const t,
+    cprnths_ref_t *const r
+) {
     {
         cprnths_ref_t* *restrict p = t->tab + t->slots_total;
         do {
@@ -152,7 +163,10 @@ Defrag:
     }
 }
 
-void cprnths_garbtab_cleanup(cprnths_garbtab_t *const t) {
+void
+cprnths_garbtab_cleanup(
+    cprnths_garbtab_t *const t
+) {
     cprnths_ref_t* *restrict p;
     cprnths_ref_t** limit;
     cprnths_obj_t *restrict o;
@@ -172,7 +186,10 @@ Search:
     } while (++p < limit);
 }
 
-void cprnths_garbtab_destruct(cprnths_garbtab_t *restrict const t) {
+void
+cprnths_garbtab_destruct(
+    cprnths_garbtab_t *restrict const t
+) {
     if (t->slots_total != t->slots_free) {
         cprnths_ref_t* *restrict p = t->tab + t->slots_total;
         do {

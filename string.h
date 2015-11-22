@@ -53,17 +53,31 @@ typedef struct {
 
 // Create a new string from the given amount of characters of the given buffer.
 // Return NULL if something went wrong.
-cprnths_string_t* cprnths_string_create(char const *, size_t);
+cprnths_string_t*
+cprnths_string_create(
+    char const *,
+    size_t
+);
 
 // Make a copy of the given string and return a pointer to it.
 // Return NULL if something went wrong.
-cprnths_string_t* cprnths_string_copy(cprnths_string_t const *);
+cprnths_string_t*
+cprnths_string_copy(
+    cprnths_string_t const *
+);
 
 // Compare two strings and report whether they're equal.
-bool cprnths_string_equal(cprnths_string_t const *, cprnths_string_t const *);
+bool
+cprnths_string_equal(
+    cprnths_string_t const *,
+    cprnths_string_t const *
+);
 
 // Destruct and free() the given string.
-void cprnths_string_destruct(cprnths_string_t*);
+void
+cprnths_string_destruct(
+    cprnths_string_t*
+);
 
 
 #endif

@@ -60,11 +60,18 @@ struct cpintern_obj_t {
  */
 
 // Destruct and free() the given object.
-void cprnths_obj_destruct(cprnths_obj_t*);
+void
+cprnths_obj_destruct(
+    cprnths_obj_t*
+);
 
 // Make a deep copy of the given object and return a pointer to it.
 // Return NULL if something went wrong.
-cprnths_obj_t* cprnths_obj_copy(cprnths_obj_t const *, cprnths_copytab_t*);
+cprnths_obj_t*
+cprnths_obj_copy(
+    cprnths_obj_t const *,
+    cprnths_copytab_t*
+);
 
 
 #endif

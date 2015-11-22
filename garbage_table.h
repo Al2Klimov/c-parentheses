@@ -62,21 +62,38 @@ struct cpintern_garbtab_t {
 
 // Create a new garbage table with given ->chunksize and return a pointer to it.
 // Return NULL if something went wrong.
-cprnths_garbtab_t* cprnths_garbtab_create(size_t);
+cprnths_garbtab_t*
+cprnths_garbtab_create(
+    size_t
+);
 
 // Add the given reference to the given garbage table.
 // Return true if (and only if) the reference was added successfully.
-bool cprnths_garbtab_addref(cprnths_garbtab_t*, cprnths_ref_t*);
+bool
+cprnths_garbtab_addref(
+    cprnths_garbtab_t*,
+    cprnths_ref_t*
+);
 
 // Remove the given reference from the given garbage table.
-void cprnths_garbtab_delref(cprnths_garbtab_t*, cprnths_ref_t*);
+void
+cprnths_garbtab_delref(
+    cprnths_garbtab_t*,
+    cprnths_ref_t*
+);
 
 // Clean the given garbage table's references up manually.
-void cprnths_garbtab_cleanup(cprnths_garbtab_t*);
+void
+cprnths_garbtab_cleanup(
+    cprnths_garbtab_t*
+);
 
 // Destruct and free() the given garbage table
 // without calling cprnths_garbtab_cleanup().
-void cprnths_garbtab_destruct(cprnths_garbtab_t*);
+void
+cprnths_garbtab_destruct(
+    cprnths_garbtab_t*
+);
 
 
 #endif

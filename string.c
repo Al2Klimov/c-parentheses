@@ -41,7 +41,11 @@
 // cprnths_string_t
 
 
-cprnths_string_t* cprnths_string_create(char const *restrict const S, size_t const l) {
+cprnths_string_t*
+cprnths_string_create(
+    char const *restrict const S,
+    size_t const l
+) {
     cprnths_string_t *restrict s = malloc(sizeof(cprnths_string_t));
 
     if (s == NULL)
@@ -70,7 +74,10 @@ Finish:
     return s;
 }
 
-cprnths_string_t* cprnths_string_copy(cprnths_string_t const *restrict const S) {
+cprnths_string_t*
+cprnths_string_copy(
+    cprnths_string_t const *restrict const S
+) {
     cprnths_string_t *restrict s = malloc(sizeof(cprnths_string_t));
 
     if (s == NULL)
@@ -90,11 +97,18 @@ Finish:
     return s;
 }
 
-bool cprnths_string_equal(cprnths_string_t const *restrict const a, cprnths_string_t const *restrict const b) {
+bool
+cprnths_string_equal(
+    cprnths_string_t const *restrict const a,
+    cprnths_string_t const *restrict const b
+) {
     return a->length == b->length && a->hash == b->hash && !memcmp(a->str, b->str, a->length);
 }
 
-void cprnths_string_destruct(cprnths_string_t *restrict const s) {
+void
+cprnths_string_destruct(
+    cprnths_string_t *restrict const s
+) {
     free((char*)s->str);
     free(s);
 }

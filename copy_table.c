@@ -42,7 +42,10 @@
 // cprnths_ref_t
 
 
-cprnths_copytab_t* cprnths_copytab_create(size_t const s) {
+cprnths_copytab_t*
+cprnths_copytab_create(
+    size_t const s
+) {
     cprnths_copytab_t *restrict t = malloc(sizeof(cprnths_copytab_t));
 
     if (t == NULL)
@@ -70,7 +73,12 @@ Finish:
     return t;
 }
 
-bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t const *const o, cprnths_ref_t *const c) {
+bool
+cprnths_copytab_addrefs(
+    cprnths_copytab_t *restrict const t,
+    cprnths_ref_t const *const o,
+    cprnths_ref_t *const c
+) {
     if (t->slots_free) {
         cprnths_copytab_row_t *restrict T = t->tab;
         while (T->orig != NULL)
@@ -109,7 +117,11 @@ bool cprnths_copytab_addrefs(cprnths_copytab_t *restrict const t, cprnths_ref_t 
     return true;
 }
 
-cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t const *restrict const t, cprnths_ref_t const *const r) {
+cprnths_ref_t*
+cprnths_copytab_chkref(
+    cprnths_copytab_t const *restrict const t,
+    cprnths_ref_t const *const r
+) {
     if (t->slots_total == t->slots_free)
         return NULL;
 
@@ -124,7 +136,10 @@ cprnths_ref_t* cprnths_copytab_chkref(cprnths_copytab_t const *restrict const t,
     return NULL;
 }
 
-void cprnths_copytab_destruct(cprnths_copytab_t *restrict const t) {
+void
+cprnths_copytab_destruct(
+    cprnths_copytab_t *restrict const t
+) {
     free(t->tab);
     free(t);
 }
