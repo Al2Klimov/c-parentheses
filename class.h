@@ -24,8 +24,8 @@
 #define CPARENTHESES_INCLUDE_CLASS
 
 
-struct cpintern_class_t;
-typedef struct cpintern_class_t cprnths_class_t;
+struct cprnths_class_t;
+typedef struct cprnths_class_t cprnths_class_t;
 
 
 #include <stddef.h>
@@ -43,7 +43,7 @@ typedef struct cpintern_class_t cprnths_class_t;
 
 // This is for storing information about datatypes non-redundandly.
 // (You know, a lot of objects of a type, almost out of memory ...)
-struct cpintern_class_t {
+struct cprnths_class_t {
     // An object's size (in bytes, MUST be > 0)
     size_t obj_size;
 

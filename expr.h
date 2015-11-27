@@ -29,9 +29,9 @@
 
 
 // An expression.
-struct cpintern_expr_t;
-typedef struct cpintern_expr_t cprnths_expr_t;
-struct cpintern_expr_t {
+struct cprnths_expr_t;
+typedef struct cprnths_expr_t cprnths_expr_t;
+struct cprnths_expr_t {
     // Evaluate the given expression and return the value.
     // Return NULL if something went wrong.
     cprnths_ref_t*

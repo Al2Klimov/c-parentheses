@@ -24,8 +24,8 @@
 #define CPARENTHESES_INCLUDE_COPY_TABLE
 
 
-struct cpintern_copytab_t;
-typedef struct cpintern_copytab_t cprnths_copytab_t;
+struct cprnths_copytab_t;
+typedef struct cprnths_copytab_t cprnths_copytab_t;
 
 
 #include <stddef.h>
@@ -49,7 +49,7 @@ typedef struct {
 
 // This is for tracking which references have already been copied during deep copying
 // not to copy a reference more than once. (You know, diamond references, ...)
-struct cpintern_copytab_t {
+struct cprnths_copytab_t {
     // The table itself
     cprnths_copytab_row_t* tab;
 

@@ -24,8 +24,8 @@
 #define CPARENTHESES_INCLUDE_REFERENCE
 
 
-struct cpintern_ref_t;
-typedef struct cpintern_ref_t cprnths_ref_t;
+struct cprnths_ref_t;
+typedef struct cprnths_ref_t cprnths_ref_t;
 
 
 #include <stddef.h>
@@ -43,7 +43,7 @@ typedef struct cpintern_ref_t cprnths_ref_t;
 
 // This is for referencing an object and cleaning it up automatically
 // when it's not being referenced anymore. (You know, garbage collection.)
-struct cpintern_ref_t {
+struct cprnths_ref_t {
     // The object being referenced (MAY be NULL, indicating invalid reference)
     cprnths_obj_t* obj;
 

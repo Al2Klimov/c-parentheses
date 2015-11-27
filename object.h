@@ -24,8 +24,8 @@
 #define CPARENTHESES_INCLUDE_OBJECT
 
 
-struct cpintern_obj_t;
-typedef struct cpintern_obj_t cprnths_obj_t;
+struct cprnths_obj_t;
+typedef struct cprnths_obj_t cprnths_obj_t;
 
 
 #include "class.h"
@@ -37,7 +37,7 @@ typedef struct cpintern_obj_t cprnths_obj_t;
 
 // A lot of datastructures are based on this.
 // (You know, the "base class" for everything else.)
-struct cpintern_obj_t {
+struct cprnths_obj_t {
     // The object's type (MUST NOT be NULL)
     cprnths_class_t const * cls;
 };

@@ -24,8 +24,8 @@
 #define CPARENTHESES_INCLUDE_GARBAGE_TABLE
 
 
-struct cpintern_garbtab_t;
-typedef struct cpintern_garbtab_t cprnths_garbtab_t;
+struct cprnths_garbtab_t;
+typedef struct cprnths_garbtab_t cprnths_garbtab_t;
 
 
 #include <stddef.h>
@@ -41,7 +41,7 @@ typedef struct cpintern_garbtab_t cprnths_garbtab_t;
 // This is for tracking how many (and which) references there are and being able
 // to clean them up manually when they aren't needed anymore, but automatic cleanup
 // was unsuccessful. (You know, circular references.)
-struct cpintern_garbtab_t {
+struct cprnths_garbtab_t {
     // The table itself
     cprnths_ref_t** tab;
 
