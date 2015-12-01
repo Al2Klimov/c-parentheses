@@ -24,6 +24,9 @@
 #define CPARENTHESES_INCLUDE_EXPR
 
 
+#include <stdbool.h>
+// bool
+
 #include "reference.h"
 // cprnths_ref_t
 
@@ -32,11 +35,12 @@
 struct cprnths_expr_t;
 typedef struct cprnths_expr_t cprnths_expr_t;
 struct cprnths_expr_t {
-    // Evaluate the given expression and return the value.
-    // Return NULL if something went wrong.
-    cprnths_ref_t*
+    // Evaluate the given expression and store the value in the given cprnths_ref_t*.
+    // Return whether the expression was evaluated sucessfully.
+    bool
     (*eval)(
-        cprnths_expr_t const *
+        cprnths_expr_t const *,
+        cprnths_ref_t**
     );
 };
 
