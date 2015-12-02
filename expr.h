@@ -21,7 +21,7 @@
 
 // Typedefs for expressions
 #ifndef CPARENTHESES_INCLUDE_EXPR
-#define CPARENTHESES_INCLUDE_EXPR
+#define CPARENTHESES_INCLUDE_EXPR 1
 
 
 #include <stdbool.h>

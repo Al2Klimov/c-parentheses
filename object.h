@@ -21,7 +21,7 @@
 
 // Typedefs and functions for objects
 #ifndef CPARENTHESES_INCLUDE_OBJECT
-#define CPARENTHESES_INCLUDE_OBJECT
+#define CPARENTHESES_INCLUDE_OBJECT 1
 
 
 struct cprnths_obj_t;

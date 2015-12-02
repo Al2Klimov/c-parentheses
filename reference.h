@@ -21,7 +21,7 @@
 
 // Typedefs and functions for references
 #ifndef CPARENTHESES_INCLUDE_REFERENCE
-#define CPARENTHESES_INCLUDE_REFERENCE
+#define CPARENTHESES_INCLUDE_REFERENCE 1
 
 
 struct cprnths_ref_t;

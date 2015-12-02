@@ -21,7 +21,7 @@
 
 // Typedefs and functions for garbage tables
 #ifndef CPARENTHESES_INCLUDE_GARBAGE_TABLE
-#define CPARENTHESES_INCLUDE_GARBAGE_TABLE
+#define CPARENTHESES_INCLUDE_GARBAGE_TABLE 1
 
 
 struct cprnths_garbtab_t;

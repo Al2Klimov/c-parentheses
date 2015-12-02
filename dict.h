@@ -21,7 +21,7 @@
 
 // Typedefs and functions for dictionaries
 #ifndef CPARENTHESES_INCLUDE_DICT
-#define CPARENTHESES_INCLUDE_DICT
+#define CPARENTHESES_INCLUDE_DICT 1
 
 
 #include <stddef.h>

@@ -21,7 +21,7 @@
 
 // Typedefs for classes
 #ifndef CPARENTHESES_INCLUDE_CLASS
-#define CPARENTHESES_INCLUDE_CLASS
+#define CPARENTHESES_INCLUDE_CLASS 1
 
 
 struct cprnths_class_t;

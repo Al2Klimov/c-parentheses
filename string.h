@@ -21,7 +21,7 @@
 
 // Typedefs and functions for strings
 #ifndef CPARENTHESES_INCLUDE_STRING
-#define CPARENTHESES_INCLUDE_STRING
+#define CPARENTHESES_INCLUDE_STRING 1
 
 
 #include <stdint.h>

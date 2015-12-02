@@ -21,7 +21,7 @@
 
 // Typedefs and functions for copy tables
 #ifndef CPARENTHESES_INCLUDE_COPY_TABLE
-#define CPARENTHESES_INCLUDE_COPY_TABLE
+#define CPARENTHESES_INCLUDE_COPY_TABLE 1
 
 
 struct cprnths_copytab_t;
