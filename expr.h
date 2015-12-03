@@ -27,6 +27,9 @@
 #include <stdbool.h>
 // bool
 
+#include <stddef.h>
+// size_t
+
 #include "reference.h"
 // cprnths_ref_t
 
@@ -43,6 +46,15 @@ struct cprnths_expr_t {
         cprnths_ref_t**
     );
 };
+
+// An array of expressions
+typedef struct {
+    // The array itself (or NULL if empty)
+    cprnths_expr_t* exprs;
+
+    // The array's length
+    size_t length;
+} cprnths_exprs_t;
 
 
 #endif
