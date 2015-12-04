@@ -1,22 +1,21 @@
-/* C() / "C Parentheses"
- * A pure functional programming language
- * Reference implementation
- *
- * Copyright (C) 2015  Alexander A. Klimov
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// C() / "C Parentheses"
+// A pure functional programming language
+// Reference implementation
+//
+// Copyright (C) 2015  Alexander A. Klimov
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // Typedefs for classes
@@ -48,18 +47,17 @@ struct cprnths_class_t {
     size_t obj_size;
 
 
-    /* About the following "virtual methods":
-     *
-     * Each function pointer MAY be NULL when there's nothing to do.
-     * This is absolutely equivalent to (but a little bit faster than)
-     * a function which does nothing at all.
-     *
-     * The pointer arguments MUST NOT be NULL.
-     *
-     * If a function MAY fail, it SHOULD fail as gracefully as possible.
-     * Things like program termination, memory leaks and printings to stderr
-     * MUST NOT happen!
-     */
+    // About the following "virtual methods":
+    //
+    // Each function pointer MAY be NULL when there's nothing to do.
+    // This is absolutely equivalent to (but a little bit faster than)
+    // a function which does nothing at all.
+    //
+    // The pointer arguments MUST NOT be NULL.
+    //
+    // If a function MAY fail, it SHOULD fail as gracefully as possible.
+    // Things like program termination, memory leaks and printings to stderr
+    // MUST NOT happen!
 
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
