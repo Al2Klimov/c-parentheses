@@ -41,7 +41,7 @@ typedef struct cprnths_garbtab_t cprnths_garbtab_t;
 // to clean them up manually when they aren't needed anymore, but automatic cleanup
 // was unsuccessful. (You know, circular references.)
 struct cprnths_garbtab_t {
-    // The table itself
+    // The table itself (not NULL)
     cprnths_ref_t** tab;
 
     // Amount of slots to allocate memory for at once
@@ -59,39 +59,45 @@ struct cprnths_garbtab_t {
 };
 
 
-// Create a new garbage table with given ->chunksize and return a pointer to it.
-// Return NULL if something went wrong.
+// Create a new garbage table.
 cprnths_garbtab_t*
+// a new garbage table or NULL
 cprnths_garbtab_create(
     size_t
+    // .chunksize
 );
 
-// Add the given reference to the given garbage table.
-// Return true if (and only if) the reference was added successfully.
+// Add a reference to a garbage table.
 bool
+// was the addition successful?
 cprnths_garbtab_addref(
     cprnths_garbtab_t*,
+    // not NULL
     cprnths_ref_t*
+    // not NULL
 );
 
-// Remove the given reference from the given garbage table.
+// Remove a reference from a garbage table.
 void
 cprnths_garbtab_delref(
     cprnths_garbtab_t*,
+    // not NULL
     cprnths_ref_t*
+    // not NULL
 );
 
-// Clean the given garbage table's references up manually.
+// Clean a garbage table's references up manually.
 void
 cprnths_garbtab_cleanup(
     cprnths_garbtab_t*
+    // not NULL
 );
 
-// Destroy and free() the given garbage table
-// without calling cprnths_garbtab_cleanup().
+// Destroy a garbage table without calling cprnths_garbtab_cleanup().
 void
 cprnths_garbtab_destroy(
     cprnths_garbtab_t*
+    // not NULL
 );
 
 

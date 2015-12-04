@@ -34,34 +34,28 @@ typedef struct cprnths_obj_t cprnths_obj_t;
 // cprnths_copytab_t
 
 
-// A lot of datastructures are based on this.
-// (You know, the "base class" for everything else.)
+// The "base class" for "everything else".
 struct cprnths_obj_t {
-    // The object's type (MUST NOT be NULL)
+    // The object's type (not NULL)
     cprnths_class_t const * cls;
 };
 
 
-// About the following functions:
-//
-// The pointer arguments MUST NOT be NULL.
-//
-// If a function fails, it will try to fail as gracefully as possible.
-// Things like program termination, memory leaks and printings to stderr
-// won't happen.
-
-// Destroy and free() the given object.
+// Destroy an object.
 void
 cprnths_obj_destroy(
     cprnths_obj_t*
+    // not NULL
 );
 
-// Make a deep copy of the given object and return a pointer to it.
-// Return NULL if something went wrong.
+// Copy an object deeply and return the copy.
 cprnths_obj_t*
+// the copy or NULL
 cprnths_obj_copy(
     cprnths_obj_t const *,
+    // the original (not NULL)
     cprnths_copytab_t*
+    // the copy table to use (not NULL)
 );
 
 

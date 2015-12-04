@@ -37,19 +37,19 @@ typedef struct cprnths_copytab_t cprnths_copytab_t;
 // cprnths_ref_t
 
 
-// A row of a copy table (just for easy reusing)
+// A row of a copy table
 typedef struct {
-    // The original
+    // The original (not NULL)
     cprnths_ref_t const * orig;
 
-    // The copy
+    // The copy (not NULL)
     cprnths_ref_t* copy;
 } cprnths_copytab_row_t;
 
 // This is for tracking which references have already been copied during deep copying
 // not to copy a reference more than once. (You know, diamond references, ...)
 struct cprnths_copytab_t {
-    // The table itself
+    // The table itself (not NULL)
     cprnths_copytab_row_t* tab;
 
     // Amount of slots to allocate memory for at once
@@ -67,34 +67,41 @@ struct cprnths_copytab_t {
 };
 
 
-// Create a new copy table with given .chunksize and return a pointer to it.
-// Return NULL if something went wrong.
+// Create a new copy table.
 cprnths_copytab_t*
+// a new table or NULL
 cprnths_copytab_create(
     size_t
+    // .chunksize
 );
 
-// Add the given references (original and copy) to the given copy table.
-// Return true if (and only if) the references were added successfully.
+// Add references to a copy table.
 bool
+// was the addition successful?
 cprnths_copytab_addrefs(
     cprnths_copytab_t*,
+    // not NULL
     cprnths_ref_t const *,
+    // original (not NULL)
     cprnths_ref_t*
+    // copy (not NULL)
 );
 
-// If the given (original) reference is listed in the given copy table,
-// return a pointer to its copy. Otherwise, return NULL.
+// If an original reference is listed in a copy table, return its copy.
 cprnths_ref_t*
+// the copy or NULL
 cprnths_copytab_chkref(
     cprnths_copytab_t const *,
+    // not NULL
     cprnths_ref_t const *
+    // not NULL
 );
 
-// Destroy and free() the given copy table.
+// Destroy a copy table.
 void
 cprnths_copytab_destroy(
     cprnths_copytab_t*
+    // not NULL
 );
 
 

@@ -41,38 +41,28 @@ typedef struct cprnths_class_t cprnths_class_t;
 
 
 // This is for storing information about datatypes non-redundandly.
-// (You know, a lot of objects of a type, almost out of memory ...)
 struct cprnths_class_t {
-    // An object's size (in bytes, MUST be > 0)
+    // An object's size (in bytes, > 0)
     size_t obj_size;
 
+    // Each of the following function pointers MAY be NULL if there's nothing to do.
 
-    // About the following "virtual methods":
-    //
-    // Each function pointer MAY be NULL when there's nothing to do.
-    // This is absolutely equivalent to (but a little bit faster than)
-    // a function which does nothing at all.
-    //
-    // The pointer arguments MUST NOT be NULL.
-    //
-    // If a function MAY fail, it SHOULD fail as gracefully as possible.
-    // Things like program termination, memory leaks and printings to stderr
-    // MUST NOT happen!
-
-    // Some objects REQUIRE some cleanup actions at the end of their lifetime.
-    // This function SHALL be called with the object's address as the only argument.
+    // Destroy the object
     void
     (*obj_destroy)(
         cprnths_obj_t*
+        // the object to clean up (not NULL)
     );
 
-    // Some objects REQUIRE some actions for deep copying.
-    // This function SHALL return true if (and only if) the object was copied successfully
-    // from the 1st argument to the 2nd one.
+    // Copy the object deeply
     bool
+    // was the copying successful?
     (*obj_copy)(
+        // original (not NULL)
         cprnths_obj_t const *,
+        // copy (target, not NULL)
         cprnths_obj_t*,
+        // copy table to use (not NULL)
         cprnths_copytab_t*
     );
 };

@@ -37,16 +37,18 @@
 struct cprnths_expr_t;
 typedef struct cprnths_expr_t cprnths_expr_t;
 struct cprnths_expr_t {
-    // Evaluate the given expression and store the value in the given cprnths_ref_t*.
-    // Return whether the expression was evaluated sucessfully.
+    // Evaluate an expression.
     bool
+    // was the evaluation sucessful?
     (*eval)(
         cprnths_expr_t const *,
+        // not NULL
         cprnths_ref_t**
+        // where to store the value/result? (or NULL)
     );
 };
 
-// An array of expressions
+// An array of expressions.
 typedef struct {
     // The array itself (or NULL if empty)
     cprnths_expr_t* exprs;

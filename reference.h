@@ -43,51 +43,55 @@ typedef struct cprnths_ref_t cprnths_ref_t;
 // This is for referencing an object and cleaning it up automatically
 // when it's not being referenced anymore. (You know, garbage collection.)
 struct cprnths_ref_t {
-    // The object being referenced (MAY be NULL, indicating invalid reference)
+    // The object being referenced (or NULL, indicating invalid reference)
     cprnths_obj_t* obj;
 
     // The amount of pointers to this reference
     size_t pcnt;
 
-    // The garbage table this reference is listed in (MAY be NULL -- no garbage table)
+    // The garbage table this reference is listed in or NULL
     cprnths_garbtab_t* garbtab;
 };
 
 
-// Create a new reference to the given object (MAY be NULL for creating
-// an invalid reference) and return a pointer to the reference.
-// The reference SHALL be listed in the given garbage table (if not NULL).
-// Return NULL if something went wrong.
+// Create a new reference to an object.
 cprnths_ref_t*
+// a new reference or NULL
 cprnths_ref_create(
     cprnths_obj_t*,
+    // NULL if indicating invalid reference
     cprnths_garbtab_t*
+    // the garbage table to list the reference in or NULL
 );
 
-// Increment the given reference's ->pcnt by the 2nd argument
-// (which MAY be negative for decrementing).
+// Increment a reference's ->pcnt by a number.
 // If the ->pcnt becomes 0, clean the reference up and remove it from
 // its garbage table (if any).
 void
 cprnths_ref_increment(
     cprnths_ref_t*,
+    // not NULL
     size_t
+    // MAY be negative for decrementing
 );
 
-// Make a deep copy of the given reference and return a pointer to it.
-// Use the given copy table for clean deep copying.
-// Return NULL if something went wrong.
+// Copy a reference deeply and return the copy.
 cprnths_ref_t*
+// the copy or NULL
 cprnths_ref_copy(
     cprnths_ref_t const *,
+    // the original (not NULL)
     cprnths_copytab_t*
+    // the copy table to use (not NULL)
 );
 
 // Create a new copy table and use it
-// to copy the given reference with cprnths_ref_copy().
+// to copy a reference with cprnths_ref_copy().
 cprnths_ref_t*
+// the copy or NULL
 cprnths_ref_copy_newtab(
     cprnths_ref_t const *
+    // the original (not NULL)
 );
 
 

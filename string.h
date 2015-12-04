@@ -33,13 +33,13 @@
 // bool
 
 
-// The type of a string's hash (just for easy reusing)
+// The type of a string's hash (just for easy changing)
 typedef uintmax_t cprnths_string_hash_t;
 
 // A string.
 // (You know, a sequence of characters.)
 typedef struct {
-    // The string itself (MUST NOT be NULL)
+    // The string itself (not NULL)
     char const * str;
 
     // The string's length
@@ -50,32 +50,39 @@ typedef struct {
 } cprnths_string_t;
 
 
-// Create a new string from the given amount of characters of the given buffer.
-// Return NULL if something went wrong.
+// Create a new string from a buffer.
 cprnths_string_t*
+// a new string or NULL
 cprnths_string_create(
     char const *,
+    // not NULL
     size_t
+    // the amount of characters to use
 );
 
-// Make a copy of the given string and return a pointer to it.
-// Return NULL if something went wrong.
+// Copy a string and return the copy.
 cprnths_string_t*
+// the copy or NULL
 cprnths_string_copy(
     cprnths_string_t const *
+    // the original (not NULL)
 );
 
-// Compare two strings and report whether they're equal.
+// Compare two strings.
 bool
+// are they equal?
 cprnths_string_equal(
     cprnths_string_t const *,
+    // not NULL
     cprnths_string_t const *
+    // not NULL
 );
 
-// Destroy and free() the given string.
+// Destroy a string.
 void
 cprnths_string_destroy(
     cprnths_string_t*
+    // not NULL
 );
 
 

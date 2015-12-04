@@ -36,16 +36,18 @@
 // cprnths_ref_t
 
 
-// A (key, value) pair of a dictionary (just for easy reusing)
+// A (key, value) pair of a dictionary
 typedef struct {
     cprnths_string_t* key;
+    // not NULL
+
     cprnths_ref_t* value;
+    // not NULL
 } cprnths_dict_pair_t;
 
-// This is for mapping particular keys to particular values.
-// (You know, an associative array.)
+// An associative array. (aka "dictionary")
 typedef struct {
-    // The dictionary itself
+    // The dictionary itself (not NULL)
     cprnths_dict_pair_t* dict;
 
     // Amount of slots to allocate memory for at once
@@ -63,52 +65,62 @@ typedef struct {
 } cprnths_dict_t;
 
 
-// Create a new dictionary with given .chunksize and return a pointer to it.
-// Return NULL if something went wrong.
+// Create a new dictionary.
 cprnths_dict_t*
+// a new dictionary or NULL
 cprnths_dict_create(
     size_t
+    // .chunksize
 );
 
-// Add the given (key, value) pair to the given dictionary.
-// If a pair with the given key already exists, override the value.
-// Return true if (and only if) the pair was added (or overridden) successfully.
+// Add the given (key, value) pair to a dictionary.
+// If the given key already exists, override the value.
 bool
+// was the addition successful?
 cprnths_dict_addpair(
     cprnths_dict_t*,
+    // not NULL
     cprnths_string_t const *,
+    // key (not NULL)
     cprnths_ref_t*
+    // value (not NULL)
 );
 
-// If the given key is listed in the given dictionary,
-// return a pointer to the value. Otherwise, return NULL.
+// If a key is listed in a dictionary, return the value.
 cprnths_ref_t*
+// the value or NULL
 cprnths_dict_getval(
     cprnths_dict_t const *,
+    // not NULL
     cprnths_string_t const *
+    // key (not NULL)
 );
 
-// If the given key is listed in the given dictionary,
-// remove the pair and return a (usable) pointer to the value.
-// Otherwise, return NULL.
+// If a key is listed in a dictionary, remove the pair and return the value.
 cprnths_ref_t*
+// the value or NULL
 cprnths_dict_popval(
     cprnths_dict_t*,
+    // not NULL
     cprnths_string_t const *
+    // key (not NULL)
 );
 
-// Remove the given key from the given dictionary if it's listed there
-// and report whether it was listed there.
+// Remove a key from a dictionary if it's listed there.
 bool
+// was it listed there?
 cprnths_dict_delpair(
     cprnths_dict_t*,
+    // not NULL
     cprnths_string_t const *
+    // key (not NULL)
 );
 
-// Destroy and free() the given dictionary.
+// Destroy a dictionary.
 void
 cprnths_dict_destroy(
     cprnths_dict_t*
+    // not NULL
 );
 
 
