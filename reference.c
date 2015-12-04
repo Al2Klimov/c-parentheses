@@ -32,7 +32,7 @@
 #include "object.h"
 // cprnths_obj_t
 // cprnths_obj_copy()
-// cprnths_obj_destruct()
+// cprnths_obj_destroy()
 
 #include "reference.h"
 // cprnths_ref_t
@@ -46,7 +46,7 @@
 // cprnths_copytab_create()
 // cprnths_copytab_addrefs()
 // cprnths_copytab_chkref()
-// cprnths_copytab_destruct()
+// cprnths_copytab_destroy()
 
 
 cprnths_ref_t*
@@ -81,7 +81,7 @@ cprnths_ref_increment(
         return;
 
     if (r->obj != NULL)
-        cprnths_obj_destruct(r->obj);
+        cprnths_obj_destroy(r->obj);
 
     if (r->garbtab != NULL)
         cprnths_garbtab_delref(r->garbtab, r);
@@ -124,7 +124,7 @@ cprnths_ref_copy_newtab(
 
     cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
 
-    cprnths_copytab_destruct(t);
+    cprnths_copytab_destroy(t);
 
     return R;
 }

@@ -87,10 +87,10 @@ cprnths_garbtab_cleanup(
     cprnths_garbtab_t*
 );
 
-// Destruct and free() the given garbage table
+// Destroy and free() the given garbage table
 // without calling cprnths_garbtab_cleanup().
 void
-cprnths_garbtab_destruct(
+cprnths_garbtab_destroy(
     cprnths_garbtab_t*
 );
 

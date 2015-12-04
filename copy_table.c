@@ -136,7 +136,7 @@ cprnths_copytab_chkref(
 }
 
 void
-cprnths_copytab_destruct(
+cprnths_copytab_destroy(
     cprnths_copytab_t *restrict const t
 ) {
     free(t->tab);

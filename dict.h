@@ -105,9 +105,9 @@ cprnths_dict_delpair(
     cprnths_string_t const *
 );
 
-// Destruct and free() the given dictionary.
+// Destroy and free() the given dictionary.
 void
-cprnths_dict_destruct(
+cprnths_dict_destroy(
     cprnths_dict_t*
 );
 

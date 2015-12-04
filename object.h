@@ -57,9 +57,9 @@ struct cprnths_obj_t {
 // Things like program termination, memory leaks and printings to stderr
 // won't happen.
 
-// Destruct and free() the given object.
+// Destroy and free() the given object.
 void
-cprnths_obj_destruct(
+cprnths_obj_destroy(
     cprnths_obj_t*
 );
 

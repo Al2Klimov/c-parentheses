@@ -41,7 +41,7 @@
 
 #include "object.h"
 // cprnths_obj_t
-// cprnths_obj_destruct()
+// cprnths_obj_destroy()
 
 
 cprnths_garbtab_t*
@@ -179,14 +179,14 @@ Search:
         if (!(*p == NULL || (*p)->obj == NULL)) {
             o = (*p)->obj;
             (*p)->obj = NULL;
-            cprnths_obj_destruct(o);
+            cprnths_obj_destroy(o);
             goto Search;
         }
     } while (++p < limit);
 }
 
 void
-cprnths_garbtab_destruct(
+cprnths_garbtab_destroy(
     cprnths_garbtab_t *restrict const t
 ) {
     if (t->slots_total != t->slots_free) {

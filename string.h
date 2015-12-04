@@ -72,9 +72,9 @@ cprnths_string_equal(
     cprnths_string_t const *
 );
 
-// Destruct and free() the given string.
+// Destroy and free() the given string.
 void
-cprnths_string_destruct(
+cprnths_string_destroy(
     cprnths_string_t*
 );
 

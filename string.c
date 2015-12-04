@@ -105,7 +105,7 @@ cprnths_string_equal(
 }
 
 void
-cprnths_string_destruct(
+cprnths_string_destroy(
     cprnths_string_t *restrict const s
 ) {
     free((char*)s->str);

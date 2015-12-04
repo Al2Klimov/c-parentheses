@@ -91,9 +91,9 @@ cprnths_copytab_chkref(
     cprnths_ref_t const *
 );
 
-// Destruct and free() the given copy table.
+// Destroy and free() the given copy table.
 void
-cprnths_copytab_destruct(
+cprnths_copytab_destroy(
     cprnths_copytab_t*
 );
 

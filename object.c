@@ -40,11 +40,11 @@
 
 
 void
-cprnths_obj_destruct(
+cprnths_obj_destroy(
     cprnths_obj_t *restrict const o
 ) {
-    if (o->cls->obj_destruct != NULL)
-        (*o->cls->obj_destruct)(o);
+    if (o->cls->obj_destroy != NULL)
+        (*o->cls->obj_destroy)(o);
 
     free(o);
 }

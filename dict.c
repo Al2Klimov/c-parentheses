@@ -41,7 +41,7 @@
 // cprnths_string_t
 // cprnths_string_equal()
 // cprnths_string_copy()
-// cprnths_string_destruct()
+// cprnths_string_destroy()
 
 #include "reference.h"
 // cprnths_ref_t
@@ -158,7 +158,7 @@ cprnths_dict_addpair(
                 slots_total * sizeof(cprnths_dict_pair_t)
             );
             if (D == NULL) {
-                cprnths_string_destruct((cprnths_string_t*)k);
+                cprnths_string_destroy((cprnths_string_t*)k);
                 return false;
             }
 
@@ -223,7 +223,7 @@ cpintern_dict_delpair(
     cprnths_dict_t *restrict const d,
     cprnths_dict_pair_t *restrict const p
 ) {
-    cprnths_string_destruct(p->key);
+    cprnths_string_destroy(p->key);
     p->key = NULL;
     cprnths_ref_increment(p->value, -1);
     p->value = NULL;
@@ -295,7 +295,7 @@ cprnths_dict_delpair(
 }
 
 void
-cprnths_dict_destruct(
+cprnths_dict_destroy(
     cprnths_dict_t *restrict const d
 ) {
     {
@@ -303,7 +303,7 @@ cprnths_dict_destruct(
         cprnths_dict_pair_t *const limit = D + d->slots_total;
         do {
             if (D->key != NULL) {
-                cprnths_string_destruct(D->key);
+                cprnths_string_destroy(D->key);
                 cprnths_ref_increment(D->value, -1);
             }
         } while (++D < limit);

@@ -62,7 +62,7 @@ struct cprnths_class_t {
     // Some objects REQUIRE some cleanup actions at the end of their lifetime.
     // This function SHALL be called with the object's address as the only argument.
     void
-    (*obj_destruct)(
+    (*obj_destroy)(
         cprnths_obj_t*
     );
 
