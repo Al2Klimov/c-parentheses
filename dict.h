@@ -37,21 +37,21 @@
 
 
 // A (key, value) pair of a dictionary
-typedef struct {
-    cprnths_string_t* key;
+struct cprnths_dict_pair_t {
+    struct cprnths_string_t* key;
     // not NULL
 
-    cprnths_ref_t* value;
+    struct cprnths_ref_t* value;
     // not NULL
-} cprnths_dict_pair_t;
+};
 
 // An associative array. (aka "dictionary")
-typedef struct {
+struct cprnths_dict_t {
     // The dictionary itself (not NULL)
-    cprnths_dict_pair_t* dict;
+    struct cprnths_dict_pair_t* dict;
 
     // Amount of slots to allocate memory for at once
-    // 1 slot == sizeof( cprnths_dict_pair_t )
+    // 1 slot == sizeof( struct cprnths_dict_pair_t )
     // SHALL be > 0!
     size_t const chunksize;
 
@@ -62,11 +62,11 @@ typedef struct {
     // Amount of free slots
     // SHALL be <= .slots_total!
     size_t slots_free;
-} cprnths_dict_t;
+};
 
 
 // Create a new dictionary.
-cprnths_dict_t*
+struct cprnths_dict_t*
 // a new dictionary or NULL
 cprnths_dict_create(
     size_t
@@ -78,31 +78,31 @@ cprnths_dict_create(
 bool
 // was the addition successful?
 cprnths_dict_addpair(
-    cprnths_dict_t*,
+    struct cprnths_dict_t*,
     // not NULL
-    cprnths_string_t const *,
+    struct cprnths_string_t const *,
     // key (not NULL)
-    cprnths_ref_t*
+    struct cprnths_ref_t*
     // value (not NULL)
 );
 
 // If a key is listed in a dictionary, return the value.
-cprnths_ref_t*
+struct cprnths_ref_t*
 // the value or NULL
 cprnths_dict_getval(
-    cprnths_dict_t const *,
+    struct cprnths_dict_t const *,
     // not NULL
-    cprnths_string_t const *
+    struct cprnths_string_t const *
     // key (not NULL)
 );
 
 // If a key is listed in a dictionary, remove the pair and return the value.
-cprnths_ref_t*
+struct cprnths_ref_t*
 // the value or NULL
 cprnths_dict_popval(
-    cprnths_dict_t*,
+    struct cprnths_dict_t*,
     // not NULL
-    cprnths_string_t const *
+    struct cprnths_string_t const *
     // key (not NULL)
 );
 
@@ -110,16 +110,16 @@ cprnths_dict_popval(
 bool
 // was it listed there?
 cprnths_dict_delpair(
-    cprnths_dict_t*,
+    struct cprnths_dict_t*,
     // not NULL
-    cprnths_string_t const *
+    struct cprnths_string_t const *
     // key (not NULL)
 );
 
 // Destroy a dictionary.
 void
 cprnths_dict_destroy(
-    cprnths_dict_t*
+    struct cprnths_dict_t*
     // not NULL
 );
 

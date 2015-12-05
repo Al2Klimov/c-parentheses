@@ -49,12 +49,12 @@
 // cprnths_copytab_destroy()
 
 
-cprnths_ref_t*
+struct cprnths_ref_t*
 cprnths_ref_create(
-    cprnths_obj_t *restrict const o,
-    cprnths_garbtab_t *restrict const t
+    struct cprnths_obj_t *restrict const o,
+    struct cprnths_garbtab_t *restrict const t
 ) {
-    cprnths_ref_t *restrict r = malloc(sizeof(cprnths_ref_t));
+    struct cprnths_ref_t *restrict r = malloc(sizeof(struct cprnths_ref_t));
 
     if (r == NULL)
         goto Finish;
@@ -74,7 +74,7 @@ Finish:
 
 void
 cprnths_ref_increment(
-    cprnths_ref_t *restrict const r,
+    struct cprnths_ref_t *restrict const r,
     size_t const i
 ) {
     if (( r->pcnt += i ))
@@ -89,12 +89,12 @@ cprnths_ref_increment(
     free(r);
 }
 
-cprnths_ref_t*
+struct cprnths_ref_t*
 cprnths_ref_copy(
-    cprnths_ref_t const *restrict const r,
-    cprnths_copytab_t *restrict const t
+    struct cprnths_ref_t const *restrict const r,
+    struct cprnths_copytab_t *restrict const t
 ) {
-    cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
+    struct cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
 
     if (R != NULL) {
         cprnths_ref_increment(R, 1u);
@@ -113,16 +113,16 @@ cprnths_ref_copy(
     return NULL;
 }
 
-cprnths_ref_t*
+struct cprnths_ref_t*
 cprnths_ref_copy_newtab(
-    cprnths_ref_t const *restrict const r
+    struct cprnths_ref_t const *restrict const r
 ) {
-    cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
+    struct cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
 
     if (t == NULL)
         return NULL;
 
-    cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
+    struct cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
 
     cprnths_copytab_destroy(t);
 

@@ -24,7 +24,6 @@
 
 
 struct cprnths_copytab_t;
-typedef struct cprnths_copytab_t cprnths_copytab_t;
 
 
 #include <stddef.h>
@@ -38,22 +37,22 @@ typedef struct cprnths_copytab_t cprnths_copytab_t;
 
 
 // A row of a copy table
-typedef struct {
+struct cprnths_copytab_row_t {
     // The original (not NULL)
-    cprnths_ref_t const * orig;
+    struct cprnths_ref_t const * orig;
 
     // The copy (not NULL)
-    cprnths_ref_t* copy;
-} cprnths_copytab_row_t;
+    struct cprnths_ref_t* copy;
+};
 
 // This is for tracking which references have already been copied during deep copying
 // not to copy a reference more than once. (You know, diamond references, ...)
 struct cprnths_copytab_t {
     // The table itself (not NULL)
-    cprnths_copytab_row_t* tab;
+    struct cprnths_copytab_row_t* tab;
 
     // Amount of slots to allocate memory for at once
-    // 1 slot == sizeof( cprnths_copytab_row_t )
+    // 1 slot == sizeof( struct cprnths_copytab_row_t )
     // SHALL be > 0!
     size_t const chunksize;
 
@@ -68,7 +67,7 @@ struct cprnths_copytab_t {
 
 
 // Create a new copy table.
-cprnths_copytab_t*
+struct cprnths_copytab_t*
 // a new table or NULL
 cprnths_copytab_create(
     size_t
@@ -79,28 +78,28 @@ cprnths_copytab_create(
 bool
 // was the addition successful?
 cprnths_copytab_addrefs(
-    cprnths_copytab_t*,
+    struct cprnths_copytab_t*,
     // not NULL
-    cprnths_ref_t const *,
+    struct cprnths_ref_t const *,
     // original (not NULL)
-    cprnths_ref_t*
+    struct cprnths_ref_t*
     // copy (not NULL)
 );
 
 // If an original reference is listed in a copy table, return its copy.
-cprnths_ref_t*
+struct cprnths_ref_t*
 // the copy or NULL
 cprnths_copytab_chkref(
-    cprnths_copytab_t const *,
+    struct cprnths_copytab_t const *,
     // not NULL
-    cprnths_ref_t const *
+    struct cprnths_ref_t const *
     // not NULL
 );
 
 // Destroy a copy table.
 void
 cprnths_copytab_destroy(
-    cprnths_copytab_t*
+    struct cprnths_copytab_t*
     // not NULL
 );
 

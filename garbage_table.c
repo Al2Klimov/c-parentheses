@@ -44,16 +44,16 @@
 // cprnths_obj_destroy()
 
 
-cprnths_garbtab_t*
+struct cprnths_garbtab_t*
 cprnths_garbtab_create(
     size_t const s
 ) {
-    cprnths_garbtab_t *restrict t = malloc(sizeof(cprnths_garbtab_t));
+    struct cprnths_garbtab_t *restrict t = malloc(sizeof(struct cprnths_garbtab_t));
 
     if (t == NULL)
         goto Finish;
 
-    t->tab = malloc(s * sizeof(cprnths_ref_t*));
+    t->tab = malloc(s * sizeof(struct cprnths_ref_t*));
 
     if (t->tab == NULL) {
         free(t);
@@ -62,7 +62,7 @@ cprnths_garbtab_create(
     }
 
     {
-        cprnths_ref_t* *restrict p = t->tab + s;
+        struct cprnths_ref_t* *restrict p = t->tab + s;
         do *--p = NULL;
         while (p > t->tab);
     }
@@ -75,11 +75,11 @@ Finish:
 
 bool
 cprnths_garbtab_addref(
-    cprnths_garbtab_t *restrict const t,
-    cprnths_ref_t *const r
+    struct cprnths_garbtab_t *restrict const t,
+    struct cprnths_ref_t *const r
 ) {
     if (t->slots_free) {
-        cprnths_ref_t* *restrict T = t->tab;
+        struct cprnths_ref_t* *restrict T = t->tab;
         while (*T != NULL)
             ++T;
         *T = r;
@@ -89,9 +89,9 @@ cprnths_garbtab_addref(
             size_t const slots_total = t->slots_total + t->chunksize;
 
             {
-                cprnths_ref_t* *restrict T = realloc(
+                struct cprnths_ref_t* *restrict T = realloc(
                     t->tab,
-                    slots_total * sizeof(cprnths_ref_t*)
+                    slots_total * sizeof(struct cprnths_ref_t*)
                 );
                 if (T == NULL)
                     return false;
@@ -100,7 +100,7 @@ cprnths_garbtab_addref(
                 T += t->slots_total;
                 *T = r;
 
-                cprnths_ref_t* *const limit = t->tab + slots_total;
+                struct cprnths_ref_t* *const limit = t->tab + slots_total;
                 while (++T < limit)
                     *T = NULL;
             }
@@ -116,11 +116,11 @@ cprnths_garbtab_addref(
 
 void
 cprnths_garbtab_delref(
-    cprnths_garbtab_t *restrict const t,
-    cprnths_ref_t *const r
+    struct cprnths_garbtab_t *restrict const t,
+    struct cprnths_ref_t *const r
 ) {
     {
-        cprnths_ref_t* *restrict p = t->tab + t->slots_total;
+        struct cprnths_ref_t* *restrict p = t->tab + t->slots_total;
         do {
             if (*--p == r) {
                 *p = NULL;
@@ -137,9 +137,9 @@ Defrag:
         return;
 
     {
-        cprnths_ref_t* *restrict free_slot = t->tab;
-        cprnths_ref_t* *restrict used_slot = t->tab + t->slots_total;
-        cprnths_ref_t* *const last_used_slot = used_slot - t->chunksize;
+        struct cprnths_ref_t* *restrict free_slot = t->tab;
+        struct cprnths_ref_t* *restrict used_slot = t->tab + t->slots_total;
+        struct cprnths_ref_t* *const last_used_slot = used_slot - t->chunksize;
         do {
             if (*--used_slot != NULL) {
                 while (*free_slot != NULL)
@@ -151,9 +151,9 @@ Defrag:
     }
 
     size_t const slots_total = t->slots_total - t->chunksize;
-    cprnths_ref_t* *restrict const T = realloc(
+    struct cprnths_ref_t* *restrict const T = realloc(
         t->tab,
-        slots_total * sizeof(cprnths_ref_t*)
+        slots_total * sizeof(struct cprnths_ref_t*)
     );
     if (T != NULL) {
         t->tab = T;
@@ -164,11 +164,11 @@ Defrag:
 
 void
 cprnths_garbtab_cleanup(
-    cprnths_garbtab_t *const t
+    struct cprnths_garbtab_t *const t
 ) {
-    cprnths_ref_t* *restrict p;
-    cprnths_ref_t** limit;
-    cprnths_obj_t *restrict o;
+    struct cprnths_ref_t* *restrict p;
+    struct cprnths_ref_t** limit;
+    struct cprnths_obj_t *restrict o;
 
 Search:
     if (t->slots_total == t->slots_free)
@@ -187,10 +187,10 @@ Search:
 
 void
 cprnths_garbtab_destroy(
-    cprnths_garbtab_t *restrict const t
+    struct cprnths_garbtab_t *restrict const t
 ) {
     if (t->slots_total != t->slots_free) {
-        cprnths_ref_t* *restrict p = t->tab + t->slots_total;
+        struct cprnths_ref_t* *restrict p = t->tab + t->slots_total;
         do {
             if (*--p != NULL)
                 (*p)->garbtab = NULL;

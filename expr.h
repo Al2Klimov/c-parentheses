@@ -34,28 +34,26 @@
 
 
 // An expression.
-struct cprnths_expr_t;
-typedef struct cprnths_expr_t cprnths_expr_t;
 struct cprnths_expr_t {
     // Evaluate an expression.
     bool
     // was the evaluation sucessful?
     (*eval)(
-        cprnths_expr_t const *,
+        struct cprnths_expr_t const *,
         // not NULL
-        cprnths_ref_t**
+        struct cprnths_ref_t**
         // where to store the value/result? (or NULL)
     );
 };
 
 // An array of expressions.
-typedef struct {
+struct cprnths_exprs_t {
     // The array itself (or NULL if empty)
-    cprnths_expr_t* exprs;
+    struct cprnths_expr_t* exprs;
 
     // The array's length
     size_t length;
-} cprnths_exprs_t;
+};
 
 
 #endif

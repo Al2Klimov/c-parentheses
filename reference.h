@@ -24,7 +24,6 @@
 
 
 struct cprnths_ref_t;
-typedef struct cprnths_ref_t cprnths_ref_t;
 
 
 #include <stddef.h>
@@ -44,23 +43,23 @@ typedef struct cprnths_ref_t cprnths_ref_t;
 // when it's not being referenced anymore. (You know, garbage collection.)
 struct cprnths_ref_t {
     // The object being referenced (or NULL, indicating invalid reference)
-    cprnths_obj_t* obj;
+    struct cprnths_obj_t* obj;
 
     // The amount of pointers to this reference
     size_t pcnt;
 
     // The garbage table this reference is listed in or NULL
-    cprnths_garbtab_t* garbtab;
+    struct cprnths_garbtab_t* garbtab;
 };
 
 
 // Create a new reference to an object.
-cprnths_ref_t*
+struct cprnths_ref_t*
 // a new reference or NULL
 cprnths_ref_create(
-    cprnths_obj_t*,
+    struct cprnths_obj_t*,
     // NULL if indicating invalid reference
-    cprnths_garbtab_t*
+    struct cprnths_garbtab_t*
     // the garbage table to list the reference in or NULL
 );
 
@@ -69,28 +68,28 @@ cprnths_ref_create(
 // its garbage table (if any).
 void
 cprnths_ref_increment(
-    cprnths_ref_t*,
+    struct cprnths_ref_t*,
     // not NULL
     size_t
     // MAY be negative for decrementing
 );
 
 // Copy a reference deeply and return the copy.
-cprnths_ref_t*
+struct cprnths_ref_t*
 // the copy or NULL
 cprnths_ref_copy(
-    cprnths_ref_t const *,
+    struct cprnths_ref_t const *,
     // the original (not NULL)
-    cprnths_copytab_t*
+    struct cprnths_copytab_t*
     // the copy table to use (not NULL)
 );
 
 // Create a new copy table and use it
 // to copy a reference with cprnths_ref_copy().
-cprnths_ref_t*
+struct cprnths_ref_t*
 // the copy or NULL
 cprnths_ref_copy_newtab(
-    cprnths_ref_t const *
+    struct cprnths_ref_t const *
     // the original (not NULL)
 );
 

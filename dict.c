@@ -48,16 +48,16 @@
 // cprnths_ref_increment()
 
 
-cprnths_dict_t*
+struct cprnths_dict_t*
 cprnths_dict_create(
     size_t const s
 ) {
-    cprnths_dict_t *restrict d = malloc(sizeof(cprnths_dict_t));
+    struct cprnths_dict_t *restrict d = malloc(sizeof(struct cprnths_dict_t));
 
     if (d == NULL)
         goto Finish;
 
-    d->dict = malloc(s * sizeof(cprnths_dict_pair_t));
+    d->dict = malloc(s * sizeof(struct cprnths_dict_pair_t));
 
     if (d->dict == NULL) {
         free(d);
@@ -66,7 +66,7 @@ cprnths_dict_create(
     }
 
     {
-        cprnths_dict_pair_t *restrict p = d->dict + s;
+        struct cprnths_dict_pair_t *restrict p = d->dict + s;
         do {
             (--p)->key = NULL;
             p->value = NULL;
@@ -81,15 +81,15 @@ Finish:
 
 bool
 cprnths_dict_addpair(
-    cprnths_dict_t *restrict const d,
-    cprnths_string_t const *restrict k,
-    cprnths_ref_t *restrict const v
+    struct cprnths_dict_t *restrict const d,
+    struct cprnths_string_t const *restrict k,
+    struct cprnths_ref_t *restrict const v
 ) {
     if (d->slots_total == d->slots_free) {
         if (NULL == ( k = cprnths_string_copy(k) ))
             return false;
 
-        d->dict->key = (cprnths_string_t*)k;
+        d->dict->key = (struct cprnths_string_t*)k;
         cprnths_ref_increment(v, 1);
         d->dict->value = v;
         --d->slots_free;
@@ -97,11 +97,11 @@ cprnths_dict_addpair(
     }
 
     if (d->slots_free)
-        for (cprnths_dict_pair_t *restrict D = d->dict;; ++D) {
+        for (struct cprnths_dict_pair_t *restrict D = d->dict;; ++D) {
             if (D->key == NULL) {
-                cprnths_dict_pair_t *restrict const free_slot = D;
+                struct cprnths_dict_pair_t *restrict const free_slot = D;
 
-                for (cprnths_dict_pair_t *const limit = D + d->slots_total; ++D < limit;)
+                for (struct cprnths_dict_pair_t *const limit = D + d->slots_total; ++D < limit;)
                     if (D->key != NULL && cprnths_string_equal(D->key, k)) {
                         if (D->value != v) {
                             cprnths_ref_increment(v, 1);
@@ -114,7 +114,7 @@ cprnths_dict_addpair(
                 if (NULL == ( k = cprnths_string_copy(k) ))
                     return false;
 
-                free_slot->key = (cprnths_string_t*)k;
+                free_slot->key = (struct cprnths_string_t*)k;
                 cprnths_ref_increment(v, 1);
                 free_slot->value = v;
                 --d->slots_free;
@@ -132,8 +132,8 @@ cprnths_dict_addpair(
         }
 
     {
-        cprnths_dict_pair_t *restrict D = d->dict;
-        cprnths_dict_pair_t *const limit = D + d->slots_total;
+        struct cprnths_dict_pair_t *restrict D = d->dict;
+        struct cprnths_dict_pair_t *const limit = D + d->slots_total;
         do {
             if (cprnths_string_equal(D->key, k)) {
                 if (D->value != v) {
@@ -153,22 +153,22 @@ cprnths_dict_addpair(
             if (NULL == ( k = cprnths_string_copy(k) ))
                 return false;
 
-            cprnths_dict_pair_t *restrict D = realloc(
+            struct cprnths_dict_pair_t *restrict D = realloc(
                 d->dict,
-                slots_total * sizeof(cprnths_dict_pair_t)
+                slots_total * sizeof(struct cprnths_dict_pair_t)
             );
             if (D == NULL) {
-                cprnths_string_destroy((cprnths_string_t*)k);
+                cprnths_string_destroy((struct cprnths_string_t*)k);
                 return false;
             }
 
             d->dict = D;
             D += d->slots_total;
-            D->key = (cprnths_string_t*)k;
+            D->key = (struct cprnths_string_t*)k;
             cprnths_ref_increment(v, 1);
             D->value = v;
 
-            cprnths_dict_pair_t *const limit = d->dict + slots_total;
+            struct cprnths_dict_pair_t *const limit = d->dict + slots_total;
             while (++D < limit) {
                 D->key = NULL;
                 D->value = NULL;
@@ -184,14 +184,14 @@ cprnths_dict_addpair(
 }
 
 static
-cprnths_dict_pair_t*
+struct cprnths_dict_pair_t*
 cpintern_dict_getpairpos(
-    cprnths_dict_t const *restrict const d,
-    cprnths_string_t const *restrict const k
+    struct cprnths_dict_t const *restrict const d,
+    struct cprnths_string_t const *restrict const k
 ) {
     if (d->slots_total != d->slots_free) {
-        cprnths_dict_pair_t *restrict D = d->dict;
-        cprnths_dict_pair_t *const limit = D + d->slots_total;
+        struct cprnths_dict_pair_t *restrict D = d->dict;
+        struct cprnths_dict_pair_t *const limit = D + d->slots_total;
         do {
             if (D->key != NULL && cprnths_string_equal(D->key, k))
                 return D;
@@ -201,13 +201,13 @@ cpintern_dict_getpairpos(
     return NULL;
 }
 
-cprnths_ref_t*
+struct cprnths_ref_t*
 cprnths_dict_getval(
-    cprnths_dict_t const *restrict const d,
-    cprnths_string_t const *restrict const k
+    struct cprnths_dict_t const *restrict const d,
+    struct cprnths_string_t const *restrict const k
 ) {
     {
-        cprnths_dict_pair_t const *restrict const D = cpintern_dict_getpairpos(d, k);
+        struct cprnths_dict_pair_t const *restrict const D = cpintern_dict_getpairpos(d, k);
         if (D != NULL) {
             cprnths_ref_increment(D->value, 1);
             return D->value;
@@ -220,8 +220,8 @@ cprnths_dict_getval(
 static
 void
 cpintern_dict_delpair(
-    cprnths_dict_t *restrict const d,
-    cprnths_dict_pair_t *restrict const p
+    struct cprnths_dict_t *restrict const d,
+    struct cprnths_dict_pair_t *restrict const p
 ) {
     cprnths_string_destroy(p->key);
     p->key = NULL;
@@ -233,9 +233,9 @@ cpintern_dict_delpair(
         return;
 
     {
-        cprnths_dict_pair_t *restrict free_slot = d->dict;
-        cprnths_dict_pair_t *restrict used_slot = d->dict + d->slots_total;
-        cprnths_dict_pair_t *const last_used_slot = used_slot - d->chunksize;
+        struct cprnths_dict_pair_t *restrict free_slot = d->dict;
+        struct cprnths_dict_pair_t *restrict used_slot = d->dict + d->slots_total;
+        struct cprnths_dict_pair_t *const last_used_slot = used_slot - d->chunksize;
         do {
             if ((--used_slot)->key != NULL) {
                 while (free_slot->key != NULL)
@@ -249,9 +249,9 @@ cpintern_dict_delpair(
     }
 
     size_t const slots_total = d->slots_total - d->chunksize;
-    cprnths_dict_pair_t *restrict const D = realloc(
+    struct cprnths_dict_pair_t *restrict const D = realloc(
         d->dict,
-        slots_total * sizeof(cprnths_dict_pair_t)
+        slots_total * sizeof(struct cprnths_dict_pair_t)
     );
     if (D != NULL) {
         d->dict = D;
@@ -260,15 +260,15 @@ cpintern_dict_delpair(
     }
 }
 
-cprnths_ref_t*
+struct cprnths_ref_t*
 cprnths_dict_popval(
-    cprnths_dict_t *restrict const d,
-    cprnths_string_t const *restrict const k
+    struct cprnths_dict_t *restrict const d,
+    struct cprnths_string_t const *restrict const k
 ) {
     {
-        cprnths_dict_pair_t *restrict const D = cpintern_dict_getpairpos(d, k);
+        struct cprnths_dict_pair_t *restrict const D = cpintern_dict_getpairpos(d, k);
         if (D != NULL) {
-            cprnths_ref_t *const v = D->value;
+            struct cprnths_ref_t *const v = D->value;
             cprnths_ref_increment(v, 1);
             cpintern_dict_delpair(d, D);
             return v;
@@ -280,11 +280,11 @@ cprnths_dict_popval(
 
 bool
 cprnths_dict_delpair(
-    cprnths_dict_t *restrict const d,
-    cprnths_string_t const *restrict const k
+    struct cprnths_dict_t *restrict const d,
+    struct cprnths_string_t const *restrict const k
 ) {
     {
-        cprnths_dict_pair_t *restrict const D = cpintern_dict_getpairpos(d, k);
+        struct cprnths_dict_pair_t *restrict const D = cpintern_dict_getpairpos(d, k);
         if (D != NULL) {
             cpintern_dict_delpair(d, D);
             return true;
@@ -296,11 +296,11 @@ cprnths_dict_delpair(
 
 void
 cprnths_dict_destroy(
-    cprnths_dict_t *restrict const d
+    struct cprnths_dict_t *restrict const d
 ) {
     {
-        cprnths_dict_pair_t *restrict D = d->dict;
-        cprnths_dict_pair_t *const limit = D + d->slots_total;
+        struct cprnths_dict_pair_t *restrict D = d->dict;
+        struct cprnths_dict_pair_t *const limit = D + d->slots_total;
         do {
             if (D->key != NULL) {
                 cprnths_string_destroy(D->key);

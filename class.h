@@ -24,7 +24,6 @@
 
 
 struct cprnths_class_t;
-typedef struct cprnths_class_t cprnths_class_t;
 
 
 #include <stddef.h>
@@ -50,7 +49,7 @@ struct cprnths_class_t {
     // Destroy the object
     void
     (*obj_destroy)(
-        cprnths_obj_t*
+        struct cprnths_obj_t*
         // the object to clean up (not NULL)
     );
 
@@ -59,11 +58,11 @@ struct cprnths_class_t {
     // was the copying successful?
     (*obj_copy)(
         // original (not NULL)
-        cprnths_obj_t const *,
+        struct cprnths_obj_t const *,
         // copy (target, not NULL)
-        cprnths_obj_t*,
+        struct cprnths_obj_t*,
         // copy table to use (not NULL)
-        cprnths_copytab_t*
+        struct cprnths_copytab_t*
     );
 };
 

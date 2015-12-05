@@ -38,7 +38,7 @@ typedef uintmax_t cprnths_string_hash_t;
 
 // A string.
 // (You know, a sequence of characters.)
-typedef struct {
+struct cprnths_string_t {
     // The string itself (not NULL)
     char const * str;
 
@@ -47,11 +47,11 @@ typedef struct {
 
     // The string's hash
     cprnths_string_hash_t hash;
-} cprnths_string_t;
+};
 
 
 // Create a new string from a buffer.
-cprnths_string_t*
+struct cprnths_string_t*
 // a new string or NULL
 cprnths_string_create(
     char const *,
@@ -61,10 +61,10 @@ cprnths_string_create(
 );
 
 // Copy a string and return the copy.
-cprnths_string_t*
+struct cprnths_string_t*
 // the copy or NULL
 cprnths_string_copy(
-    cprnths_string_t const *
+    struct cprnths_string_t const *
     // the original (not NULL)
 );
 
@@ -72,16 +72,16 @@ cprnths_string_copy(
 bool
 // are they equal?
 cprnths_string_equal(
-    cprnths_string_t const *,
+    struct cprnths_string_t const *,
     // not NULL
-    cprnths_string_t const *
+    struct cprnths_string_t const *
     // not NULL
 );
 
 // Destroy a string.
 void
 cprnths_string_destroy(
-    cprnths_string_t*
+    struct cprnths_string_t*
     // not NULL
 );
 

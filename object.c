@@ -41,7 +41,7 @@
 
 void
 cprnths_obj_destroy(
-    cprnths_obj_t *restrict const o
+    struct cprnths_obj_t *restrict const o
 ) {
     if (o->cls->obj_destroy != NULL)
         (*o->cls->obj_destroy)(o);
@@ -49,12 +49,12 @@ cprnths_obj_destroy(
     free(o);
 }
 
-cprnths_obj_t*
+struct cprnths_obj_t*
 cprnths_obj_copy(
-    cprnths_obj_t const *restrict const o,
-    cprnths_copytab_t *restrict const t
+    struct cprnths_obj_t const *restrict const o,
+    struct cprnths_copytab_t *restrict const t
 ) {
-    cprnths_obj_t *restrict c = malloc(o->cls->obj_size);
+    struct cprnths_obj_t *restrict c = malloc(o->cls->obj_size);
 
     if (c == NULL)
         goto Finish;

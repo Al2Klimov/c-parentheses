@@ -24,7 +24,6 @@
 
 
 struct cprnths_obj_t;
-typedef struct cprnths_obj_t cprnths_obj_t;
 
 
 #include "class.h"
@@ -37,24 +36,24 @@ typedef struct cprnths_obj_t cprnths_obj_t;
 // The "base class" for "everything else".
 struct cprnths_obj_t {
     // The object's type (not NULL)
-    cprnths_class_t const * cls;
+    struct cprnths_class_t const * cls;
 };
 
 
 // Destroy an object.
 void
 cprnths_obj_destroy(
-    cprnths_obj_t*
+    struct cprnths_obj_t*
     // not NULL
 );
 
 // Copy an object deeply and return the copy.
-cprnths_obj_t*
+struct cprnths_obj_t*
 // the copy or NULL
 cprnths_obj_copy(
-    cprnths_obj_t const *,
+    struct cprnths_obj_t const *,
     // the original (not NULL)
-    cprnths_copytab_t*
+    struct cprnths_copytab_t*
     // the copy table to use (not NULL)
 );
 
