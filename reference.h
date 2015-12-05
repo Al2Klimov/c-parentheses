@@ -89,8 +89,10 @@ cprnths_ref_copy(
 struct cprnths_ref_t*
 // the copy or NULL
 cprnths_ref_copy_newtab(
-    struct cprnths_ref_t const *
+    struct cprnths_ref_t const *,
     // the original (not NULL)
+    size_t
+    // .chunksize
 );
 
 

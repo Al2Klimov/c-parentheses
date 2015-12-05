@@ -115,9 +115,10 @@ cprnths_ref_copy(
 
 struct cprnths_ref_t*
 cprnths_ref_copy_newtab(
-    struct cprnths_ref_t const *restrict const r
+    struct cprnths_ref_t const *restrict const r,
+    size_t const s
 ) {
-    struct cprnths_copytab_t *restrict const t = cprnths_copytab_create(256u);
+    struct cprnths_copytab_t *restrict const t = cprnths_copytab_create(s);
 
     if (t == NULL)
         return NULL;
