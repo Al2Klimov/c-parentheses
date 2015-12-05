@@ -23,11 +23,18 @@
 #define CPARENTHESES_INCLUDE_EXPR 1
 
 
+struct cprnths_expr_t;
+struct cprnths_exprs_t;
+
+
 #include <stdbool.h>
 // bool
 
 #include <stddef.h>
 // size_t
+
+#include "exec.h"
+// cprnths_execenv_t
 
 #include "reference.h"
 // cprnths_ref_t
@@ -41,6 +48,8 @@ struct cprnths_expr_t {
     (*eval)(
         struct cprnths_expr_t const *,
         // not NULL
+        struct cprnths_execenv_t*,
+        // the environment to evaluate the expression in (not NULL)
         struct cprnths_ref_t**
         // where to store the value/result? (or NULL)
     );
