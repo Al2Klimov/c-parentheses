@@ -40,18 +40,60 @@ struct cprnths_exprs_t;
 // cprnths_ref_t
 
 
+struct cprnths_exprcls_t;
+
 // An expression.
 struct cprnths_expr_t {
+    struct cprnths_exprcls_t const * const cls;
+};
+
+typedef enum {
+    cprnths_expr_parse_success,
+    // an expression was parsed sucessfully
+    cprnths_expr_parse_malform,
+    // matching type, but invalid expression
+    cprnths_expr_parse_unknown,
+    // non-matching type or invalid syntax
+    cprnths_expr_parse_eof,
+    // unexpected end of string
+    cprnths_expr_parse_fail
+    // failed for other reason
+} cprnths_expr_parse_stat_t;
+
+// This is for storing information about expression types non-redundandly.
+struct cprnths_exprcls_t {
+    // Parse (create) an expression.
+    cprnths_expr_parse_stat_t
+    // (see above)
+    (*expr_parse)(
+    // not NULL
+        char const **,
+        // current position (not NULL, SHALL be changed in case of success)
+        char const *,
+        // end of string (not NULL)
+        struct cprnths_expr_t **
+        // where to store the parsed expression? (not NULL)
+    );
+
     // Evaluate an expression.
     bool
     // was the evaluation sucessful?
-    (*eval)(
+    (*expr_eval)(
+    // not NULL
         struct cprnths_expr_t const *,
         // not NULL
         struct cprnths_execenv_t*,
         // the environment to evaluate the expression in (not NULL)
         struct cprnths_ref_t**
         // where to store the value/result? (or NULL)
+    );
+
+    // Destroy an expression.
+    void
+    (*expr_destroy)(
+    // MAY be NULL
+        struct cprnths_expr_t*
+        // not NULL
     );
 };
 

@@ -119,7 +119,7 @@ cprnths_exec(
         struct cprnths_expr_t const *restrict current = exprs->exprs;
         struct cprnths_expr_t const *const last = current;
         do {
-            if (!(*current->eval)(current, env, NULL)) {
+            if (!(*current->cls->expr_eval)(current, env, NULL)) {
                 success = false;
                 break;
             }
