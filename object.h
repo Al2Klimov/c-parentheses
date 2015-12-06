@@ -23,20 +23,49 @@
 #define CPARENTHESES_INCLUDE_OBJECT 1
 
 
-struct cprnths_obj_t;
+#include <stddef.h>
+// size_t
 
-
-#include "class.h"
-// cprnths_class_t
+#include <stdbool.h>
+// bool
 
 #include "copy_table.h"
 // cprnths_copytab_t
 
 
+struct cprnths_class_t;
+
 // The "base class" for "everything else".
 struct cprnths_obj_t {
     // The object's type (not NULL)
     struct cprnths_class_t const * cls;
+};
+
+// This is for storing information about datatypes non-redundandly.
+struct cprnths_class_t {
+    // An object's size (in bytes, > 0)
+    size_t obj_size;
+
+    // Each of the following function pointers MAY be NULL if there's nothing to do.
+
+    // Destroy the object
+    void
+    (*obj_destroy)(
+        struct cprnths_obj_t*
+        // the object to clean up (not NULL)
+    );
+
+    // Copy the object deeply
+    bool
+    // was the copying successful?
+    (*obj_copy)(
+        // original (not NULL)
+        struct cprnths_obj_t const *,
+        // copy (target, not NULL)
+        struct cprnths_obj_t*,
+        // copy table to use (not NULL)
+        struct cprnths_copytab_t*
+    );
 };
 
 
