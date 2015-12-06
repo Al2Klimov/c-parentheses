@@ -49,7 +49,7 @@ struct cprnths_expr_t {
 
 typedef enum {
     cprnths_expr_parse_success,
-    // an expression was parsed sucessfully
+    // an expression was parsed successfully
     cprnths_expr_parse_malform,
     // matching type, but invalid expression
     cprnths_expr_parse_unknown,
@@ -77,7 +77,7 @@ struct cprnths_exprcls_t {
 
     // Evaluate an expression.
     bool
-    // was the evaluation sucessful?
+    // was the evaluation successful?
     (*expr_eval)(
     // not NULL
         struct cprnths_expr_t const *,
