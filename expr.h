@@ -60,41 +60,50 @@ typedef enum {
     // failed for other reason
 } cprnths_expr_parse_stat_t;
 
+typedef
+// Parse (create) an expression.
+cprnths_expr_parse_stat_t
+// (see above)
+(*cprnths_expr_parse_t)(
+    char const **,
+    // current position (not NULL, SHALL be changed in case of success)
+    char const *,
+    // end of string (not NULL)
+    struct cprnths_expr_t **
+    // where to store the parsed expression? (not NULL)
+);
+
+typedef
+// Evaluate an expression.
+bool
+// was the evaluation successful?
+(*cprnths_expr_eval_t)(
+    struct cprnths_expr_t const *,
+    // not NULL
+    struct cprnths_execenv_t*,
+    // the environment to evaluate the expression in (not NULL)
+    struct cprnths_ref_t**
+    // where to store the value/result? (or NULL)
+);
+
+typedef
+// Destroy an expression.
+void
+(*cprnths_expr_destroy_t)(
+    struct cprnths_expr_t*
+    // not NULL
+);
+
 // This is for storing information about expression types non-redundandly.
 struct cprnths_exprcls_t {
-    // Parse (create) an expression.
-    cprnths_expr_parse_stat_t
-    // (see above)
-    (*expr_parse)(
+    cprnths_expr_parse_t expr_parse;
     // not NULL
-        char const **,
-        // current position (not NULL, SHALL be changed in case of success)
-        char const *,
-        // end of string (not NULL)
-        struct cprnths_expr_t **
-        // where to store the parsed expression? (not NULL)
-    );
 
-    // Evaluate an expression.
-    bool
-    // was the evaluation successful?
-    (*expr_eval)(
+    cprnths_expr_eval_t expr_eval;
     // not NULL
-        struct cprnths_expr_t const *,
-        // not NULL
-        struct cprnths_execenv_t*,
-        // the environment to evaluate the expression in (not NULL)
-        struct cprnths_ref_t**
-        // where to store the value/result? (or NULL)
-    );
 
-    // Destroy an expression.
-    void
-    (*expr_destroy)(
+    cprnths_expr_destroy_t expr_destroy;
     // MAY be NULL
-        struct cprnths_expr_t*
-        // not NULL
-    );
 };
 
 // An array of expressions.
