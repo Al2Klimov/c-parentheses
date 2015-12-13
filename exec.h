@@ -38,53 +38,23 @@ struct cprnths_execenv_t;
 #include "expr.h"
 // cprnths_exprs_t
 
-#include "reference.h"
-// cprnths_ref_t
+#include "stack.h"
+// cprnths_stack_t
 
 #include "garbage_table.h"
 // cprnths_garbtab_t
 
 
-// A stack frame.
-struct cprnths_stackframe_t {
-    // The local symbol table (not NULL)
-    struct cprnths_dict_t* lsymbtab;
-
-    // Return explicitly after processing the current expression?
-    bool return_now;
-
-    // The value to return or NULL
-    struct cprnths_ref_t* return_val;
-};
-
 // This contains all information about the current execution state.
 struct cprnths_execenv_t {
     // The stack (not NULL)
-    struct cprnths_stackframe_t* stack;
-
-    // Amount of stack frames to allocate memory for at once
-    // SHALL be > 0!
-    size_t const frames_chunksize;
-
-    // Amount of available stack frames
-    // SHALL be > 0 and multiple of .frames_chunksize!
-    size_t frames_total;
-
-    // Amount of unused stack frames
-    // SHALL be <= .frames_total!
-    size_t frames_free;
-
-    // The currently active stack frame or NULL
-    struct cprnths_stackframe_t* current_frame;
+    struct cprnths_stack_t* stack;
 
     // The garbage table or NULL
     struct cprnths_garbtab_t* garbtab;
 
     // The global symbol table (not NULL)
     struct cprnths_dict_t* gsymbtab;
-
-    // Local symbol tables' chunksize (> 0)
-    size_t const lsymbtab_chunksize;
 
     // Copy tables' chunksize (> 0)
     size_t const copytab_chunksize;
@@ -114,21 +84,6 @@ cprnths_exec(
     struct cprnths_execenv_t*,
     // not NULL
     struct cprnths_exprs_t const *
-    // not NULL
-);
-
-// Add a new frame to an execution environment's stack.
-bool
-// was the addition successful?
-cprnths_execenv_pushframe(
-    struct cprnths_execenv_t*
-    // not NULL
-);
-
-// Remove the last frame from an execution environment's stack.
-void
-cprnths_execenv_popframe(
-    struct cprnths_execenv_t*
     // not NULL
 );
 
