@@ -33,6 +33,9 @@ struct cprnths_exprs_t;
 #include <stddef.h>
 // size_t
 
+#include "parser.h"
+// cprnths_parse_stat_t
+
 #include "exec.h"
 // cprnths_execenv_t
 
@@ -47,23 +50,10 @@ struct cprnths_expr_t {
     struct cprnths_exprcls_t const * const cls;
 };
 
-typedef enum {
-    cprnths_expr_parse_success,
-    // an expression was parsed successfully
-    cprnths_expr_parse_malform,
-    // matching type, but invalid expression
-    cprnths_expr_parse_unknown,
-    // non-matching type or invalid syntax
-    cprnths_expr_parse_eof,
-    // unexpected end of string
-    cprnths_expr_parse_fail
-    // failed for other reason
-} cprnths_expr_parse_stat_t;
-
 typedef
 // Parse (create) an expression.
-cprnths_expr_parse_stat_t
-// (see above)
+cprnths_parse_stat_t
+// (see parser.h)
 (*cprnths_expr_parse_t)(
     char const **,
     // current position (not NULL, SHALL be changed in case of success)
