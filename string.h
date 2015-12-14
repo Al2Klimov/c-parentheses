@@ -55,7 +55,7 @@ struct cprnths_string_t*
 // a new string or NULL
 cprnths_string_create(
     char const *,
-    // not NULL
+    // not NULL if not empty
     size_t
     // the amount of characters to use
 );
