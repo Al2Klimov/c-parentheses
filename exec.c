@@ -45,6 +45,7 @@
 
 #include "garbage_table.h"
 // cprnths_garbtab_create()
+// cprnths_garbtab_cleanup()
 // cprnths_garbtab_destroy()
 
 #include "dict.h"
@@ -125,8 +126,10 @@ cprnths_execenv_destroy(
     struct cprnths_execenv_t *restrict const e
 ) {
     cprnths_stack_destroy(e->stack);
-    if (e->garbtab != NULL)
-        cprnths_garbtab_destroy(e->garbtab);
     cprnths_dict_destroy(e->gsymbtab);
+    if (e->garbtab != NULL) {
+        cprnths_garbtab_cleanup(e->garbtab);
+        cprnths_garbtab_destroy(e->garbtab);
+    }
     free(e);
 }
