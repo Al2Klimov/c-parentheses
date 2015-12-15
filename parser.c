@@ -27,6 +27,24 @@
 // cprnths_parse_malform
 // cprnths_parse_eof
 
+#include "expr.h"
+// cprnths_expr_t
+// cprnths_exprcls_t
+
+
+extern struct cprnths_exprcls_t const cprnths_exprcls_variable;
+
+cprnths_parse_stat_t
+cprnths_parse_anyexpr(
+    char const * *restrict const current,
+    char const *const end,
+    struct cprnths_expr_t* *restrict const expr
+) {
+    // TODO: Once there will be more expressions, this simple line MUST be replaced
+    // with a loop over all available cprnths_exprcls_t. If a .expr_parse() returns
+    // cprnths_parse_unknown, call the next one (if any) instead of returning.
+    return (*cprnths_exprcls_variable.expr_parse)(current, end, expr);
+}
 
 cprnths_parse_stat_t
 cprnths_parseutil_skip_spcomm(

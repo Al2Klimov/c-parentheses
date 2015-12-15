@@ -23,16 +23,6 @@
 #define CPARENTHESES_INCLUDE_PARSER 1
 
 
-#include <stdbool.h>
-// bool
-
-#include <stddef.h>
-// size_t
-
-#include <string.h>
-// memcmp()
-
-
 // The kind of parse error (if any).
 typedef enum {
     cprnths_parse_success,
@@ -46,6 +36,19 @@ typedef enum {
     cprnths_parse_fail
     // failed for other reason
 } cprnths_parse_stat_t;
+
+
+#include <stdbool.h>
+// bool
+
+#include <stddef.h>
+// size_t
+
+#include <string.h>
+// memcmp()
+
+#include "expr.h"
+// cprnths_expr_t
 
 
 // Is a character in [A-Za-z0-9_] ?
@@ -92,6 +95,18 @@ cprnths_parseutil_skip_spcomm(
     // current position (not NULL)
     char const *
     // end of string (not NULL)
+);
+
+// Parse any expression.
+cprnths_parse_stat_t
+// (see above)
+cprnths_parse_anyexpr(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    struct cprnths_expr_t**
+    // where to store the result in case of success (not NULL)
 );
 
 
