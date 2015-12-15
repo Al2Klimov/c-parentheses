@@ -77,7 +77,7 @@ cprnths_parseutil_startswith_word(
     size_t const len
     // length of <frag> (> 0)
 ) {
-    if (end - *subj < len || memcmp(*subj, frag, len))
+    if ((size_t)(end - *subj) < len || memcmp(*subj, frag, len))
         return -1;
     if ((*subj += len) == end)
         return 2;
