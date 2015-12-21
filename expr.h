@@ -18,7 +18,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Typedefs for expressions
+// Typedefs and functions for expressions
 #ifndef CPARENTHESES_INCLUDE_EXPR
 #define CPARENTHESES_INCLUDE_EXPR 1
 
@@ -104,6 +104,14 @@ struct cprnths_exprs_t {
     // The array's length
     size_t length;
 };
+
+
+// Destroy an expression.
+void
+cprnths_expr_destroy(
+    struct cprnths_expr_t*
+    // not NULL
+);
 
 
 #endif
