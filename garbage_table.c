@@ -25,9 +25,6 @@
 // NULL
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include <stdlib.h>
 // malloc()
 // realloc()
@@ -73,7 +70,7 @@ Finish:
     return t;
 }
 
-bool
+_Bool
 cprnths_garbtab_addref(
     struct cprnths_garbtab_t *restrict const t,
     struct cprnths_ref_t *const r
@@ -94,7 +91,7 @@ cprnths_garbtab_addref(
                     slots_total * sizeof(struct cprnths_ref_t*)
                 );
                 if (T == NULL)
-                    return false;
+                    return 0;
 
                 t->tab = T;
                 T += t->slots_total;
@@ -111,7 +108,7 @@ cprnths_garbtab_addref(
         t->slots_free += t->chunksize - 1u;
     }
 
-    return true;
+    return 1;
 }
 
 void

@@ -25,9 +25,6 @@
 // NULL
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include <stdlib.h>
 // malloc()
 // free()
@@ -99,21 +96,21 @@ Finish:
     return e;
 }
 
-bool
+_Bool
 cprnths_exec(
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_exprs_t const *restrict const exprs
 ) {
     if (!exprs->length)
-        return true;
+        return 1;
 
-    bool success = true;
+    _Bool success = 1;
     {
         struct cprnths_expr_t const *restrict current = exprs->exprs;
         struct cprnths_expr_t const *const last = current;
         do {
             if (!(*current->cls->expr_eval)(current, env, NULL)) {
-                success = false;
+                success = 0;
                 break;
             }
         } while (++current < last);

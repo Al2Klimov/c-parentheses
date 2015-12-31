@@ -25,9 +25,6 @@
 // NULL
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include <stdlib.h>
 // malloc()
 // free()
@@ -96,7 +93,7 @@ Finish:
     return s;
 }
 
-bool
+_Bool
 cprnths_string_equal(
     struct cprnths_string_t const *restrict const a,
     struct cprnths_string_t const *restrict const b

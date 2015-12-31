@@ -21,9 +21,6 @@
 // Expression: variable access
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // NULL
 
@@ -63,7 +60,7 @@
 struct cpintern_expr_variable_t {
     struct cprnths_expr_t base;
     struct cprnths_string_t* varname;
-    bool global;
+    _Bool global;
 };
 
 struct cprnths_exprcls_t const cprnths_exprcls_variable;
@@ -78,13 +75,13 @@ cpintern_expr_variable_parse(
     if (*current_ == end)
         return cprnths_parse_unknown;
 
-    bool global;
+    _Bool global;
     switch (**current_) {
         case '@':
-            global = true;
+            global = 1;
             break;
         case '#':
-            global = false;
+            global = 0;
             break;
         default:
             return cprnths_parse_unknown;
@@ -113,7 +110,7 @@ cpintern_expr_variable_parse(
 }
 
 static
-bool
+_Bool
 cpintern_expr_variable_eval(
     struct cpintern_expr_variable_t const *restrict const expr,
     struct cprnths_execenv_t *restrict const env,
@@ -127,7 +124,7 @@ cpintern_expr_variable_eval(
     );
     if (*target != NULL)
         cprnths_ref_increment(*target, 1u);
-    return true;
+    return 1;
 }
 
 static

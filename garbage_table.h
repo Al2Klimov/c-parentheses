@@ -29,9 +29,6 @@ struct cprnths_garbtab_t;
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include "reference.h"
 // cprnths_ref_t
 
@@ -67,7 +64,7 @@ cprnths_garbtab_create(
 );
 
 // Add a reference to a garbage table.
-bool
+_Bool
 // was the addition successful?
 cprnths_garbtab_addref(
     struct cprnths_garbtab_t*,

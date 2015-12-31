@@ -21,9 +21,6 @@
 // Expression: assignment
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // size_t
 // NULL
@@ -178,10 +175,10 @@ cpintern_expr_assign_parse(
                         size_t *restrict used;
                         size_t *restrict available;
                         struct cprnths_string_t** *restrict target;
-                        bool skipable;
+                        _Bool skipable;
                         char const * start;
                         for (;;) {
-                            skipable = true;
+                            skipable = 1;
 ParseVarName:
                             ASSERT_NO_EOF(CleanUpLocals)
                             switch (*current) {
@@ -197,7 +194,7 @@ ParseVarName:
                                     break;
                                 default:
                                     if (skipable) {
-                                        skipable = false;
+                                        skipable = 0;
                                         SKIP_SPCOMM(CleanUpLocals)
                                         goto ParseVarName;
                                     }
@@ -232,7 +229,7 @@ ParseVarName:
                             }
                             ++*used;
 
-                            skipable = true;
+                            skipable = 1;
 ParseNext:
                             switch (*current) {
                                 case ')':
@@ -243,7 +240,7 @@ ParseNext:
                                     break;
                                 default:
                                     if (skipable) {
-                                        skipable = false;
+                                        skipable = 0;
                                         SKIP_SPCOMM(CleanUpLocals)
                                         ASSERT_NO_EOF(CleanUpLocals)
                                         goto ParseNext;
@@ -334,7 +331,7 @@ Finish:
 }
 
 static
-bool
+_Bool
 cpintern_expr_assign_eval(
     struct cpintern_expr_assign_t const *restrict const expr,
     struct cprnths_execenv_t *restrict const env,
@@ -344,7 +341,7 @@ cpintern_expr_assign_eval(
     if (!(*expr->inner_expr->cls->expr_eval)(
         expr->inner_expr, env, (struct cprnths_ref_t**)&ref
     ))
-        return false;
+        return 0;
 
     {
         struct cprnths_string_t* *restrict current;
@@ -370,7 +367,7 @@ cpintern_expr_assign_eval(
                 do {
                     if (!cprnths_dict_addpair(target, *current, ref)) {
                         cprnths_ref_increment(ref, -1);
-                        return false;
+                        return 0;
                     }
                 } while (*++current != NULL);
             }
@@ -380,7 +377,7 @@ cpintern_expr_assign_eval(
                 do {
                     if (!cprnths_dict_addpair(target, *current, ref)) {
                         cprnths_ref_increment(ref, -1);
-                        return false;
+                        return 0;
                     }
                 } while (*++current != NULL);
             }
@@ -391,7 +388,7 @@ cpintern_expr_assign_eval(
         cprnths_ref_increment(ref, -1);
     else
         *ref_ = ref;
-    return true;
+    return 1;
 }
 
 static

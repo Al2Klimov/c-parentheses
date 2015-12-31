@@ -26,9 +26,6 @@
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include "string.h"
 // cprnths_string_t
 
@@ -75,7 +72,7 @@ cprnths_dict_create(
 
 // Add the given (key, value) pair to a dictionary.
 // If the given key already exists, override the value.
-bool
+_Bool
 // was the addition successful?
 cprnths_dict_addpair(
     struct cprnths_dict_t*,
@@ -107,7 +104,7 @@ cprnths_dict_popval(
 );
 
 // Remove a key from a dictionary if it's listed there.
-bool
+_Bool
 // was it listed there?
 cprnths_dict_delpair(
     struct cprnths_dict_t*,

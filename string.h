@@ -29,9 +29,6 @@
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 
 // The type of a string's hash (just for easy changing)
 typedef uintmax_t cprnths_string_hash_t;
@@ -69,7 +66,7 @@ cprnths_string_copy(
 );
 
 // Compare two strings.
-bool
+_Bool
 // are they equal?
 cprnths_string_equal(
     struct cprnths_string_t const *,

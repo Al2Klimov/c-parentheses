@@ -26,9 +26,6 @@
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include "copy_table.h"
 // cprnths_copytab_t
 
@@ -56,7 +53,7 @@ struct cprnths_class_t {
     );
 
     // Copy the object deeply
-    bool
+    _Bool
     // was the copying successful?
     (*obj_copy)(
         // original (not NULL)

@@ -29,9 +29,6 @@ struct cprnths_copytab_t;
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include "reference.h"
 // cprnths_ref_t
 
@@ -75,7 +72,7 @@ cprnths_copytab_create(
 );
 
 // Add references to a copy table.
-bool
+_Bool
 // was the addition successful?
 cprnths_copytab_addrefs(
     struct cprnths_copytab_t*,

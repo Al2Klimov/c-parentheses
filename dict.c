@@ -25,9 +25,6 @@
 // NULL
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include <stdlib.h>
 // malloc()
 // realloc()
@@ -79,7 +76,7 @@ Finish:
     return d;
 }
 
-bool
+_Bool
 cprnths_dict_addpair(
     struct cprnths_dict_t *restrict const d,
     struct cprnths_string_t const *restrict k,
@@ -87,13 +84,13 @@ cprnths_dict_addpair(
 ) {
     if (d->slots_total == d->slots_free) {
         if (NULL == ( k = cprnths_string_copy(k) ))
-            return false;
+            return 0;
 
         d->dict->key = (struct cprnths_string_t*)k;
         cprnths_ref_increment(v, 1);
         d->dict->value = v;
         --d->slots_free;
-        return true;
+        return 1;
     }
 
     if (d->slots_free)
@@ -108,17 +105,17 @@ cprnths_dict_addpair(
                             cprnths_ref_increment(D->value, -1);
                             D->value = v;
                         }
-                        return true;
+                        return 1;
                     }
 
                 if (NULL == ( k = cprnths_string_copy(k) ))
-                    return false;
+                    return 0;
 
                 free_slot->key = (struct cprnths_string_t*)k;
                 cprnths_ref_increment(v, 1);
                 free_slot->value = v;
                 --d->slots_free;
-                return true;
+                return 1;
             }
 
             if (cprnths_string_equal(D->key, k)) {
@@ -127,7 +124,7 @@ cprnths_dict_addpair(
                     cprnths_ref_increment(D->value, -1);
                     D->value = v;
                 }
-                return true;
+                return 1;
             }
         }
 
@@ -141,7 +138,7 @@ cprnths_dict_addpair(
                     cprnths_ref_increment(D->value, -1);
                     D->value = v;
                 }
-                return true;
+                return 1;
             }
         } while (++D < limit);
     }
@@ -151,7 +148,7 @@ cprnths_dict_addpair(
 
         {
             if (NULL == ( k = cprnths_string_copy(k) ))
-                return false;
+                return 0;
 
             struct cprnths_dict_pair_t *restrict D = realloc(
                 d->dict,
@@ -159,7 +156,7 @@ cprnths_dict_addpair(
             );
             if (D == NULL) {
                 cprnths_string_destroy((struct cprnths_string_t*)k);
-                return false;
+                return 0;
             }
 
             d->dict = D;
@@ -180,7 +177,7 @@ cprnths_dict_addpair(
 
     d->slots_free += d->chunksize - 1u;
 
-    return true;
+    return 1;
 }
 
 static
@@ -278,7 +275,7 @@ cprnths_dict_popval(
     return NULL;
 }
 
-bool
+_Bool
 cprnths_dict_delpair(
     struct cprnths_dict_t *restrict const d,
     struct cprnths_string_t const *restrict const k
@@ -287,11 +284,11 @@ cprnths_dict_delpair(
         struct cprnths_dict_pair_t *restrict const D = cpintern_dict_getpairpos(d, k);
         if (D != NULL) {
             cpintern_dict_delpair(d, D);
-            return true;
+            return 1;
         }
     }
 
-    return false;
+    return 0;
 }
 
 void

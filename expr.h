@@ -27,9 +27,6 @@ struct cprnths_expr_t;
 struct cprnths_exprs_t;
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // size_t
 
@@ -65,7 +62,7 @@ cprnths_parse_stat_t
 
 typedef
 // Evaluate an expression.
-bool
+_Bool
 // was the evaluation successful?
 (*cprnths_expr_eval_t)(
     struct cprnths_expr_t const *,

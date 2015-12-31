@@ -29,9 +29,6 @@ struct cprnths_execenv_t;
 #include <stddef.h>
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include "dict.h"
 // cprnths_dict_t
 
@@ -78,7 +75,7 @@ cprnths_execenv_create(
 );
 
 // Execute expressions in an execution environment.
-bool
+_Bool
 // was the execution successful?
 cprnths_exec(
     struct cprnths_execenv_t*,

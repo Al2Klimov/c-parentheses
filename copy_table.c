@@ -25,9 +25,6 @@
 // NULL
 // size_t
 
-#include <stdbool.h>
-// bool
-
 #include <stdlib.h>
 // malloc()
 // realloc()
@@ -72,7 +69,7 @@ Finish:
     return t;
 }
 
-bool
+_Bool
 cprnths_copytab_addrefs(
     struct cprnths_copytab_t *restrict const t,
     struct cprnths_ref_t const *const o,
@@ -95,7 +92,7 @@ cprnths_copytab_addrefs(
                     slots_total * sizeof(struct cprnths_copytab_row_t)
                 );
                 if (T == NULL)
-                    return false;
+                    return 0;
 
                 t->tab = T;
                 T += t->slots_total;
@@ -113,7 +110,7 @@ cprnths_copytab_addrefs(
         t->slots_free += t->chunksize - 1u;
     }
 
-    return true;
+    return 1;
 }
 
 struct cprnths_ref_t*

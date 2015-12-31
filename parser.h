@@ -38,9 +38,6 @@ typedef enum {
 } cprnths_parse_stat_t;
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // size_t
 
@@ -53,7 +50,7 @@ typedef enum {
 
 // Is a character in [A-Za-z0-9_] ?
 static inline
-bool
+_Bool
 cprnths_parseutil_is_wordchar(
     char const c
 ) {

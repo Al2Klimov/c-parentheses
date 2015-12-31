@@ -21,9 +21,6 @@
 // Function definitions for stacks
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // size_t
 // NULL
@@ -70,7 +67,7 @@ Finish:
     return s;
 }
 
-bool
+_Bool
 cprnths_stack_pushframe(
     struct cprnths_stack_t *restrict const s
 ) {
@@ -82,7 +79,7 @@ cprnths_stack_pushframe(
                 frames_total * sizeof(struct cprnths_stack_frame_t)
             );
             if (S == NULL)
-                return false;
+                return 0;
 
             s->frames_free += s->frames_chunksize;
             if (s->stack != S) {
@@ -99,7 +96,7 @@ cprnths_stack_pushframe(
             s->lsymbtab_chunksize
         );
         if (lsymbtab == NULL)
-            return false;
+            return 0;
 
         --s->frames_free;
         if (s->current_frame == NULL)
@@ -110,10 +107,10 @@ cprnths_stack_pushframe(
         s->current_frame->lsymbtab = lsymbtab;
     }
 
-    s->current_frame->return_now = false;
+    s->current_frame->return_now = 0;
     s->current_frame->return_val = NULL;
 
-    return true;
+    return 1;
 }
 
 void

@@ -23,9 +23,6 @@
 #define CPARENTHESES_INCLUDE_STACK 1
 
 
-#include <stdbool.h>
-// bool
-
 #include <stddef.h>
 // size_t
 
@@ -42,7 +39,7 @@ struct cprnths_stack_frame_t {
     struct cprnths_dict_t* lsymbtab;
 
     // Return explicitly after processing the current expression?
-    bool return_now;
+    _Bool return_now;
 
     // The value to return or NULL
     struct cprnths_ref_t* return_val;
@@ -83,7 +80,7 @@ cprnths_stack_create(
 );
 
 // Add a new frame to a stack.
-bool
+_Bool
 // was the addition successful?
 cprnths_stack_pushframe(
     struct cprnths_stack_t*
