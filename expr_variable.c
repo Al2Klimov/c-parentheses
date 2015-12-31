@@ -134,7 +134,6 @@ cpintern_expr_variable_destroy(
     struct cpintern_expr_variable_t *restrict const e
 ) {
     cprnths_string_destroy(e->varname);
-    free(e);
 }
 
 struct cprnths_exprcls_t const cprnths_exprcls_variable = {
