@@ -119,6 +119,8 @@ cpintern_expr_variable_eval(
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_ref_t* *restrict const target
 ) {
+    // Not checking for target == NULL as
+    // variable access isn't allowed in void context.
     *target = cprnths_dict_getval(
         expr->global ? env->gsymbtab : env->stack->current_frame->lsymbtab,
         expr->varname
