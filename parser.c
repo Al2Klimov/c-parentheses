@@ -21,18 +21,31 @@
 // Function definitions for parsing
 
 
+#include <stddef.h>
+// NULL
+
 #include "parser.h"
 // cprnths_parse_stat_t
 // cprnths_parse_success
 // cprnths_parse_malform
 // cprnths_parse_eof
+// cprnths_parse_unknown
 
 #include "expr.h"
 // cprnths_expr_t
 // cprnths_exprcls_t
 
 
-extern struct cprnths_exprcls_t const cprnths_exprcls_variable;
+extern struct cprnths_exprcls_t const
+    cprnths_exprcls_variable,
+    cprnths_exprcls_assign;
+
+static
+struct cprnths_exprcls_t const *const cpintern_exprclss[] = {
+    &cprnths_exprcls_variable,
+    &cprnths_exprcls_assign,
+    NULL
+};
 
 cprnths_parse_stat_t
 cprnths_parse_anyexpr(
@@ -40,10 +53,14 @@ cprnths_parse_anyexpr(
     char const *const end,
     struct cprnths_expr_t* *restrict const expr
 ) {
-    // TODO: Once there will be more expressions, this simple line MUST be replaced
-    // with a loop over all available cprnths_exprcls_t. If a .expr_parse() returns
-    // cprnths_parse_unknown, call the next one (if any) instead of returning.
-    return (*cprnths_exprcls_variable.expr_parse)(current, end, expr);
+    cprnths_parse_stat_t stat;
+    {
+        struct cprnths_exprcls_t const *const *restrict cls = cpintern_exprclss;
+        while (cprnths_parse_unknown == (
+            stat = (*(*cls)->expr_parse)(current, end, expr)
+        ) && *++cls != NULL);
+    }
+    return stat;
 }
 
 cprnths_parse_stat_t
