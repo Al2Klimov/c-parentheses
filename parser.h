@@ -18,24 +18,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Typedefs and functions for parsing
+// Functions for parsing
 #ifndef CPARENTHESES_INCLUDE_PARSER
 #define CPARENTHESES_INCLUDE_PARSER 1
-
-
-// The kind of parse error (if any).
-typedef enum {
-    cprnths_parse_success,
-    // an expression was parsed successfully
-    cprnths_parse_malform,
-    // matching type, but invalid expression
-    cprnths_parse_unknown,
-    // non-matching type or invalid syntax
-    cprnths_parse_eof,
-    // unexpected end of string
-    cprnths_parse_fail
-    // failed for other reason
-} cprnths_parse_stat_t;
 
 
 #include <stddef.h>
@@ -46,6 +31,9 @@ typedef enum {
 
 #include "expr.h"
 // cprnths_expr_t
+
+#include "error.h"
+// cprnths_error_t
 
 
 // Is a character in [A-Za-z0-9_] ?
@@ -85,8 +73,8 @@ cprnths_parseutil_startswith_word(
 }
 
 // Skip whitespace and comments (C and BCPL).
-cprnths_parse_stat_t
-// (see above)
+cprnths_error_t
+// (see error.h)
 cprnths_parseutil_skip_spcomm(
     char const **,
     // current position (not NULL)
@@ -95,8 +83,8 @@ cprnths_parseutil_skip_spcomm(
 );
 
 // Parse any expression.
-cprnths_parse_stat_t
-// (see above)
+cprnths_error_t
+// (see error.h)
 cprnths_parse_anyexpr(
     char const **,
     // current position (not NULL)

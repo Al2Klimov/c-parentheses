@@ -36,11 +36,10 @@
 // cprnths_expr_destroy_t
 
 #include "parser.h"
-// cprnths_parse_stat_t
-// cprnths_parse_success
-// cprnths_parse_unknown
-// cprnths_parse_fail
 // cprnths_parseutil_is_wordchar()
+
+#include "error.h"
+// cprnths_error_*
 
 #include "string.h"
 // cprnths_string_t
@@ -66,14 +65,14 @@ struct cpintern_expr_variable_t {
 struct cprnths_exprcls_t const cprnths_exprcls_variable;
 
 static
-cprnths_parse_stat_t
+cprnths_error_t
 cpintern_expr_variable_parse(
     char const * *restrict const current_,
     char const *const end,
     struct cpintern_expr_variable_t* *restrict const expr_
 ) {
     if (*current_ == end)
-        return cprnths_parse_unknown;
+        return cprnths_error_parse_unknown;
 
     _Bool global;
     switch (**current_) {
@@ -84,7 +83,7 @@ cpintern_expr_variable_parse(
             global = 0;
             break;
         default:
-            return cprnths_parse_unknown;
+            return cprnths_error_parse_unknown;
     }
 
     char const *restrict current = *current_ + 1u;
@@ -94,19 +93,19 @@ cpintern_expr_variable_parse(
 
     struct cpintern_expr_variable_t *restrict const expr = malloc(sizeof(struct cpintern_expr_variable_t));
     if (expr == NULL)
-        return cprnths_parse_fail;
+        return cprnths_error_nomem;
 
     expr->varname = cprnths_string_create(start, current - start);
     if (expr->varname == NULL) {
         free(expr);
-        return cprnths_parse_fail;
+        return cprnths_error_nomem;
     }
 
     *(struct cprnths_exprcls_t const **)&expr->base.cls = &cprnths_exprcls_variable;
     expr->global = global;
     *expr_ = expr;
     *current_ = current;
-    return cprnths_parse_success;
+    return 0;
 }
 
 static

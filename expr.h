@@ -23,15 +23,14 @@
 #define CPARENTHESES_INCLUDE_EXPR 1
 
 
-struct cprnths_expr_t;
 struct cprnths_exprs_t;
 
 
 #include <stddef.h>
 // size_t
 
-#include "parser.h"
-// cprnths_parse_stat_t
+#include "error.h"
+// cprnths_error_t
 
 #include "exec.h"
 // cprnths_execenv_t
@@ -49,8 +48,8 @@ struct cprnths_expr_t {
 
 typedef
 // Parse (create) an expression.
-cprnths_parse_stat_t
-// (see parser.h)
+cprnths_error_t
+// (see error.h)
 (*cprnths_expr_parse_t)(
     char const **,
     // current position (not NULL, SHALL be changed in case of success)

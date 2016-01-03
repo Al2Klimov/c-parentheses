@@ -39,16 +39,13 @@
 // cprnths_expr_destroy()
 
 #include "parser.h"
-// cprnths_parse_stat_t
-// cprnths_parse_success
-// cprnths_parse_unknown
-// cprnths_parse_malform
-// cprnths_parse_eof
-// cprnths_parse_fail
 // cprnths_parseutil_startswith_word()
 // cprnths_parseutil_is_wordchar()
 // cprnths_parseutil_skip_spcomm()
 // cprnths_parse_anyexpr()
+
+#include "error.h"
+// cprnths_error_*
 
 #include "exec.h"
 // cprnths_execenv_t
@@ -81,21 +78,19 @@ struct cpintern_expr_assign_t {
 struct cprnths_exprcls_t const cprnths_exprcls_assign;
 
 static
-cprnths_parse_stat_t
+cprnths_error_t
 cpintern_expr_assign_parse(
     char const * *restrict const current_,
     char const *const end,
     struct cpintern_expr_assign_t* *restrict const expr_
 ) {
 #define SKIP_SPCOMM(x) {\
-    if (cprnths_parse_success != (\
-        stat = cprnths_parseutil_skip_spcomm((char const **)&current, end)\
-    ))\
+    if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))\
         goto x;\
 }
 #define ASSERT_NO_EOF(x) {\
     if (current == end) {\
-        stat = cprnths_parse_eof;\
+        err = cprnths_error_parse_eof;\
         goto x;\
     }\
 }
@@ -104,7 +99,7 @@ cpintern_expr_assign_parse(
         SKIP_SPCOMM(y)\
         ASSERT_NO_EOF(y)\
         if (*current != (x)) {\
-            stat = cprnths_parse_malform;\
+            err = cprnths_error_parse_malform;\
             goto y;\
         }\
     }\
@@ -112,14 +107,14 @@ cpintern_expr_assign_parse(
 }
 
     char const *restrict current = *current_;
-    cprnths_parse_stat_t stat;
+    cprnths_error_t err;
 
     switch (cprnths_parseutil_startswith_word((char const **)&current, end, "Assign", 6u)) {
         case -1:
         case 0:
-            return cprnths_parse_unknown;
+            return cprnths_error_parse_unknown;
         case 2:
-            stat = cprnths_parse_eof;
+            err = cprnths_error_parse_eof;
             goto Finish;
     }
     // Assign\W.*
@@ -136,15 +131,15 @@ cpintern_expr_assign_parse(
     {
         struct cpintern_expr_assign_t *restrict const expr = malloc(sizeof(struct cpintern_expr_assign_t));
         if (expr == NULL) {
-            stat = cprnths_parse_fail;
+            err = cprnths_error_nomem;
             goto Finish;
         }
 
-        switch ( stat = cprnths_parse_anyexpr((char const **)&current, end, &expr->inner_expr) ) {
-            case cprnths_parse_success:
+        switch ( err = cprnths_parse_anyexpr((char const **)&current, end, &expr->inner_expr) ) {
+            case 0:
                 break;
-            case cprnths_parse_unknown:
-                stat = cprnths_parse_malform;
+            case cprnths_error_parse_unknown:
+                err = cprnths_error_parse_malform;
             default:
                 goto CleanUpOuterExpr;
         }
@@ -152,7 +147,7 @@ cpintern_expr_assign_parse(
         ASSERT_CHAR(',', CleanUpInnerExpr)
 
         if (NULL == ( expr->global = malloc(16u * sizeof(struct cprnths_string_t*)) )) {
-            stat = cprnths_parse_fail;
+            err = cprnths_error_nomem;
             goto CleanUpInnerExpr;
         }
 
@@ -160,7 +155,7 @@ cpintern_expr_assign_parse(
             size_t global_used = 0u;
 
             if (NULL == ( expr->local = malloc(16u * sizeof(struct cprnths_string_t*)) )) {
-                stat = cprnths_parse_fail;
+                err = cprnths_error_nomem;
                 goto CleanUpGlobals;
             }
 
@@ -198,7 +193,7 @@ ParseVarName:
                                         SKIP_SPCOMM(CleanUpLocals)
                                         goto ParseVarName;
                                     }
-                                    stat = cprnths_parse_malform;
+                                    err = cprnths_error_parse_malform;
                                     goto CleanUpLocals;
                             }
                             ++current;
@@ -214,7 +209,7 @@ ParseVarName:
                                 if (NULL == ( reallocate = realloc(
                                     *target, (*available + 16u) * sizeof(struct cprnths_string_t*)
                                 ) )) {
-                                    stat = cprnths_parse_fail;
+                                    err = cprnths_error_nomem;
                                     goto CleanUpLocals;
                                 }
                                 *target = reallocate;
@@ -224,7 +219,7 @@ ParseVarName:
                             if (NULL == (
                                 (*target)[*used] = cprnths_string_create(start, current - start)
                             )) {
-                                stat = cprnths_parse_fail;
+                                err = cprnths_error_nomem;
                                 goto CleanUpLocals;
                             }
                             ++*used;
@@ -245,7 +240,7 @@ ParseNext:
                                         ASSERT_NO_EOF(CleanUpLocals)
                                         goto ParseNext;
                                     }
-                                    stat = cprnths_parse_malform;
+                                    err = cprnths_error_parse_malform;
                                     goto CleanUpLocals;
                             }
                         }
@@ -259,7 +254,7 @@ ParseEnd:
                             if (NULL == ( reallocate = realloc(
                                 expr->global, target_size * sizeof(struct cprnths_string_t*)
                             ) )) {
-                                stat = cprnths_parse_fail;
+                                err = cprnths_error_nomem;
                                 goto CleanUpLocals;
                             }
                             expr->global = reallocate;
@@ -276,7 +271,7 @@ ParseEnd:
                             if (NULL == ( reallocate = realloc(
                                 expr->local, target_size * sizeof(struct cprnths_string_t*)
                             ) )) {
-                                stat = cprnths_parse_fail;
+                                err = cprnths_error_nomem;
                                 goto CleanUpLocals;
                             }
                             expr->local = reallocate;
@@ -291,7 +286,7 @@ ParseEnd:
                 *(struct cprnths_exprcls_t const **)&expr->base.cls = &cprnths_exprcls_assign;
                 *expr_ = expr;
                 // Already done while calling cprnths_parse_anyexpr().
-                //stat = cprnths_parse_success;
+                //err = 0;
                 goto Finish;
 
 CleanUpLocals:
@@ -323,7 +318,7 @@ CleanUpOuterExpr:
 
 Finish:
     *current_ = current;
-    return stat;
+    return err;
 
 #undef SKIP_SPCOMM
 #undef ASSERT_NO_EOF

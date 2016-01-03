@@ -24,12 +24,8 @@
 #include <stddef.h>
 // NULL
 
-#include "parser.h"
-// cprnths_parse_stat_t
-// cprnths_parse_success
-// cprnths_parse_malform
-// cprnths_parse_eof
-// cprnths_parse_unknown
+#include "error.h"
+// cprnths_error_*
 
 #include "expr.h"
 // cprnths_expr_t
@@ -47,47 +43,47 @@ struct cprnths_exprcls_t const *const cpintern_exprclss[] = {
     NULL
 };
 
-cprnths_parse_stat_t
+cprnths_error_t
 cprnths_parse_anyexpr(
     char const * *restrict const current,
     char const *const end,
     struct cprnths_expr_t* *restrict const expr
 ) {
-    cprnths_parse_stat_t stat;
+    cprnths_error_t err;
     {
         struct cprnths_exprcls_t const *const *restrict cls = cpintern_exprclss;
-        while (cprnths_parse_unknown == (
-            stat = (*(*cls)->expr_parse)(current, end, expr)
+        while (cprnths_error_parse_unknown == (
+            err = (*(*cls)->expr_parse)(current, end, expr)
         ) && *++cls != NULL);
     }
-    return stat;
+    return err;
 }
 
-cprnths_parse_stat_t
+cprnths_error_t
 cprnths_parseutil_skip_spcomm(
     char const * *restrict const current,
     char const *const end
 ) {
     if (*current == end)
-        return cprnths_parse_success;
+        return 0;
 
     char const *restrict p = *current;
     do {
         switch (*p) {
             case '/': // comment
                 if (++p == end)
-                    return cprnths_parse_eof;
+                    return cprnths_error_parse_eof;
 
                 switch (*p) {
                     case '*': // C
                         while (++p != end)
                             if (*p == '*') {
                                 if (++p == end)
-                                    return cprnths_parse_eof;
+                                    return cprnths_error_parse_eof;
                                 if (*p == '/')
                                     goto CommentEnd;
                             }
-                        return cprnths_parse_eof;
+                        return cprnths_error_parse_eof;
                     case '/': // BCPL
                         while (++p != end)
                             if (*p == '\n')
@@ -95,7 +91,7 @@ cprnths_parseutil_skip_spcomm(
                         goto Success;
                 }
                 *current = p;
-                return cprnths_parse_malform;
+                return cprnths_error_parse_malform;
             case ' ': // whitespace
             case '\t':
             case '\r':
@@ -111,5 +107,5 @@ CommentEnd:;
 
 Success:
     *current = p;
-    return cprnths_parse_success;
+    return 0;
 }
