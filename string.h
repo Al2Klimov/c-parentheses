@@ -2,7 +2,7 @@
 // A pure functional programming language
 // Reference implementation
 //
-// Copyright (C) 2015  Alexander A. Klimov
+// Copyright (C) 2015-2016  Alexander A. Klimov
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
