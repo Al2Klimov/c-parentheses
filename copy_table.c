@@ -37,22 +37,23 @@
 #include "reference.h"
 // cprnths_ref_t
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_copytab_t*
+
+cprnths_error_t
 cprnths_copytab_create(
+    struct cprnths_copytab_t* *restrict const t_,
     size_t const s
 ) {
-    struct cprnths_copytab_t *restrict t = malloc(sizeof(struct cprnths_copytab_t));
-
+    struct cprnths_copytab_t *restrict const t = malloc(sizeof(struct cprnths_copytab_t));
     if (t == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     t->tab = malloc(s * sizeof(struct cprnths_copytab_row_t));
-
     if (t->tab == NULL) {
         free(t);
-        t = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     {
@@ -62,14 +63,13 @@ cprnths_copytab_create(
             p->copy = NULL;
         } while (p > t->tab);
     }
-
     *(size_t*)&t->chunksize = t->slots_total = t->slots_free = s;
 
-Finish:
-    return t;
+    *t_ = t;
+    return 0;
 }
 
-_Bool
+cprnths_error_t
 cprnths_copytab_addrefs(
     struct cprnths_copytab_t *restrict const t,
     struct cprnths_ref_t const *const o,
@@ -92,7 +92,7 @@ cprnths_copytab_addrefs(
                     slots_total * sizeof(struct cprnths_copytab_row_t)
                 );
                 if (T == NULL)
-                    return 0;
+                    return cprnths_error_nomem;
 
                 t->tab = T;
                 T += t->slots_total;
@@ -110,7 +110,7 @@ cprnths_copytab_addrefs(
         t->slots_free += t->chunksize - 1u;
     }
 
-    return 1;
+    return 0;
 }
 
 struct cprnths_ref_t*

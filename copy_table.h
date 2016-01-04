@@ -32,6 +32,9 @@ struct cprnths_copytab_t;
 #include "reference.h"
 // cprnths_ref_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // A row of a copy table
 struct cprnths_copytab_row_t {
@@ -64,16 +67,18 @@ struct cprnths_copytab_t {
 
 
 // Create a new copy table.
-struct cprnths_copytab_t*
-// a new table or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_copytab_create(
+    struct cprnths_copytab_t**,
+    // a new table (not NULL)
     size_t
     // .chunksize
 );
 
 // Add references to a copy table.
-_Bool
-// was the addition successful?
+cprnths_error_t
+// (see error.h)
 cprnths_copytab_addrefs(
     struct cprnths_copytab_t*,
     // not NULL

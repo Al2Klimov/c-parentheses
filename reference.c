@@ -104,7 +104,7 @@ cprnths_ref_copy(
     if (NULL == ( R = cprnths_ref_create(NULL, r->garbtab) ))
         return NULL;
 
-    if (cprnths_copytab_addrefs(t, r, R) && (
+    if (!cprnths_copytab_addrefs(t, r, R) && (
         r->obj == NULL || NULL != ( R->obj = cprnths_obj_copy(r->obj, t) )
     ))
         return R;
@@ -118,9 +118,8 @@ cprnths_ref_copy_newtab(
     struct cprnths_ref_t const *restrict const r,
     size_t const s
 ) {
-    struct cprnths_copytab_t *restrict const t = cprnths_copytab_create(s);
-
-    if (t == NULL)
+    struct cprnths_copytab_t *restrict t;
+    if (cprnths_copytab_create((struct cprnths_copytab_t**)&t, s))
         return NULL;
 
     struct cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
