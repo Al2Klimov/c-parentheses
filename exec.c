@@ -74,8 +74,7 @@ cprnths_execenv_create(
         e->garbtab = NULL;
     }
 
-    e->gsymbtab = cprnths_dict_create(gsymbtab_cs);
-    if (e->gsymbtab == NULL)
+    if (cprnths_dict_create(&e->gsymbtab, gsymbtab_cs))
         goto FailGSymbTab;
 
     *(size_t*)&e->copytab_chunksize = copytab_cs;

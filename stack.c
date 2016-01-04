@@ -92,10 +92,8 @@ cprnths_stack_pushframe(
     }
 
     {
-        struct cprnths_dict_t *restrict const lsymbtab = cprnths_dict_create(
-            s->lsymbtab_chunksize
-        );
-        if (lsymbtab == NULL)
+        struct cprnths_dict_t *restrict lsymbtab;
+        if (cprnths_dict_create((struct cprnths_dict_t**)&lsymbtab, s->lsymbtab_chunksize))
             return 0;
 
         --s->frames_free;

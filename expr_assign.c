@@ -360,7 +360,7 @@ cpintern_expr_assign_eval(
                 current = expr->local;
                 target = env->stack->current_frame->lsymbtab;
                 do {
-                    if (!cprnths_dict_addpair(target, *current, ref)) {
+                    if (cprnths_dict_addpair(target, *current, ref)) {
                         cprnths_ref_increment(ref, -1);
                         return 0;
                     }
@@ -370,7 +370,7 @@ cpintern_expr_assign_eval(
                 current = expr->global;
                 target = env->gsymbtab;
                 do {
-                    if (!cprnths_dict_addpair(target, *current, ref)) {
+                    if (cprnths_dict_addpair(target, *current, ref)) {
                         cprnths_ref_increment(ref, -1);
                         return 0;
                     }

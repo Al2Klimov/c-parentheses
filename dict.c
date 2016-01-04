@@ -44,22 +44,23 @@
 // cprnths_ref_t
 // cprnths_ref_increment()
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_dict_t*
+
+cprnths_error_t
 cprnths_dict_create(
+    struct cprnths_dict_t* *restrict const d_,
     size_t const s
 ) {
-    struct cprnths_dict_t *restrict d = malloc(sizeof(struct cprnths_dict_t));
-
+    struct cprnths_dict_t *restrict const d = malloc(sizeof(struct cprnths_dict_t));
     if (d == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     d->dict = malloc(s * sizeof(struct cprnths_dict_pair_t));
-
     if (d->dict == NULL) {
         free(d);
-        d = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     {
@@ -69,14 +70,13 @@ cprnths_dict_create(
             p->value = NULL;
         } while (p > d->dict);
     }
-
     *(size_t*)&d->chunksize = d->slots_total = d->slots_free = s;
 
-Finish:
-    return d;
+    *d_ = d;
+    return 0;
 }
 
-_Bool
+cprnths_error_t
 cprnths_dict_addpair(
     struct cprnths_dict_t *restrict const d,
     struct cprnths_string_t const *restrict k,
@@ -84,13 +84,13 @@ cprnths_dict_addpair(
 ) {
     if (d->slots_total == d->slots_free) {
         if (NULL == ( k = cprnths_string_copy(k) ))
-            return 0;
+            return cprnths_error_nomem;
 
         d->dict->key = (struct cprnths_string_t*)k;
         cprnths_ref_increment(v, 1);
         d->dict->value = v;
         --d->slots_free;
-        return 1;
+        return 0;
     }
 
     if (d->slots_free)
@@ -105,17 +105,17 @@ cprnths_dict_addpair(
                             cprnths_ref_increment(D->value, -1);
                             D->value = v;
                         }
-                        return 1;
+                        return 0;
                     }
 
                 if (NULL == ( k = cprnths_string_copy(k) ))
-                    return 0;
+                    return cprnths_error_nomem;
 
                 free_slot->key = (struct cprnths_string_t*)k;
                 cprnths_ref_increment(v, 1);
                 free_slot->value = v;
                 --d->slots_free;
-                return 1;
+                return 0;
             }
 
             if (cprnths_string_equal(D->key, k)) {
@@ -124,7 +124,7 @@ cprnths_dict_addpair(
                     cprnths_ref_increment(D->value, -1);
                     D->value = v;
                 }
-                return 1;
+                return 0;
             }
         }
 
@@ -138,7 +138,7 @@ cprnths_dict_addpair(
                     cprnths_ref_increment(D->value, -1);
                     D->value = v;
                 }
-                return 1;
+                return 0;
             }
         } while (++D < limit);
     }
@@ -148,7 +148,7 @@ cprnths_dict_addpair(
 
         {
             if (NULL == ( k = cprnths_string_copy(k) ))
-                return 0;
+                return cprnths_error_nomem;
 
             struct cprnths_dict_pair_t *restrict D = realloc(
                 d->dict,
@@ -156,7 +156,7 @@ cprnths_dict_addpair(
             );
             if (D == NULL) {
                 cprnths_string_destroy((struct cprnths_string_t*)k);
-                return 0;
+                return cprnths_error_nomem;
             }
 
             d->dict = D;
@@ -177,7 +177,7 @@ cprnths_dict_addpair(
 
     d->slots_free += d->chunksize - 1u;
 
-    return 1;
+    return 0;
 }
 
 static

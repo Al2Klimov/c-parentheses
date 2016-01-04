@@ -32,6 +32,9 @@
 #include "reference.h"
 // cprnths_ref_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // A (key, value) pair of a dictionary
 struct cprnths_dict_pair_t {
@@ -63,17 +66,19 @@ struct cprnths_dict_t {
 
 
 // Create a new dictionary.
-struct cprnths_dict_t*
-// a new dictionary or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_dict_create(
+    struct cprnths_dict_t**,
+    // a new dictionary (not NULL)
     size_t
     // .chunksize
 );
 
 // Add the given (key, value) pair to a dictionary.
 // If the given key already exists, override the value.
-_Bool
-// was the addition successful?
+cprnths_error_t
+// (see error.h)
 cprnths_dict_addpair(
     struct cprnths_dict_t*,
     // not NULL
