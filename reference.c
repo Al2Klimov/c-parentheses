@@ -105,7 +105,7 @@ cprnths_ref_copy(
         return NULL;
 
     if (!cprnths_copytab_addrefs(t, r, R) && (
-        r->obj == NULL || NULL != ( R->obj = cprnths_obj_copy(r->obj, t) )
+        r->obj == NULL || !cprnths_obj_copy(r->obj, &R->obj, t)
     ))
         return R;
 

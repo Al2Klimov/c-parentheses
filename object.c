@@ -35,6 +35,9 @@
 #include "object.h"
 // cprnths_*_t
 
+#include "error.h"
+// cprnths_error_*
+
 
 void
 cprnths_obj_destroy(
@@ -46,23 +49,25 @@ cprnths_obj_destroy(
     free(o);
 }
 
-struct cprnths_obj_t*
+cprnths_error_t
 cprnths_obj_copy(
     struct cprnths_obj_t const *restrict const o,
+    struct cprnths_obj_t* *restrict const c_,
     struct cprnths_copytab_t *restrict const t
 ) {
-    struct cprnths_obj_t *restrict c = malloc(o->cls->obj_size);
-
+    struct cprnths_obj_t *restrict const c = malloc(o->cls->obj_size);
     if (c == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     memcpy(c, o, o->cls->obj_size);
-
-    if (!(o->cls->obj_copy == NULL || (*o->cls->obj_copy)(o, c, t))) {
-        free(c);
-        c = NULL;
+    if (o->cls->obj_copy != NULL) {
+        cprnths_error_t const err = (*o->cls->obj_copy)(o, c, t);
+        if (err) {
+            free(c);
+            return err;
+        }
     }
 
-Finish:
-    return c;
+    *c_ = c;
+    return 0;
 }

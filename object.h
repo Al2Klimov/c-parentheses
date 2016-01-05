@@ -29,6 +29,9 @@
 #include "copy_table.h"
 // cprnths_copytab_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 struct cprnths_class_t;
 
@@ -53,8 +56,8 @@ struct cprnths_class_t {
     );
 
     // Copy the object deeply
-    _Bool
-    // was the copying successful?
+    cprnths_error_t
+    // (see error.h)
     (*obj_copy)(
         // original (not NULL)
         struct cprnths_obj_t const *,
@@ -73,12 +76,14 @@ cprnths_obj_destroy(
     // not NULL
 );
 
-// Copy an object deeply and return the copy.
-struct cprnths_obj_t*
-// the copy or NULL
+// Copy an object deeply.
+cprnths_error_t
+// (see error.h)
 cprnths_obj_copy(
     struct cprnths_obj_t const *,
     // the original (not NULL)
+    struct cprnths_obj_t**,
+    // the copy (not NULL)
     struct cprnths_copytab_t*
     // the copy table to use (not NULL)
 );
