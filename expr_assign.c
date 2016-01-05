@@ -33,9 +33,6 @@
 #include "expr.h"
 // cprnths_expr_t
 // cprnths_exprcls_t
-// cprnths_expr_parse_t
-// cprnths_expr_eval_t
-// cprnths_expr_destroy_t
 // cprnths_expr_destroy()
 
 #include "parser.h"
@@ -82,7 +79,7 @@ cprnths_error_t
 cpintern_expr_assign_parse(
     char const * *restrict const current_,
     char const *const end,
-    struct cpintern_expr_assign_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_
 ) {
 #define SKIP_SPCOMM(x) {\
     if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))\
@@ -284,7 +281,7 @@ ParseEnd:
                 }
 
                 *(struct cprnths_exprcls_t const **)&expr->base.cls = &cprnths_exprcls_assign;
-                *expr_ = expr;
+                *expr_ = (struct cprnths_expr_t*)expr;
                 // Already done while calling cprnths_parse_anyexpr().
                 //err = 0;
                 goto Finish;
@@ -328,17 +325,19 @@ Finish:
 static
 _Bool
 cpintern_expr_assign_eval(
-    struct cpintern_expr_assign_t const *restrict const expr,
+    struct cprnths_expr_t const *const expr_,
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_ref_t* *restrict const ref_
 ) {
     struct cprnths_ref_t *restrict ref;
-    if (!(*expr->inner_expr->cls->expr_eval)(
-        expr->inner_expr, env, (struct cprnths_ref_t**)&ref
-    ))
-        return 0;
 
     {
+        struct cpintern_expr_assign_t const *restrict const expr = (struct cpintern_expr_assign_t const *)expr_;
+        if (!(*expr->inner_expr->cls->expr_eval)(
+            expr->inner_expr, env, (struct cprnths_ref_t**)&ref
+        ))
+            return 0;
+
         struct cprnths_string_t* *restrict current;
         struct cprnths_dict_t *restrict target;
 
@@ -389,8 +388,9 @@ cpintern_expr_assign_eval(
 static
 void
 cpintern_expr_assign_destroy(
-    struct cpintern_expr_assign_t *restrict const e
+    struct cprnths_expr_t *const e_
 ) {
+    struct cpintern_expr_assign_t *restrict const e = (struct cpintern_expr_assign_t*)e_;
     cprnths_expr_destroy(e->inner_expr);
     struct cprnths_string_t* *restrict current;
     if (e->global != NULL) {
@@ -406,7 +406,7 @@ cpintern_expr_assign_destroy(
 }
 
 struct cprnths_exprcls_t const cprnths_exprcls_assign = {
-    (cprnths_expr_parse_t)&cpintern_expr_assign_parse,
-    (cprnths_expr_eval_t)&cpintern_expr_assign_eval,
-    (cprnths_expr_destroy_t)&cpintern_expr_assign_destroy
+    &cpintern_expr_assign_parse,
+    &cpintern_expr_assign_eval,
+    &cpintern_expr_assign_destroy
 };

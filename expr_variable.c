@@ -31,9 +31,6 @@
 #include "expr.h"
 // cprnths_expr_t
 // cprnths_exprcls_t
-// cprnths_expr_parse_t
-// cprnths_expr_eval_t
-// cprnths_expr_destroy_t
 
 #include "parser.h"
 // cprnths_parseutil_is_wordchar()
@@ -69,7 +66,7 @@ cprnths_error_t
 cpintern_expr_variable_parse(
     char const * *restrict const current_,
     char const *const end,
-    struct cpintern_expr_variable_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_
 ) {
     if (*current_ == end)
         return cprnths_error_parse_unknown;
@@ -103,7 +100,7 @@ cpintern_expr_variable_parse(
 
     *(struct cprnths_exprcls_t const **)&expr->base.cls = &cprnths_exprcls_variable;
     expr->global = global;
-    *expr_ = expr;
+    *expr_ = (struct cprnths_expr_t*)expr;
     *current_ = current;
     return 0;
 }
@@ -111,16 +108,19 @@ cpintern_expr_variable_parse(
 static
 _Bool
 cpintern_expr_variable_eval(
-    struct cpintern_expr_variable_t const *restrict const expr,
+    struct cprnths_expr_t const *const expr_,
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_ref_t* *restrict const target
 ) {
-    // Not checking for target == NULL as
-    // variable access isn't allowed in void context.
-    *target = cprnths_dict_getval(
-        expr->global ? env->gsymbtab : env->stack->current_frame->lsymbtab,
-        expr->varname
-    );
+    {
+        struct cpintern_expr_variable_t const *restrict const expr = (struct cpintern_expr_variable_t const *)expr_;
+        // Not checking for target == NULL as
+        // variable access isn't allowed in void context.
+        *target = cprnths_dict_getval(
+            expr->global ? env->gsymbtab : env->stack->current_frame->lsymbtab,
+            expr->varname
+        );
+    }
     if (*target != NULL)
         cprnths_ref_increment(*target, 1u);
     return 1;
@@ -129,13 +129,13 @@ cpintern_expr_variable_eval(
 static
 void
 cpintern_expr_variable_destroy(
-    struct cpintern_expr_variable_t *restrict const e
+    struct cprnths_expr_t *restrict const e
 ) {
-    cprnths_string_destroy(e->varname);
+    cprnths_string_destroy(((struct cpintern_expr_variable_t*)e)->varname);
 }
 
 struct cprnths_exprcls_t const cprnths_exprcls_variable = {
-    (cprnths_expr_parse_t)&cpintern_expr_variable_parse,
-    (cprnths_expr_eval_t)&cpintern_expr_variable_eval,
-    (cprnths_expr_destroy_t)&cpintern_expr_variable_destroy
+    &cpintern_expr_variable_parse,
+    &cpintern_expr_variable_eval,
+    &cpintern_expr_variable_destroy
 };
