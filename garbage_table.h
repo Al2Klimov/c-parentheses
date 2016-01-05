@@ -32,6 +32,9 @@ struct cprnths_garbtab_t;
 #include "reference.h"
 // cprnths_ref_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // This is for tracking how many (and which) references there are and being able
 // to clean them up manually when they aren't needed anymore, but automatic cleanup
@@ -56,16 +59,18 @@ struct cprnths_garbtab_t {
 
 
 // Create a new garbage table.
-struct cprnths_garbtab_t*
-// a new garbage table or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_garbtab_create(
+    struct cprnths_garbtab_t**,
+    // a new garbage table (not NULL)
     size_t
     // .chunksize
 );
 
 // Add a reference to a garbage table.
-_Bool
-// was the addition successful?
+cprnths_error_t
+// (see error.h)
 cprnths_garbtab_addref(
     struct cprnths_garbtab_t*,
     // not NULL

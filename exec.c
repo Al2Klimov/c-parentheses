@@ -78,11 +78,8 @@ cprnths_execenv_create(
         }
 
         if (garbtab_cs) {
-            env->garbtab = cprnths_garbtab_create(garbtab_cs);
-            if (env->garbtab == NULL) {
-                err = cprnths_error_nomem;
+            if (( err = cprnths_garbtab_create(&env->garbtab, garbtab_cs) ))
                 goto FailGarbTab;
-            }
         } else {
             env->garbtab = NULL;
         }

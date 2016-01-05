@@ -40,22 +40,23 @@
 // cprnths_obj_t
 // cprnths_obj_destroy()
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_garbtab_t*
+
+cprnths_error_t
 cprnths_garbtab_create(
+    struct cprnths_garbtab_t* *restrict const t_,
     size_t const s
 ) {
-    struct cprnths_garbtab_t *restrict t = malloc(sizeof(struct cprnths_garbtab_t));
-
+    struct cprnths_garbtab_t *restrict const t = malloc(sizeof(struct cprnths_garbtab_t));
     if (t == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     t->tab = malloc(s * sizeof(struct cprnths_ref_t*));
-
     if (t->tab == NULL) {
         free(t);
-        t = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     {
@@ -63,14 +64,13 @@ cprnths_garbtab_create(
         do *--p = NULL;
         while (p > t->tab);
     }
-
     *(size_t*)&t->chunksize = t->slots_total = t->slots_free = s;
 
-Finish:
-    return t;
+    *t_ = t;
+    return 0;
 }
 
-_Bool
+cprnths_error_t
 cprnths_garbtab_addref(
     struct cprnths_garbtab_t *restrict const t,
     struct cprnths_ref_t *const r
@@ -91,7 +91,7 @@ cprnths_garbtab_addref(
                     slots_total * sizeof(struct cprnths_ref_t*)
                 );
                 if (T == NULL)
-                    return 0;
+                    return cprnths_error_nomem;
 
                 t->tab = T;
                 T += t->slots_total;
@@ -108,7 +108,7 @@ cprnths_garbtab_addref(
         t->slots_free += t->chunksize - 1u;
     }
 
-    return 1;
+    return 0;
 }
 
 void

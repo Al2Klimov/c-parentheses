@@ -59,7 +59,7 @@ cprnths_ref_create(
     if (r == NULL)
         goto Finish;
 
-    if (t == NULL || cprnths_garbtab_addref(t, r)) {
+    if (t == NULL || !cprnths_garbtab_addref(t, r)) {
         r->obj = o;
         r->pcnt = 1u;
         r->garbtab = t;
