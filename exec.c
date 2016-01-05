@@ -49,72 +49,88 @@
 // cprnths_dict_create()
 // cprnths_dict_destroy()
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_execenv_t*
+
+cprnths_error_t
 cprnths_execenv_create(
+    struct cprnths_execenv_t* *restrict const env_,
     size_t const stack_cs,
     size_t const gsymbtab_cs,
     size_t const garbtab_cs,
     size_t const lsymbtab_cs,
     size_t const copytab_cs
 ) {
-    struct cprnths_execenv_t *restrict e = malloc(sizeof(struct cprnths_execenv_t));
-    if (e == NULL)
+    cprnths_error_t err;
+
+    {
+        struct cprnths_execenv_t *restrict const env = malloc(sizeof(struct cprnths_execenv_t));
+        if (env == NULL) {
+            err = cprnths_error_nomem;
+            goto Finish;
+        }
+
+        env->stack = cprnths_stack_create(stack_cs, lsymbtab_cs);
+        if (env->stack == NULL) {
+            err = cprnths_error_nomem;
+            goto FailStack;
+        }
+
+        if (garbtab_cs) {
+            env->garbtab = cprnths_garbtab_create(garbtab_cs);
+            if (env->garbtab == NULL) {
+                err = cprnths_error_nomem;
+                goto FailGarbTab;
+            }
+        } else {
+            env->garbtab = NULL;
+        }
+
+        if (( err = cprnths_dict_create(&env->gsymbtab, gsymbtab_cs) ))
+            goto FailGSymbTab;
+
+        *(size_t*)&env->copytab_chunksize = copytab_cs;
+        *env_ = env;
+        // Already done implicitly.
+        //err = 0;
         goto Finish;
 
-    e->stack = cprnths_stack_create(stack_cs, lsymbtab_cs);
-    if (e->stack == NULL)
-        goto FailStack;
-
-    if (garbtab_cs) {
-        e->garbtab = cprnths_garbtab_create(garbtab_cs);
-        if (e->garbtab == NULL)
-            goto FailGarbTab;
-    } else {
-        e->garbtab = NULL;
-    }
-
-    if (cprnths_dict_create(&e->gsymbtab, gsymbtab_cs))
-        goto FailGSymbTab;
-
-    *(size_t*)&e->copytab_chunksize = copytab_cs;
-    goto Finish;
-
 FailGSymbTab:
-    if (garbtab_cs)
-        cprnths_garbtab_destroy(e->garbtab);
+        if (garbtab_cs)
+            cprnths_garbtab_destroy(env->garbtab);
 
 FailGarbTab:
-    cprnths_stack_destroy(e->stack);
+        cprnths_stack_destroy(env->stack);
 
 FailStack:
-    free(e);
-    e = NULL;
+        free(env);
+    }
 
 Finish:
-    return e;
+    return err;
 }
 
-_Bool
+cprnths_error_t
 cprnths_exec(
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_exprs_t const *restrict const exprs
 ) {
     if (!exprs->length)
-        return 1;
+        return 0;
 
-    _Bool success = 1;
+    cprnths_error_t err;
     {
         struct cprnths_expr_t const *restrict current = exprs->exprs;
         struct cprnths_expr_t const *const last = current;
         do {
             if (!(*current->cls->expr_eval)(current, env, NULL)) {
-                success = 0;
+                err = cprnths_error_nomem;
                 break;
             }
         } while (++current < last);
     }
-    return success;
+    return err;
 }
 
 void

@@ -41,6 +41,9 @@ struct cprnths_execenv_t;
 #include "garbage_table.h"
 // cprnths_garbtab_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // This contains all information about the current execution state.
 struct cprnths_execenv_t {
@@ -59,9 +62,11 @@ struct cprnths_execenv_t {
 
 
 // Create a new execution environment.
-struct cprnths_execenv_t*
-// a new environment or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_execenv_create(
+    struct cprnths_execenv_t**,
+    // a new environment (not NULL)
     size_t,
     // stack's chunksize (> 0)
     size_t,
@@ -75,8 +80,8 @@ cprnths_execenv_create(
 );
 
 // Execute expressions in an execution environment.
-_Bool
-// was the execution successful?
+cprnths_error_t
+// (see error.h)
 cprnths_exec(
     struct cprnths_execenv_t*,
     // not NULL
