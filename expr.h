@@ -62,8 +62,8 @@ struct cprnths_exprcls_t {
     );
 
     // Evaluate an expression.
-    _Bool
-    // was the evaluation successful?
+    cprnths_error_t
+    // (see error.h)
     (*expr_eval)(
     // not NULL
         struct cprnths_expr_t const *,

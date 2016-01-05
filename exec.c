@@ -123,12 +123,9 @@ cprnths_exec(
     {
         struct cprnths_expr_t const *restrict current = exprs->exprs;
         struct cprnths_expr_t const *const last = current;
-        do {
-            if (!(*current->cls->expr_eval)(current, env, NULL)) {
-                err = cprnths_error_nomem;
-                break;
-            }
-        } while (++current < last);
+        while (!(
+            err = (*current->cls->expr_eval)(current, env, NULL)
+        ) && ++current < last);
     }
     return err;
 }

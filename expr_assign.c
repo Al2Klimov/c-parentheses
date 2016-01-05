@@ -323,7 +323,7 @@ Finish:
 }
 
 static
-_Bool
+cprnths_error_t
 cpintern_expr_assign_eval(
     struct cprnths_expr_t const *const expr_,
     struct cprnths_execenv_t *restrict const env,
@@ -332,11 +332,12 @@ cpintern_expr_assign_eval(
     struct cprnths_ref_t *restrict ref;
 
     {
+        cprnths_error_t err;
         struct cpintern_expr_assign_t const *restrict const expr = (struct cpintern_expr_assign_t const *)expr_;
-        if (!(*expr->inner_expr->cls->expr_eval)(
+        if (( err = (*expr->inner_expr->cls->expr_eval)(
             expr->inner_expr, env, (struct cprnths_ref_t**)&ref
-        ))
-            return 0;
+        ) ))
+            return err;
 
         struct cprnths_string_t* *restrict current;
         struct cprnths_dict_t *restrict target;
@@ -359,9 +360,9 @@ cpintern_expr_assign_eval(
                 current = expr->local;
                 target = env->stack->current_frame->lsymbtab;
                 do {
-                    if (cprnths_dict_addpair(target, *current, ref)) {
+                    if (( err = cprnths_dict_addpair(target, *current, ref) )) {
                         cprnths_ref_increment(ref, -1);
-                        return 0;
+                        return err;
                     }
                 } while (*++current != NULL);
             }
@@ -369,9 +370,9 @@ cpintern_expr_assign_eval(
                 current = expr->global;
                 target = env->gsymbtab;
                 do {
-                    if (cprnths_dict_addpair(target, *current, ref)) {
+                    if (( err = cprnths_dict_addpair(target, *current, ref) )) {
                         cprnths_ref_increment(ref, -1);
-                        return 0;
+                        return err;
                     }
                 } while (*++current != NULL);
             }
@@ -382,7 +383,7 @@ cpintern_expr_assign_eval(
         cprnths_ref_increment(ref, -1);
     else
         *ref_ = ref;
-    return 1;
+    return 0;
 }
 
 static

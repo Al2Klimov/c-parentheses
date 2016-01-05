@@ -106,7 +106,7 @@ cpintern_expr_variable_parse(
 }
 
 static
-_Bool
+cprnths_error_t
 cpintern_expr_variable_eval(
     struct cprnths_expr_t const *const expr_,
     struct cprnths_execenv_t *restrict const env,
@@ -123,7 +123,7 @@ cpintern_expr_variable_eval(
     }
     if (*target != NULL)
         cprnths_ref_increment(*target, 1u);
-    return 1;
+    return 0;
 }
 
 static
