@@ -38,6 +38,9 @@ struct cprnths_ref_t;
 #include "copy_table.h"
 // cprnths_copytab_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // This is for referencing an object and cleaning it up automatically
 // when it's not being referenced anymore. (You know, garbage collection.)
@@ -54,9 +57,11 @@ struct cprnths_ref_t {
 
 
 // Create a new reference to an object.
-struct cprnths_ref_t*
-// a new reference or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_ref_create(
+    struct cprnths_ref_t**,
+    // a new reference (not NULL)
     struct cprnths_obj_t*,
     // NULL if indicating invalid reference
     struct cprnths_garbtab_t*
@@ -74,23 +79,27 @@ cprnths_ref_increment(
     // MAY be negative for decrementing
 );
 
-// Copy a reference deeply and return the copy.
-struct cprnths_ref_t*
-// the copy or NULL
+// Copy a reference deeply.
+cprnths_error_t
+// (see error.h)
 cprnths_ref_copy(
     struct cprnths_ref_t const *,
     // the original (not NULL)
+    struct cprnths_ref_t**,
+    // the copy (not NULL)
     struct cprnths_copytab_t*
     // the copy table to use (not NULL)
 );
 
 // Create a new copy table and use it
 // to copy a reference with cprnths_ref_copy().
-struct cprnths_ref_t*
-// the copy or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_ref_copy_newtab(
     struct cprnths_ref_t const *,
     // the original (not NULL)
+    struct cprnths_ref_t**,
+    // the copy (not NULL)
     size_t
     // .chunksize
 );

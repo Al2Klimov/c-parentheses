@@ -48,28 +48,34 @@
 // cprnths_copytab_chkref()
 // cprnths_copytab_destroy()
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_ref_t*
+
+cprnths_error_t
 cprnths_ref_create(
+    struct cprnths_ref_t* *restrict const r_,
     struct cprnths_obj_t *restrict const o,
     struct cprnths_garbtab_t *restrict const t
 ) {
-    struct cprnths_ref_t *restrict r = malloc(sizeof(struct cprnths_ref_t));
-
+    struct cprnths_ref_t *restrict const r = malloc(sizeof(struct cprnths_ref_t));
     if (r == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
-    if (t == NULL || !cprnths_garbtab_addref(t, r)) {
-        r->obj = o;
-        r->pcnt = 1u;
-        r->garbtab = t;
-    } else {
-        free(r);
-        r = NULL;
+    if (t != NULL) {
+        cprnths_error_t const err = cprnths_garbtab_addref(t, r);
+        if (err) {
+            free(r);
+            return err;
+        }
     }
 
-Finish:
-    return r;
+    r->obj = o;
+    r->pcnt = 1u;
+    r->garbtab = t;
+
+    *r_ = r;
+    return 0;
 }
 
 void
@@ -89,42 +95,46 @@ cprnths_ref_increment(
     free(r);
 }
 
-struct cprnths_ref_t*
+cprnths_error_t
 cprnths_ref_copy(
     struct cprnths_ref_t const *restrict const r,
+    struct cprnths_ref_t* *restrict const R_,
     struct cprnths_copytab_t *restrict const t
 ) {
     struct cprnths_ref_t* R = cprnths_copytab_chkref(t, r);
+    if (R == NULL) {
+        cprnths_error_t err;
+        if (( err = cprnths_ref_create(&R, NULL, r->garbtab) ))
+            return err;
 
-    if (R != NULL) {
+        if (( err = cprnths_copytab_addrefs(t, r, R) ) || (
+            r->obj != NULL && ( err = cprnths_obj_copy(r->obj, &R->obj, t) )
+        )) {
+            cprnths_ref_increment(R, -1);
+            return err;
+        }
+    } else {
         cprnths_ref_increment(R, 1u);
-        return R;
     }
 
-    if (NULL == ( R = cprnths_ref_create(NULL, r->garbtab) ))
-        return NULL;
-
-    if (!cprnths_copytab_addrefs(t, r, R) && (
-        r->obj == NULL || !cprnths_obj_copy(r->obj, &R->obj, t)
-    ))
-        return R;
-
-    cprnths_ref_increment(R, -1);
-    return NULL;
+    *R_ = R;
+    return 0;
 }
 
-struct cprnths_ref_t*
+cprnths_error_t
 cprnths_ref_copy_newtab(
     struct cprnths_ref_t const *restrict const r,
+    struct cprnths_ref_t* *restrict const R,
     size_t const s
 ) {
+    cprnths_error_t err;
     struct cprnths_copytab_t *restrict t;
-    if (cprnths_copytab_create((struct cprnths_copytab_t**)&t, s))
-        return NULL;
+    if (( err = cprnths_copytab_create((struct cprnths_copytab_t**)&t, s) ))
+        return err;
 
-    struct cprnths_ref_t *restrict const R = cprnths_ref_copy(r, t);
+    err = cprnths_ref_copy(r, R, t);
 
     cprnths_copytab_destroy(t);
 
-    return R;
+    return err;
 }
