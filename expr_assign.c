@@ -213,12 +213,9 @@ ParseVarName:
                                 *available += 16u;
                             }
 
-                            if (NULL == (
-                                (*target)[*used] = cprnths_string_create(start, current - start)
-                            )) {
-                                err = cprnths_error_nomem;
+                            if (( err = cprnths_string_create(*target + *used, start, current - start) ))
                                 goto CleanUpLocals;
-                            }
+
                             ++*used;
 
                             skipable = 1;

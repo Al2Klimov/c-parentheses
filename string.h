@@ -29,6 +29,9 @@
 #include <stddef.h>
 // size_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // The type of a string's hash (just for easy changing)
 typedef uintmax_t cprnths_string_hash_t;
@@ -48,21 +51,25 @@ struct cprnths_string_t {
 
 
 // Create a new string from a buffer.
-struct cprnths_string_t*
-// a new string or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_string_create(
+    struct cprnths_string_t**,
+    // a new string (not NULL)
     char const *,
     // not NULL if not empty
     size_t
     // the amount of characters to use
 );
 
-// Copy a string and return the copy.
-struct cprnths_string_t*
-// the copy or NULL
+// Copy a string.
+cprnths_error_t
+// (see error.h)
 cprnths_string_copy(
-    struct cprnths_string_t const *
+    struct cprnths_string_t const *,
     // the original (not NULL)
+    struct cprnths_string_t**
+    // the copy (not NULL)
 );
 
 // Compare two strings.

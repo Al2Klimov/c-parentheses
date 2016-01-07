@@ -92,10 +92,12 @@ cpintern_expr_variable_parse(
     if (expr == NULL)
         return cprnths_error_nomem;
 
-    expr->varname = cprnths_string_create(start, current - start);
-    if (expr->varname == NULL) {
-        free(expr);
-        return cprnths_error_nomem;
+    {
+        cprnths_error_t const err = cprnths_string_create(&expr->varname, start, current - start);
+        if (err) {
+            free(expr);
+            return err;
+        }
     }
 
     *(struct cprnths_exprcls_t const **)&expr->base.cls = &cprnths_exprcls_variable;

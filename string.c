@@ -36,21 +36,23 @@
 #include "string.h"
 // cprnths_string_t
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_string_t*
+
+cprnths_error_t
 cprnths_string_create(
+    struct cprnths_string_t* *restrict const s_,
     char const *restrict const S,
     size_t const l
 ) {
-    struct cprnths_string_t *restrict s = malloc(sizeof(struct cprnths_string_t));
-
+    struct cprnths_string_t *restrict const s = malloc(sizeof(struct cprnths_string_t));
     if (s == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     if (NULL == ( s->str = malloc(l + 1u) )) {
         free(s);
-        s = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     s->length = l;
@@ -66,31 +68,30 @@ cprnths_string_create(
         while (++p < limit);
     }
 
-Finish:
-    return s;
+    *s_ = s;
+    return 0;
 }
 
-struct cprnths_string_t*
+cprnths_error_t
 cprnths_string_copy(
-    struct cprnths_string_t const *restrict const S
+    struct cprnths_string_t const *restrict const S,
+    struct cprnths_string_t* *restrict const s_
 ) {
-    struct cprnths_string_t *restrict s = malloc(sizeof(struct cprnths_string_t));
-
+    struct cprnths_string_t *restrict const s = malloc(sizeof(struct cprnths_string_t));
     if (s == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     if (NULL == ( s->str = malloc(S->length + 1u) )) {
         free(s);
-        s = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     s->length = S->length;
     s->hash = S->hash;
     memcpy((char*)s->str, S->str, S->length + 1u);
 
-Finish:
-    return s;
+    *s_ = s;
+    return 0;
 }
 
 _Bool

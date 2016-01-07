@@ -82,97 +82,101 @@ cprnths_dict_addpair(
     struct cprnths_string_t const *restrict k,
     struct cprnths_ref_t *restrict const v
 ) {
-    if (d->slots_total == d->slots_free) {
-        if (NULL == ( k = cprnths_string_copy(k) ))
-            return cprnths_error_nomem;
+    {
+        cprnths_error_t err;
 
-        d->dict->key = (struct cprnths_string_t*)k;
-        cprnths_ref_increment(v, 1);
-        d->dict->value = v;
-        --d->slots_free;
-        return 0;
-    }
+        if (d->slots_total == d->slots_free) {
+            if (( err = cprnths_string_copy(k, (struct cprnths_string_t**)&k) ))
+                return err;
 
-    if (d->slots_free)
-        for (struct cprnths_dict_pair_t *restrict D = d->dict;; ++D) {
-            if (D->key == NULL) {
-                struct cprnths_dict_pair_t *restrict const free_slot = D;
-
-                for (struct cprnths_dict_pair_t *const limit = D + d->slots_total; ++D < limit;)
-                    if (D->key != NULL && cprnths_string_equal(D->key, k)) {
-                        if (D->value != v) {
-                            cprnths_ref_increment(v, 1);
-                            cprnths_ref_increment(D->value, -1);
-                            D->value = v;
-                        }
-                        return 0;
-                    }
-
-                if (NULL == ( k = cprnths_string_copy(k) ))
-                    return cprnths_error_nomem;
-
-                free_slot->key = (struct cprnths_string_t*)k;
-                cprnths_ref_increment(v, 1);
-                free_slot->value = v;
-                --d->slots_free;
-                return 0;
-            }
-
-            if (cprnths_string_equal(D->key, k)) {
-                if (D->value != v) {
-                    cprnths_ref_increment(v, 1);
-                    cprnths_ref_increment(D->value, -1);
-                    D->value = v;
-                }
-                return 0;
-            }
+            d->dict->key = (struct cprnths_string_t*)k;
+            cprnths_ref_increment(v, 1);
+            d->dict->value = v;
+            --d->slots_free;
+            return 0;
         }
 
-    {
-        struct cprnths_dict_pair_t *restrict D = d->dict;
-        struct cprnths_dict_pair_t *const limit = D + d->slots_total;
-        do {
-            if (cprnths_string_equal(D->key, k)) {
-                if (D->value != v) {
-                    cprnths_ref_increment(v, 1);
-                    cprnths_ref_increment(D->value, -1);
-                    D->value = v;
-                }
-                return 0;
-            }
-        } while (++D < limit);
-    }
+        if (d->slots_free)
+            for (struct cprnths_dict_pair_t *restrict D = d->dict;; ++D) {
+                if (D->key == NULL) {
+                    struct cprnths_dict_pair_t *restrict const free_slot = D;
 
-    {
-        size_t const slots_total = d->slots_total + d->chunksize;
+                    for (struct cprnths_dict_pair_t *const limit = D + d->slots_total; ++D < limit;)
+                        if (D->key != NULL && cprnths_string_equal(D->key, k)) {
+                            if (D->value != v) {
+                                cprnths_ref_increment(v, 1);
+                                cprnths_ref_increment(D->value, -1);
+                                D->value = v;
+                            }
+                            return 0;
+                        }
+
+                    if (( err = cprnths_string_copy(k, (struct cprnths_string_t**)&k) ))
+                        return err;
+
+                    free_slot->key = (struct cprnths_string_t*)k;
+                    cprnths_ref_increment(v, 1);
+                    free_slot->value = v;
+                    --d->slots_free;
+                    return 0;
+                }
+
+                if (cprnths_string_equal(D->key, k)) {
+                    if (D->value != v) {
+                        cprnths_ref_increment(v, 1);
+                        cprnths_ref_increment(D->value, -1);
+                        D->value = v;
+                    }
+                    return 0;
+                }
+            }
 
         {
-            if (NULL == ( k = cprnths_string_copy(k) ))
-                return cprnths_error_nomem;
-
-            struct cprnths_dict_pair_t *restrict D = realloc(
-                d->dict,
-                slots_total * sizeof(struct cprnths_dict_pair_t)
-            );
-            if (D == NULL) {
-                cprnths_string_destroy((struct cprnths_string_t*)k);
-                return cprnths_error_nomem;
-            }
-
-            d->dict = D;
-            D += d->slots_total;
-            D->key = (struct cprnths_string_t*)k;
-            cprnths_ref_increment(v, 1);
-            D->value = v;
-
-            struct cprnths_dict_pair_t *const limit = d->dict + slots_total;
-            while (++D < limit) {
-                D->key = NULL;
-                D->value = NULL;
-            }
+            struct cprnths_dict_pair_t *restrict D = d->dict;
+            struct cprnths_dict_pair_t *const limit = D + d->slots_total;
+            do {
+                if (cprnths_string_equal(D->key, k)) {
+                    if (D->value != v) {
+                        cprnths_ref_increment(v, 1);
+                        cprnths_ref_increment(D->value, -1);
+                        D->value = v;
+                    }
+                    return 0;
+                }
+            } while (++D < limit);
         }
 
-        d->slots_total = slots_total;
+        {
+            size_t const slots_total = d->slots_total + d->chunksize;
+
+            {
+                if (( err = cprnths_string_copy(k, (struct cprnths_string_t**)&k) ))
+                    return err;
+
+                struct cprnths_dict_pair_t *restrict D = realloc(
+                    d->dict,
+                    slots_total * sizeof(struct cprnths_dict_pair_t)
+                );
+                if (D == NULL) {
+                    cprnths_string_destroy((struct cprnths_string_t*)k);
+                    return cprnths_error_nomem;
+                }
+
+                d->dict = D;
+                D += d->slots_total;
+                D->key = (struct cprnths_string_t*)k;
+                cprnths_ref_increment(v, 1);
+                D->value = v;
+
+                struct cprnths_dict_pair_t *const limit = d->dict + slots_total;
+                while (++D < limit) {
+                    D->key = NULL;
+                    D->value = NULL;
+                }
+            }
+
+            d->slots_total = slots_total;
+        }
     }
 
     d->slots_free += d->chunksize - 1u;
