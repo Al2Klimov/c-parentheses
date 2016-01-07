@@ -59,12 +59,10 @@ struct cprnths_class_t {
     cprnths_error_t
     // (see error.h)
     (*obj_copy)(
-        // original (not NULL)
-        struct cprnths_obj_t const *,
-        // copy (target, not NULL)
         struct cprnths_obj_t*,
-        // copy table to use (not NULL)
+        // copy (not NULL)
         struct cprnths_copytab_t*
+        // copy table to use (not NULL)
     );
 };
 

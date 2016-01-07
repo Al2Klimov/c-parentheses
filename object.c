@@ -60,8 +60,8 @@ cprnths_obj_copy(
         return cprnths_error_nomem;
 
     memcpy(c, o, o->cls->obj_size);
-    if (o->cls->obj_copy != NULL) {
-        cprnths_error_t const err = (*o->cls->obj_copy)(o, c, t);
+    if (c->cls->obj_copy != NULL) {
+        cprnths_error_t const err = (*c->cls->obj_copy)(c, t);
         if (err) {
             free(c);
             return err;
