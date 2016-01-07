@@ -71,11 +71,8 @@ cprnths_execenv_create(
             goto Finish;
         }
 
-        env->stack = cprnths_stack_create(stack_cs, lsymbtab_cs);
-        if (env->stack == NULL) {
-            err = cprnths_error_nomem;
+        if (( err = cprnths_stack_create(&env->stack, stack_cs, lsymbtab_cs) ))
             goto FailStack;
-        }
 
         if (garbtab_cs) {
             if (( err = cprnths_garbtab_create(&env->garbtab, garbtab_cs) ))

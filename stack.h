@@ -32,6 +32,9 @@
 #include "reference.h"
 // cprnths_ref_t
 
+#include "error.h"
+// cprnths_error_t
+
 
 // A stack frame.
 struct cprnths_stack_frame_t {
@@ -70,9 +73,11 @@ struct cprnths_stack_t {
 };
 
 // Create a new stack.
-struct cprnths_stack_t*
-// a new stack or NULL
+cprnths_error_t
+// (see error.h)
 cprnths_stack_create(
+    struct cprnths_stack_t**,
+    // a new stack (not NULL)
     size_t,
     // .frames_chunksize (> 0)
     size_t
@@ -80,8 +85,8 @@ cprnths_stack_create(
 );
 
 // Add a new frame to a stack.
-_Bool
-// was the addition successful?
+cprnths_error_t
+// (see error.h)
 cprnths_stack_pushframe(
     struct cprnths_stack_t*
     // not NULL

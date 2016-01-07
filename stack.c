@@ -42,32 +42,35 @@
 #include "reference.h"
 // cprnths_ref_increment()
 
+#include "error.h"
+// cprnths_error_*
 
-struct cprnths_stack_t*
+
+cprnths_error_t
 cprnths_stack_create(
+    struct cprnths_stack_t* *restrict const s_,
     size_t const frames_cs,
     size_t const lsymbtab_cs
 ) {
-    struct cprnths_stack_t *restrict s = malloc(sizeof(struct cprnths_stack_t));
+    struct cprnths_stack_t *restrict const s = malloc(sizeof(struct cprnths_stack_t));
     if (s == NULL)
-        goto Finish;
+        return cprnths_error_nomem;
 
     s->stack = malloc(frames_cs * sizeof(struct cprnths_stack_frame_t));
     if (s->stack == NULL) {
         free(s);
-        s = NULL;
-        goto Finish;
+        return cprnths_error_nomem;
     }
 
     *(size_t*)&s->frames_chunksize = s->frames_total = s->frames_free = frames_cs;
     *(size_t*)&s->lsymbtab_chunksize = lsymbtab_cs;
     s->current_frame = NULL;
 
-Finish:
-    return s;
+    *s_ = s;
+    return 0;
 }
 
-_Bool
+cprnths_error_t
 cprnths_stack_pushframe(
     struct cprnths_stack_t *restrict const s
 ) {
@@ -79,7 +82,7 @@ cprnths_stack_pushframe(
                 frames_total * sizeof(struct cprnths_stack_frame_t)
             );
             if (S == NULL)
-                return 0;
+                return cprnths_error_nomem;
 
             s->frames_free += s->frames_chunksize;
             if (s->stack != S) {
@@ -93,8 +96,13 @@ cprnths_stack_pushframe(
 
     {
         struct cprnths_dict_t *restrict lsymbtab;
-        if (cprnths_dict_create((struct cprnths_dict_t**)&lsymbtab, s->lsymbtab_chunksize))
-            return 0;
+        {
+            cprnths_error_t const err = cprnths_dict_create(
+                (struct cprnths_dict_t**)&lsymbtab, s->lsymbtab_chunksize
+            );
+            if (err)
+                return err;
+        }
 
         --s->frames_free;
         if (s->current_frame == NULL)
@@ -108,7 +116,7 @@ cprnths_stack_pushframe(
     s->current_frame->return_now = 0;
     s->current_frame->return_val = NULL;
 
-    return 1;
+    return 0;
 }
 
 void
