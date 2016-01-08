@@ -26,9 +26,6 @@
 struct cprnths_exprs_t;
 
 
-#include <stddef.h>
-// size_t
-
 #include "error.h"
 // cprnths_error_t
 
@@ -86,10 +83,7 @@ struct cprnths_exprcls_t {
 // An array of expressions.
 struct cprnths_exprs_t {
     // The array itself (or NULL if empty)
-    struct cprnths_expr_t* exprs;
-
-    // The array's length
-    size_t length;
+    struct cprnths_expr_t** exprs;
 };
 
 

@@ -110,16 +110,15 @@ cprnths_exec(
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_exprs_t const *restrict const exprs
 ) {
-    if (!exprs->length)
+    if (exprs->exprs == NULL)
         return 0;
 
     cprnths_error_t err;
     {
-        struct cprnths_expr_t const *restrict current = exprs->exprs;
-        struct cprnths_expr_t const *const last = current;
+        struct cprnths_expr_t const *const *restrict current = (struct cprnths_expr_t const *const *)exprs->exprs;
         while (!(
-            err = (*current->cls->expr_eval)(current, env, NULL)
-        ) && ++current < last);
+            err = (*(*current)->cls->expr_eval)(*current, env, NULL)
+        ) && *++current != NULL);
     }
     return err;
 }
