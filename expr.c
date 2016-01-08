@@ -29,6 +29,7 @@
 
 #include "expr.h"
 // cprnths_expr_t
+// cprnths_exprs_t
 
 
 void
@@ -37,5 +38,20 @@ cprnths_expr_destroy(
 ) {
     if (e->cls->expr_destroy != NULL)
         (*e->cls->expr_destroy)(e);
+    free(e);
+}
+
+void
+cprnths_exprs_destroy(
+    struct cprnths_exprs_t *restrict const e
+) {
+    if (e->exprs != NULL) {
+        {
+            struct cprnths_expr_t* *restrict expr = e->exprs;
+            do cprnths_expr_destroy(*expr);
+            while (*++expr != NULL);
+        }
+        free(e->exprs);
+    }
     free(e);
 }

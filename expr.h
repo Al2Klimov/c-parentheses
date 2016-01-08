@@ -94,5 +94,12 @@ cprnths_expr_destroy(
     // not NULL
 );
 
+// Destroy an array of expressions.
+void
+cprnths_exprs_destroy(
+    struct cprnths_exprs_t*
+    // not NULL
+);
+
 
 #endif
