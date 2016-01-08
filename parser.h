@@ -107,5 +107,17 @@ cprnths_parse_stmtexprs(
     // where to store the result in case of success (not NULL)
 );
 
+// Parse a file's content.
+cprnths_error_t
+// (see error.h)
+cprnths_parse_file(
+    char const **,
+    // start (not NULL)
+    char const *,
+    // end (not NULL)
+    struct cprnths_exprs_t**
+    // where to store the result in case of success (not NULL)
+);
+
 
 #endif

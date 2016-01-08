@@ -38,6 +38,7 @@
 // cprnths_exprs_t
 // cprnths_exprcls_t
 // cprnths_expr_destroy()
+// cprnths_exprs_destroy()
 
 
 extern struct cprnths_exprcls_t const
@@ -215,5 +216,44 @@ Fail:
 
     free(exprs->exprs);
     free(exprs);
+    return err;
+}
+
+cprnths_error_t
+cprnths_parse_file(
+    char const * *restrict const current_,
+    char const *const end,
+    struct cprnths_exprs_t* *restrict const exprs_
+) {
+    char const *restrict current = *current_;
+
+    // Skip #!...\n (if any)
+    if (end - current >= 2 && *current == '#' && current[1] == '!') {
+        current += 2u;
+        while (current != end && *current++ != '\n');
+    }
+
+    cprnths_error_t err;
+    {
+        struct cprnths_exprs_t *restrict exprs;
+        if (( err = cprnths_parse_stmtexprs(
+            (char const **)&current, end, (struct cprnths_exprs_t**)&exprs
+        ) ))
+            goto Fail;
+
+        if (current != end) {
+            cprnths_exprs_destroy(exprs);
+            err = cprnths_error_parse_unknown;
+            goto Fail;
+        }
+
+        *exprs_ = exprs;
+    }
+
+    // current doesn't have to be forwarded as success implies EOF here.
+    return 0;
+
+Fail:
+    *current_ = current;
     return err;
 }
