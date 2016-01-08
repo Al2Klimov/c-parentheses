@@ -23,13 +23,21 @@
 
 #include <stddef.h>
 // NULL
+// size_t
+
+#include <stdlib.h>
+// malloc()
+// realloc()
+// free()
 
 #include "error.h"
 // cprnths_error_*
 
 #include "expr.h"
 // cprnths_expr_t
+// cprnths_exprs_t
 // cprnths_exprcls_t
+// cprnths_expr_destroy()
 
 
 extern struct cprnths_exprcls_t const
@@ -108,4 +116,104 @@ CommentEnd:;
 Success:
     *current = p;
     return 0;
+}
+
+cprnths_error_t
+cprnths_parse_stmtexprs(
+    char const * *restrict const current_,
+    char const *const end,
+    struct cprnths_exprs_t* *restrict const exprs_
+) {
+    struct cprnths_exprs_t *restrict const exprs = malloc(sizeof(struct cprnths_exprs_t));
+    if (exprs == NULL)
+        return cprnths_error_nomem;
+
+    exprs->exprs = malloc(64u * sizeof(struct cprnths_expr_t*));
+    if (exprs->exprs == NULL) {
+        free(exprs);
+        return cprnths_error_nomem;
+    }
+
+    cprnths_error_t err;
+
+    {
+        size_t used = 0u;
+
+        {
+            size_t available = 64u;
+            struct cprnths_expr_t** reallocate;
+
+            for (char const * current;;) {
+                if (( err = cprnths_parseutil_skip_spcomm(current_, end) ))
+                    goto Fail;
+
+                if (*current_ == end)
+                    goto ParseEnd;
+
+                if (used == available) {
+                    if (NULL == ( reallocate = realloc(
+                        exprs->exprs, ( available += 64u ) * sizeof(struct cprnths_expr_t*)
+                    ) )) {
+                        err = cprnths_error_nomem;
+                        goto Fail;
+                    }
+                    exprs->exprs = reallocate;
+                }
+
+                current = *current_;
+                switch (( err = cprnths_parse_anyexpr(
+                    &current, end, exprs->exprs + used
+                ) )) {
+                    case cprnths_success:
+                        break;
+                    case cprnths_error_parse_unknown:
+                        goto ParseEnd;
+                    default:
+                        *current_ = current;
+                        goto Fail;
+                }
+
+                if (exprs->exprs[used++]->cls != &cprnths_exprcls_assign) {
+                    err = cprnths_error_parse_nostmt;
+                    goto Fail;
+                }
+                *current_ = current;
+            }
+
+ParseEnd:
+            if (used) {
+                {
+                    size_t const final_size = used + 1u;
+                    if (available != final_size) {
+                        if (NULL == ( reallocate = realloc(
+                            exprs->exprs, final_size * sizeof(struct cprnths_expr_t*)
+                        ) )) {
+                            err = cprnths_error_nomem;
+                            goto Fail;
+                        }
+                        exprs->exprs = reallocate;
+                    }
+                }
+
+                exprs->exprs[used] = NULL;
+            } else {
+                free(exprs->exprs);
+                exprs->exprs = NULL;
+            }
+        }
+
+        *exprs_ = exprs;
+        return 0;
+
+Fail:
+        if (used) {
+            struct cprnths_expr_t* *restrict expr = exprs->exprs + used;
+            do cprnths_expr_destroy(*--expr);
+            while (expr != exprs->exprs);
+        }
+    }
+
+    free(exprs->exprs);
+    free(exprs);
+    return err;
 }

@@ -31,6 +31,7 @@
 
 #include "expr.h"
 // cprnths_expr_t
+// cprnths_exprs_t
 
 #include "error.h"
 // cprnths_error_t
@@ -91,6 +92,18 @@ cprnths_parse_anyexpr(
     char const *,
     // end of string (not NULL)
     struct cprnths_expr_t**
+    // where to store the result in case of success (not NULL)
+);
+
+// Parse statement expressions.
+cprnths_error_t
+// (see error.h)
+cprnths_parse_stmtexprs(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    struct cprnths_exprs_t**
     // where to store the result in case of success (not NULL)
 );
 

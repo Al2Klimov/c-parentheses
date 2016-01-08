@@ -36,8 +36,10 @@ typedef enum {
     // non-matching type or invalid syntax
     cprnths_error_parse_malform,
     // matching type, but invalid syntax
-    cprnths_error_parse_eof
+    cprnths_error_parse_eof,
     // unexpected end of string
+    cprnths_error_parse_nostmt
+    // unexpected (but valid) non-statement expression
 } cprnths_error_t;
 
 
