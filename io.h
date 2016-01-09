@@ -18,35 +18,29 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Typedefs for error handling
-#ifndef CPARENTHESES_INCLUDE_ERROR
-#define CPARENTHESES_INCLUDE_ERROR 1
+// Functions for I/O
+#ifndef CPARENTHESES_INCLUDE_IO
+#define CPARENTHESES_INCLUDE_IO 1
 
 
-// The kind of an error (if any).
-typedef enum {
-    // Common errors:
-    cprnths_success = 0,
-    // no error
-    cprnths_error_nomem,
-    // out of memory
+#include <stddef.h>
+// size_t
 
-    // Parsing errors:
-    cprnths_error_parse_unknown,
-    // non-matching type or invalid syntax
-    cprnths_error_parse_malform,
-    // matching type, but invalid syntax
-    cprnths_error_parse_eof,
-    // unexpected end of string
-    cprnths_error_parse_nostmt,
-    // unexpected (but valid) non-statement expression
+#include "error.h"
+// cprnths_error_t
 
-    // I/O errors:
-    cprnths_error_io_open,
-    // couldn't open a file
-    cprnths_error_io_read
-    // couldn't read a file
-} cprnths_error_t;
+
+// Get a file's content.
+cprnths_error_t
+// (see error.h)
+cprnths_fcat(
+    char const *,
+    // file name (or NULL for stdin)
+    char**,
+    // the file's content (target, not NULL)
+    size_t*
+    // the file's content's length (target, not NULL)
+);
 
 
 #endif
