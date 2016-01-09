@@ -70,7 +70,7 @@ cprnths_parseutil_startswith_word(
         return -1;
     if ((*subj += len) == end)
         return 2;
-    return cprnths_parseutil_is_wordchar(**subj);
+    return !cprnths_parseutil_is_wordchar(**subj);
 }
 
 // Skip whitespace and comments (C and BCPL).
