@@ -376,10 +376,12 @@ cpintern_expr_assign_eval(
         }
     }
 
-    if (ref_ == NULL)
-        cprnths_ref_increment(ref, -1);
-    else
+    if (ref_ == NULL) {
+        if (ref != NULL)
+            cprnths_ref_increment(ref, -1);
+    } else {
         *ref_ = ref;
+    }
     return 0;
 }
 
