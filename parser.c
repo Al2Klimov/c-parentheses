@@ -39,6 +39,7 @@
 // cprnths_exprcls_t
 // cprnths_expr_destroy()
 // cprnths_exprs_destroy()
+// cprnths_jmptab_row_t
 
 #include "parser.h"
 // cprnths_jmptab_prep_t
@@ -246,6 +247,29 @@ ParseEnd:
                     free(exprs->exprs);
                     exprs->exprs = NULL;
                 }
+            }
+
+            if (jmptab_prep.used) {
+                if (NULL == ( exprs->jmptab = malloc(
+                    (jmptab_prep.used + 1u) * sizeof(struct cprnths_jmptab_row_t)
+                ) )) {
+                    err = cprnths_error_nomem;
+                    goto Fail;
+                }
+
+                struct cprnths_jmptab_row_t *restrict current = exprs->jmptab;
+                {
+                    struct cprnths_jmptab_row_t *const limit = current + jmptab_prep.used;
+                    struct cprnths_jmptab_prep_row_t const *restrict current_prep = jmptab_prep.jmptab_prep;
+                    do {
+                        current->label = current_prep->label;
+                        current->stmt = (struct cprnths_expr_t const *const *)exprs->exprs + current_prep++->stmt_offset;
+                    } while (++current < limit);
+                }
+                current->label = NULL;
+                current->stmt = NULL;
+            } else {
+                exprs->jmptab = NULL;
             }
 
             *exprs_ = exprs;

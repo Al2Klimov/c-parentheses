@@ -52,6 +52,8 @@ cprnths_exprs_destroy(
             while (*++expr != NULL);
         }
         free(e->exprs);
+        if (e->jmptab != NULL)
+            free(e->jmptab);
     }
     free(e);
 }
