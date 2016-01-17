@@ -40,6 +40,10 @@
 // cprnths_expr_destroy()
 // cprnths_exprs_destroy()
 
+#include "parser.h"
+// cprnths_jmptab_prep_t
+// cprnths_jmptab_prep_row_t
+
 
 extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
@@ -125,97 +129,124 @@ cprnths_parse_stmtexprs(
     char const *const end,
     struct cprnths_exprs_t* *restrict const exprs_
 ) {
+    cprnths_error_t err;
+
     struct cprnths_exprs_t *restrict const exprs = malloc(sizeof(struct cprnths_exprs_t));
-    if (exprs == NULL)
-        return cprnths_error_nomem;
+    if (exprs == NULL) {
+        err = cprnths_error_nomem;
+        goto Finish;
+    }
 
     exprs->exprs = malloc(64u * sizeof(struct cprnths_expr_t*));
     if (exprs->exprs == NULL) {
-        free(exprs);
-        return cprnths_error_nomem;
+        err = cprnths_error_nomem;
+        goto CleanUpExprs;
     }
 
-    cprnths_error_t err;
-
     {
-        size_t used = 0u;
+        struct cprnths_jmptab_prep_t jmptab_prep;
+
+        jmptab_prep.jmptab_prep = malloc(16u * sizeof(struct cprnths_jmptab_prep_row_t));
+        if (jmptab_prep.jmptab_prep == NULL) {
+            err = cprnths_error_nomem;
+            goto CleanUpExprsExprs;
+        }
+
+        jmptab_prep.available = 16u;
+        jmptab_prep.used = jmptab_prep.current_stmt_offset = 0u;
 
         {
-            size_t available = 64u;
-            struct cprnths_expr_t** reallocate;
+            size_t used = 0u;
 
-            for (char const * current;;) {
-                if (( err = cprnths_parseutil_skip_spcomm(current_, end) ))
-                    goto Fail;
+            {
+                size_t available = 64u;
+                struct cprnths_expr_t** reallocate;
 
-                if (*current_ == end)
-                    goto ParseEnd;
-
-                if (used == available) {
-                    if (NULL == ( reallocate = realloc(
-                        exprs->exprs, ( available += 64u ) * sizeof(struct cprnths_expr_t*)
-                    ) )) {
-                        err = cprnths_error_nomem;
+                for (char const * current;;) {
+                    if (( err = cprnths_parseutil_skip_spcomm(current_, end) ))
                         goto Fail;
-                    }
-                    exprs->exprs = reallocate;
-                }
 
-                current = *current_;
-                switch (( err = cprnths_parse_anyexpr(
-                    &current, end, exprs->exprs + used
-                ) )) {
-                    case cprnths_success:
-                        break;
-                    case cprnths_error_parse_unknown:
+                    if (*current_ == end)
                         goto ParseEnd;
-                    default:
-                        *current_ = current;
-                        goto Fail;
-                }
 
-                if (exprs->exprs[used++]->cls != &cprnths_exprcls_assign) {
-                    err = cprnths_error_parse_nostmt;
-                    goto Fail;
-                }
-                *current_ = current;
-            }
-
-ParseEnd:
-            if (used) {
-                {
-                    size_t const final_size = used + 1u;
-                    if (available != final_size) {
+                    if (used == available) {
                         if (NULL == ( reallocate = realloc(
-                            exprs->exprs, final_size * sizeof(struct cprnths_expr_t*)
+                            exprs->exprs, ( available += 64u ) * sizeof(struct cprnths_expr_t*)
                         ) )) {
                             err = cprnths_error_nomem;
                             goto Fail;
                         }
                         exprs->exprs = reallocate;
                     }
+
+                    current = *current_;
+                    switch (( err = cprnths_parse_anyexpr(
+                        &current, end, exprs->exprs + used
+                    ) )) {
+                        case cprnths_success:
+                            break;
+                        case cprnths_error_parse_unknown:
+                            goto ParseEnd;
+                        default:
+                            *current_ = current;
+                            goto Fail;
+                    }
+
+                    if (exprs->exprs[used++]->cls != &cprnths_exprcls_assign) {
+                        err = cprnths_error_parse_nostmt;
+                        goto Fail;
+                    }
+                    *current_ = current;
                 }
 
-                exprs->exprs[used] = NULL;
-            } else {
-                free(exprs->exprs);
-                exprs->exprs = NULL;
+ParseEnd:
+                if (used) {
+                    {
+                        size_t const final_size = used + 1u;
+                        if (available != final_size) {
+                            if (NULL == ( reallocate = realloc(
+                                exprs->exprs, final_size * sizeof(struct cprnths_expr_t*)
+                            ) )) {
+                                err = cprnths_error_nomem;
+                                goto Fail;
+                            }
+                            exprs->exprs = reallocate;
+                        }
+                    }
+
+                    exprs->exprs[used] = NULL;
+                } else {
+                    free(exprs->exprs);
+                    exprs->exprs = NULL;
+                }
+            }
+
+            *exprs_ = exprs;
+            err = 0;
+            goto CleanUpJmpTabPrep;
+
+Fail:
+            if (used) {
+                struct cprnths_expr_t* *restrict expr = exprs->exprs + used;
+                do cprnths_expr_destroy(*--expr);
+                while (expr != exprs->exprs);
             }
         }
 
-        *exprs_ = exprs;
-        return 0;
-
-Fail:
-        if (used) {
-            struct cprnths_expr_t* *restrict expr = exprs->exprs + used;
-            do cprnths_expr_destroy(*--expr);
-            while (expr != exprs->exprs);
-        }
+CleanUpJmpTabPrep:
+        free(jmptab_prep.jmptab_prep);
     }
 
+    if (!err)
+        goto Finish;
+
+CleanUpExprsExprs:
     free(exprs->exprs);
+
+CleanUpExprs:
     free(exprs);
+
+Finish:
     return err;
 }
 
