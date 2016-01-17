@@ -23,6 +23,7 @@
 #define CPARENTHESES_INCLUDE_EXPR 1
 
 
+struct cprnths_expr_t;
 struct cprnths_exprs_t;
 
 
@@ -34,6 +35,9 @@ struct cprnths_exprs_t;
 
 #include "reference.h"
 // cprnths_ref_t
+
+#include "parser.h"
+// cprnths_jmptab_prep_t
 
 
 struct cprnths_exprcls_t;
@@ -54,8 +58,10 @@ struct cprnths_exprcls_t {
         // current position (not NULL, SHALL be changed in case of success)
         char const *,
         // end of string (not NULL)
-        struct cprnths_expr_t **
+        struct cprnths_expr_t**,
         // where to store the parsed expression? (not NULL)
+        struct cprnths_jmptab_prep_t*
+        // (see parser.h, not NULL)
     );
 
     // Evaluate an expression.

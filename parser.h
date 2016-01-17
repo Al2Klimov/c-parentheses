@@ -23,6 +23,9 @@
 #define CPARENTHESES_INCLUDE_PARSER 1
 
 
+struct cprnths_jmptab_prep_t;
+
+
 #include <stddef.h>
 // size_t
 
@@ -114,8 +117,10 @@ cprnths_parse_anyexpr(
     // current position (not NULL)
     char const *,
     // end of string (not NULL)
-    struct cprnths_expr_t**
+    struct cprnths_expr_t**,
     // where to store the result in case of success (not NULL)
+    struct cprnths_jmptab_prep_t*
+    // (see above, not NULL)
 );
 
 // Parse statement expressions.

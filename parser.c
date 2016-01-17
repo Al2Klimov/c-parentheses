@@ -60,13 +60,14 @@ cprnths_error_t
 cprnths_parse_anyexpr(
     char const * *restrict const current,
     char const *const end,
-    struct cprnths_expr_t* *restrict const expr
+    struct cprnths_expr_t* *restrict const expr,
+    struct cprnths_jmptab_prep_t *restrict const jmptab_prep
 ) {
     cprnths_error_t err;
     {
         struct cprnths_exprcls_t const *const *restrict cls = cpintern_exprclss;
         while (cprnths_error_parse_unknown == (
-            err = (*(*cls)->expr_parse)(current, end, expr)
+            err = (*(*cls)->expr_parse)(current, end, expr, jmptab_prep)
         ) && *++cls != NULL);
     }
     return err;
@@ -181,7 +182,7 @@ cprnths_parse_stmtexprs(
 
                     current = *current_;
                     switch (( err = cprnths_parse_anyexpr(
-                        &current, end, exprs->exprs + used
+                        &current, end, exprs->exprs + used, &jmptab_prep
                     ) )) {
                         case cprnths_success:
                             break;

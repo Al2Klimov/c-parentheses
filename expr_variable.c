@@ -34,6 +34,7 @@
 
 #include "parser.h"
 // cprnths_parseutil_is_wordchar()
+// cprnths_jmptab_prep_t
 
 #include "error.h"
 // cprnths_error_*
@@ -66,8 +67,11 @@ cprnths_error_t
 cpintern_expr_variable_parse(
     char const * *restrict const current_,
     char const *const end,
-    struct cprnths_expr_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_,
+    struct cprnths_jmptab_prep_t *restrict const jmptab_prep
 ) {
+    (void)jmptab_prep;
+
     if (*current_ == end)
         return cprnths_error_parse_unknown;
 
