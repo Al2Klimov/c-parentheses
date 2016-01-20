@@ -38,7 +38,7 @@ struct cprnths_class_t;
 // The "base class" for "everything else".
 struct cprnths_obj_t {
     // The object's type (not NULL)
-    struct cprnths_class_t const * cls;
+    struct cprnths_class_t const *const cls;
 };
 
 // This is for storing information about datatypes non-redundandly.
