@@ -47,12 +47,14 @@
 
 extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
+    cprnths_exprcls_string,
     cprnths_exprcls_assign,
     cprnths_exprcls_bool;
 
 static
 struct cprnths_exprcls_t const *const cpintern_exprclss[] = {
     &cprnths_exprcls_variable,
+    &cprnths_exprcls_string,
     &cprnths_exprcls_assign,
     &cprnths_exprcls_bool,
     NULL
