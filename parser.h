@@ -36,6 +36,9 @@
 #include "error.h"
 // cprnths_error_t
 
+#include "string.h"
+// cprnths_string_t
+
 
 // Is a character in [A-Za-z0-9_] ?
 static inline
@@ -116,6 +119,18 @@ cprnths_parse_file(
     char const *,
     // end (not NULL)
     struct cprnths_exprs_t**
+    // where to store the result in case of success (not NULL)
+);
+
+// Parse a string constant.
+cprnths_error_t
+// (see error.h)
+cprnths_parseutil_string(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    struct cprnths_string_t**
     // where to store the result in case of success (not NULL)
 );
 

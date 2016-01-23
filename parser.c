@@ -40,6 +40,10 @@
 // cprnths_expr_destroy()
 // cprnths_exprs_destroy()
 
+#include "string.h"
+// cprnths_string_t
+// cprnths_string_create()
+
 
 extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
@@ -258,4 +262,56 @@ cprnths_parse_file(
 Fail:
     *current_ = current;
     return err;
+}
+
+cprnths_error_t
+cprnths_parseutil_string(
+    char const * *restrict const current_,
+    char const *const end,
+    struct cprnths_string_t* *restrict const target
+) {
+    if (*current_ == end || **current_ != '\'')
+        return cprnths_error_parse_unknown;
+
+    {
+        char const *restrict current = *current_ + 1u;
+        char const *const start = current;
+        size_t quote_chars = 0u;
+
+        for (;; ++current) {
+            if (current == end)
+                return cprnths_error_parse_eof;
+
+            if (*current == '\'') {
+                if (++current == end || *current != '\'')
+                    break;
+                else
+                    ++quote_chars;
+            }
+        }
+        *current_ = current;
+
+        char const *const stop = current - 1u;
+        size_t const length = stop - (start + quote_chars);
+
+        if (length) {
+            char buf[length];
+            current = start;
+
+            {
+                char *restrict buf_current = buf;
+                do {
+                    *buf_current++ = *current;
+                    if (*current == '\'')
+                        current += 2u;
+                    else
+                        ++current;
+                } while (current < stop);
+            }
+
+            return cprnths_string_create(target, buf, length);
+        }
+    }
+
+    return cprnths_string_create(target, NULL, 0u);
 }
