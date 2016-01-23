@@ -138,6 +138,8 @@ cpintern_expr_bool_eval(
 ) {
     (void)env;
 
+    // Not checking for target == NULL as
+    // boolean constants aren't allowed in void context.
     return cprnths_obj_bool_create(
         ((struct cpintern_expr_bool_t const *)expr)->value, target
     );
