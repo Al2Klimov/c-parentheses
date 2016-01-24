@@ -83,10 +83,19 @@ cpintern_obj_string_copy(
     return cprnths_string_copy(*value, value);
 }
 
+static
+_Bool
+cpintern_obj_string_2bool(
+    struct cprnths_obj_t const *restrict const obj
+) {
+    return ((struct cpintern_obj_string_t const *)obj)->value->length;
+}
+
 struct cprnths_class_t const cprnths_class_string = {
     sizeof(struct cpintern_obj_string_t),
     &cpintern_obj_string_destroy,
-    &cpintern_obj_string_copy
+    &cpintern_obj_string_copy,
+    &cpintern_obj_string_2bool
 };
 
 cprnths_error_t

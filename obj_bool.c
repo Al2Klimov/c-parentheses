@@ -55,8 +55,19 @@ struct cpintern_obj_bool_t {
     _Bool const value;
 };
 
+static
+_Bool
+cpintern_obj_bool_2bool(
+    struct cprnths_obj_t const *restrict const obj
+) {
+    return ((struct cpintern_obj_bool_t const *)obj)->value;
+}
+
 struct cprnths_class_t const cprnths_class_bool = {
-    sizeof(struct cpintern_obj_bool_t), NULL, NULL
+    sizeof(struct cpintern_obj_bool_t),
+    NULL,
+    NULL,
+    &cpintern_obj_bool_2bool
 };
 
 cprnths_error_t
