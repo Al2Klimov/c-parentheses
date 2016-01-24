@@ -104,5 +104,12 @@ cprnths_ref_copy_newtab(
     // .chunksize
 );
 
+// Get the object's truth value
+_Bool
+cprnths_ref_obj2bool(
+    struct cprnths_ref_t const *
+    // MAY be NULL
+);
+
 
 #endif

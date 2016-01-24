@@ -138,3 +138,11 @@ cprnths_ref_copy_newtab(
 
     return err;
 }
+
+_Bool
+cprnths_ref_obj2bool(
+    struct cprnths_ref_t const *const r
+) {
+    return !(r == NULL || r->obj->cls->obj2bool == NULL)
+        && (*r->obj->cls->obj2bool)(r->obj);
+}
