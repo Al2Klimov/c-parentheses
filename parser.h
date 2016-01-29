@@ -134,5 +134,17 @@ cprnths_parseutil_string(
     // where to store the result in case of success (not NULL)
 );
 
+// Parse the start of a function call.
+cprnths_error_t
+// (see error.h)
+cprnths_parseutil_funccall_start(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    char const *
+    // the expected function's name (not NULL)
+);
+
 
 #endif

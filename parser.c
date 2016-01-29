@@ -44,6 +44,9 @@
 // cprnths_string_t
 // cprnths_string_create()
 
+#include "parser.h"
+// cprnths_parseutil_startswith_word()
+
 
 extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
@@ -316,4 +319,49 @@ cprnths_parseutil_string(
     }
 
     return cprnths_string_create(target, NULL, 0u);
+}
+
+cprnths_error_t
+cprnths_parseutil_funccall_start(
+    char const * *restrict const current_,
+    char const *const end,
+    char const *restrict const func_name
+) {
+    char const *restrict current = *current_;
+
+    switch (cprnths_parseutil_startswith_word((char const **)&current, end, func_name)) {
+        case -1:
+        case 0:
+            return cprnths_error_parse_unknown;
+        case 2:
+            return cprnths_error_parse_eof;
+    }
+
+    cprnths_error_t err;
+
+    if (*current != '(') {
+        if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
+            goto Finish;
+        if (current == end)
+            return cprnths_error_parse_eof;
+
+        if (*current != '(') {
+            err = cprnths_error_parse_malform;
+            goto Finish;
+        }
+    }
+    ++current;
+
+    if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
+        goto Finish;
+
+    if (current == end)
+        return cprnths_error_parse_eof;
+
+    // Already done while calling cprnths_parseutil_skip_spcomm().
+    //err = 0;
+
+Finish:
+    *current_ = current;
+    return err;
 }
