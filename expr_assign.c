@@ -106,7 +106,7 @@ cpintern_expr_assign_parse(
     char const *restrict current = *current_;
     cprnths_error_t err;
 
-    switch (cprnths_parseutil_startswith_word((char const **)&current, end, "Assign", 6u)) {
+    switch (cprnths_parseutil_startswith_word((char const **)&current, end, "Assign")) {
         case -1:
         case 0:
             return cprnths_error_parse_unknown;

@@ -28,6 +28,7 @@
 
 #include <string.h>
 // memcmp()
+// strlen()
 
 #include "expr.h"
 // cprnths_expr_t
@@ -64,11 +65,10 @@ cprnths_parseutil_startswith_word(
     // not NULL
     char const *const end,
     // end of <subj> (not NULL)
-    char const *restrict const frag,
+    char const *restrict const frag
     // not NULL
-    size_t const len
-    // length of <frag> (> 0)
 ) {
+    size_t const len = strlen(frag);
     if ((size_t)(end - *subj) < len || memcmp(*subj, frag, len))
         return -1;
     if ((*subj += len) == end)

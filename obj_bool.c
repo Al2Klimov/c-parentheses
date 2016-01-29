@@ -113,10 +113,10 @@ cpintern_expr_bool_parse(
     {
         char const *restrict current = *current_;
 
-        switch (cprnths_parseutil_startswith_word((char const **)&current, end, "True", 4u)) {
+        switch (cprnths_parseutil_startswith_word((char const **)&current, end, "True")) {
             case -1:
             case 0:
-                switch (cprnths_parseutil_startswith_word((char const **)&current, end, "False", 5u)) {
+                switch (cprnths_parseutil_startswith_word((char const **)&current, end, "False")) {
                     case -1:
                     case 0:
                         return cprnths_error_parse_unknown;
