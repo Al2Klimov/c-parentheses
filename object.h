@@ -38,7 +38,7 @@ struct cprnths_class_t;
 // The "base class" for "everything else".
 struct cprnths_obj_t {
     // The object's type (not NULL)
-    struct cprnths_class_t const * cls;
+    struct cprnths_class_t const *const cls;
 };
 
 // This is for storing information about datatypes non-redundandly.
@@ -46,11 +46,10 @@ struct cprnths_class_t {
     // An object's size (in bytes, > 0)
     size_t obj_size;
 
-    // Each of the following function pointers MAY be NULL if there's nothing to do.
-
     // Destroy the object
     void
     (*obj_destroy)(
+    // MAY be NULL if there's nothing to do
         struct cprnths_obj_t*
         // the object to clean up (not NULL)
     );
@@ -59,10 +58,19 @@ struct cprnths_class_t {
     cprnths_error_t
     // (see error.h)
     (*obj_copy)(
+    // MAY be NULL if there's nothing to do
         struct cprnths_obj_t*,
         // copy (not NULL)
         struct cprnths_copytab_t*
         // copy table to use (not NULL)
+    );
+
+    // Get the object's truth value
+    _Bool
+    (*obj2bool)(
+    // MAY be NULL if n/a
+        struct cprnths_obj_t const *
+        // not NULL
     );
 };
 

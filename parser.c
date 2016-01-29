@@ -43,16 +43,25 @@
 #include "parser.h"
 // cprnths_jmptab_prep_t
 // cprnths_jmptab_prep_row_t
+// cprnths_parseutil_startswith_word()
+
+#include "string.h"
+// cprnths_string_t
+// cprnths_string_create()
 
 
 extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
-    cprnths_exprcls_assign;
+    cprnths_exprcls_string,
+    cprnths_exprcls_assign,
+    cprnths_exprcls_bool;
 
 static
 struct cprnths_exprcls_t const *const cpintern_exprclss[] = {
     &cprnths_exprcls_variable,
+    &cprnths_exprcls_string,
     &cprnths_exprcls_assign,
+    &cprnths_exprcls_bool,
     NULL
 };
 
@@ -286,6 +295,103 @@ cprnths_parse_file(
     return 0;
 
 Fail:
+    *current_ = current;
+    return err;
+}
+
+cprnths_error_t
+cprnths_parseutil_string(
+    char const * *restrict const current_,
+    char const *const end,
+    struct cprnths_string_t* *restrict const target
+) {
+    if (*current_ == end || **current_ != '\'')
+        return cprnths_error_parse_unknown;
+
+    {
+        char const *restrict current = *current_ + 1u;
+        char const *const start = current;
+        size_t quote_chars = 0u;
+
+        for (;; ++current) {
+            if (current == end)
+                return cprnths_error_parse_eof;
+
+            if (*current == '\'') {
+                if (++current == end || *current != '\'')
+                    break;
+                else
+                    ++quote_chars;
+            }
+        }
+        *current_ = current;
+
+        char const *const stop = current - 1u;
+        size_t const length = stop - (start + quote_chars);
+
+        if (length) {
+            char buf[length];
+            current = start;
+
+            {
+                char *restrict buf_current = buf;
+                do {
+                    *buf_current++ = *current;
+                    if (*current == '\'')
+                        current += 2u;
+                    else
+                        ++current;
+                } while (current < stop);
+            }
+
+            return cprnths_string_create(target, buf, length);
+        }
+    }
+
+    return cprnths_string_create(target, NULL, 0u);
+}
+
+cprnths_error_t
+cprnths_parseutil_funccall_start(
+    char const * *restrict const current_,
+    char const *const end,
+    char const *restrict const func_name
+) {
+    char const *restrict current = *current_;
+
+    switch (cprnths_parseutil_startswith_word((char const **)&current, end, func_name)) {
+        case -1:
+        case 0:
+            return cprnths_error_parse_unknown;
+        case 2:
+            return cprnths_error_parse_eof;
+    }
+
+    cprnths_error_t err;
+
+    if (*current != '(') {
+        if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
+            goto Finish;
+        if (current == end)
+            return cprnths_error_parse_eof;
+
+        if (*current != '(') {
+            err = cprnths_error_parse_malform;
+            goto Finish;
+        }
+    }
+    ++current;
+
+    if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
+        goto Finish;
+
+    if (current == end)
+        return cprnths_error_parse_eof;
+
+    // Already done while calling cprnths_parseutil_skip_spcomm().
+    //err = 0;
+
+Finish:
     *current_ = current;
     return err;
 }

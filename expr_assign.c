@@ -36,11 +36,11 @@
 // cprnths_expr_destroy()
 
 #include "parser.h"
-// cprnths_parseutil_startswith_word()
 // cprnths_parseutil_is_wordchar()
 // cprnths_parseutil_skip_spcomm()
 // cprnths_parse_anyexpr()
 // cprnths_jmptab_prep_t
+// cprnths_parseutil_funccall_start()
 
 #include "error.h"
 // cprnths_error_*
@@ -108,24 +108,8 @@ cpintern_expr_assign_parse(
     char const *restrict current = *current_;
     cprnths_error_t err;
 
-    switch (cprnths_parseutil_startswith_word((char const **)&current, end, "Assign", 6u)) {
-        case -1:
-        case 0:
-            return cprnths_error_parse_unknown;
-        case 2:
-            err = cprnths_error_parse_eof;
-            goto Finish;
-    }
-    // Assign\W.*
-
-    ASSERT_CHAR('(', Finish)
-    // Assign\s*\(.*
-
-    SKIP_SPCOMM(Finish)
-    // Assign\s*\(\s*.*
-
-    ASSERT_NO_EOF(Finish)
-    // Assign\s*\(\s*.+
+    if (( err = cprnths_parseutil_funccall_start((char const **)&current, end, "Assign") ))
+        goto Finish;
 
     {
         struct cpintern_expr_assign_t *restrict const expr = malloc(sizeof(struct cpintern_expr_assign_t));

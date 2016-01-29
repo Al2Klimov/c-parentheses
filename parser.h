@@ -31,6 +31,7 @@ struct cprnths_jmptab_prep_t;
 
 #include <string.h>
 // memcmp()
+// strlen()
 
 #include "expr.h"
 // cprnths_expr_t
@@ -87,11 +88,10 @@ cprnths_parseutil_startswith_word(
     // not NULL
     char const *const end,
     // end of <subj> (not NULL)
-    char const *restrict const frag,
+    char const *restrict const frag
     // not NULL
-    size_t const len
-    // length of <frag> (> 0)
 ) {
+    size_t const len = strlen(frag);
     if ((size_t)(end - *subj) < len || memcmp(*subj, frag, len))
         return -1;
     if ((*subj += len) == end)
@@ -145,6 +145,30 @@ cprnths_parse_file(
     // end (not NULL)
     struct cprnths_exprs_t**
     // where to store the result in case of success (not NULL)
+);
+
+// Parse a string constant.
+cprnths_error_t
+// (see error.h)
+cprnths_parseutil_string(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    struct cprnths_string_t**
+    // where to store the result in case of success (not NULL)
+);
+
+// Parse the start of a function call.
+cprnths_error_t
+// (see error.h)
+cprnths_parseutil_funccall_start(
+    char const **,
+    // current position (not NULL)
+    char const *,
+    // end of string (not NULL)
+    char const *
+    // the expected function's name (not NULL)
 );
 
 
