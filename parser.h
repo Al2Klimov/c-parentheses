@@ -46,8 +46,8 @@ struct cprnths_jmptab_prep_t;
 
 // This is for preparing the jump table.
 struct cprnths_jmptab_prep_row_t {
-    struct cprnths_string_t** labels;
-    // labels of a statement (not NULL)
+    struct cprnths_string_t* label;
+    // label of a statement (not NULL)
     size_t stmt_offset;
     // index of the statement
 };
