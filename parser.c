@@ -43,6 +43,7 @@
 #include "string.h"
 // cprnths_string_t
 // cprnths_string_create()
+// cprnths_string_create_customds()
 
 #include "parser.h"
 // cprnths_parseutil_startswith_word()
@@ -269,6 +270,24 @@ Fail:
     return err;
 }
 
+static
+void
+cpintern_parseutil_string_ds(
+    void *const src_,
+    char *restrict tgt,
+    size_t const length
+) {
+    char const *restrict src = src_;
+    char *const stop = tgt + length;
+    do {
+        *tgt++ = *src;
+        if (*src == '\'')
+            src += 2u;
+        else
+            ++src;
+    } while (tgt < stop);
+}
+
 cprnths_error_t
 cprnths_parseutil_string(
     char const * *restrict const current_,
@@ -296,26 +315,9 @@ cprnths_parseutil_string(
         }
         *current_ = current;
 
-        char const *const stop = current - 1u;
-        size_t const length = stop - (start + quote_chars);
-
-        if (length) {
-            char buf[length];
-            current = start;
-
-            {
-                char *restrict buf_current = buf;
-                do {
-                    *buf_current++ = *current;
-                    if (*current == '\'')
-                        current += 2u;
-                    else
-                        ++current;
-                } while (current < stop);
-            }
-
-            return cprnths_string_create(target, buf, length);
-        }
+        size_t const length = current - (start + quote_chars + 1u);
+        if (length)
+            return cprnths_string_create_customds(target, length, &cpintern_parseutil_string_ds, (void*)start);
     }
 
     return cprnths_string_create(target, NULL, 0u);

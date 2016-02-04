@@ -62,6 +62,26 @@ cprnths_string_create(
     // the amount of characters to use
 );
 
+// Create a new string from a custom data source.
+cprnths_error_t
+// (see error.h)
+cprnths_string_create_customds(
+    struct cprnths_string_t**,
+    // a new string (not NULL)
+    size_t,
+    // the string's length
+    void (*)(void*, char*, size_t),
+    // This function (not NULL) will be called
+    // once the target buffer becomes ready to be written to.
+    // It should write something useful to the buffer.
+    // Arguments:
+    //   1. (see below)
+    //   2. the target buffer
+    //   3. the target buffer's length
+    void*
+    // MAY or MUST NOT be NULL, depending on the above function
+);
+
 // Copy a string.
 cprnths_error_t
 // (see error.h)
