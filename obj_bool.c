@@ -106,8 +106,11 @@ cprnths_error_t
 cpintern_expr_bool_parse(
     char const * *restrict const current_,
     char const *const end,
-    struct cprnths_expr_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_,
+    struct cprnths_jmptab_prep_t *restrict const jmptab_prep
 ) {
+    (void)jmptab_prep;
+
     _Bool value;
 
     {
