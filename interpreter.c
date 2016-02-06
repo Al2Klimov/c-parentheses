@@ -112,6 +112,9 @@ int main(int const argc, char* *const argv) {
                 case cprnths_error_parse_nostmt:
                     msg = "unexpected non-statement expression";
                     break;
+                case cprnths_error_parse_double_jlabel:
+                    msg = "a jump label is used more than once";
+                    break;
                 default:
                     msg = "invalid syntax";
             }

@@ -54,6 +54,7 @@ extern struct cprnths_exprcls_t const
     cprnths_exprcls_variable,
     cprnths_exprcls_string,
     cprnths_exprcls_assign,
+    cprnths_exprcls_jlabel,
     cprnths_exprcls_bool;
 
 static
@@ -61,7 +62,15 @@ struct cprnths_exprcls_t const *const cpintern_exprclss[] = {
     &cprnths_exprcls_variable,
     &cprnths_exprcls_string,
     &cprnths_exprcls_assign,
+    &cprnths_exprcls_jlabel,
     &cprnths_exprcls_bool,
+    NULL
+};
+
+static
+struct cprnths_exprcls_t const *const cpintern_stmtexprclss[] = {
+    &cprnths_exprcls_assign,
+    &cprnths_exprcls_jlabel,
     NULL
 };
 
@@ -172,7 +181,7 @@ cprnths_parse_stmtexprs(
                 size_t available = 64u;
                 struct cprnths_expr_t** reallocate;
 
-                for (char const * current;;) {
+                for (char const * current;; ++jmptab_prep.current_stmt_offset) {
                     if (( err = cprnths_parseutil_skip_spcomm(current_, end) ))
                         goto Fail;
 
@@ -202,9 +211,17 @@ cprnths_parse_stmtexprs(
                             goto Fail;
                     }
 
-                    if (exprs->exprs[used++]->cls != &cprnths_exprcls_assign) {
-                        err = cprnths_error_parse_nostmt;
-                        goto Fail;
+                    {
+                        struct cprnths_exprcls_t const *const cls = exprs->exprs[used++]->cls;
+                        struct cprnths_exprcls_t const *const *restrict clsp = cpintern_stmtexprclss;
+                        for (;;) {
+                            if (cls == *clsp)
+                                break;
+                            if (++clsp == NULL) {
+                                err = cprnths_error_parse_nostmt;
+                                goto Fail;
+                            }
+                        }
                     }
                     *current_ = current;
                 }
