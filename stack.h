@@ -23,6 +23,9 @@
 #define CPARENTHESES_INCLUDE_STACK 1
 
 
+struct cprnths_stack_t;
+
+
 #include <stddef.h>
 // size_t
 
@@ -35,6 +38,9 @@
 #include "error.h"
 // cprnths_error_t
 
+#include "expr.h"
+// cprnths_expr_t
+
 
 // A stack frame.
 struct cprnths_stack_frame_t {
@@ -46,6 +52,9 @@ struct cprnths_stack_frame_t {
 
     // The value to return or NULL
     struct cprnths_ref_t* return_val;
+
+    // The statement to jump to after executing the current one or NULL
+    struct cprnths_expr_t const *const * next_stmt;
 };
 
 // A stack.
