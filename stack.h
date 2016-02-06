@@ -41,6 +41,9 @@ struct cprnths_stack_t;
 #include "expr.h"
 // cprnths_expr_t
 
+#include "string.h"
+// cprnths_string_t
+
 
 // A stack frame.
 struct cprnths_stack_frame_t {
@@ -55,6 +58,12 @@ struct cprnths_stack_frame_t {
 
     // The statement to jump to after executing the current one or NULL
     struct cprnths_expr_t const *const * next_stmt;
+
+    // The jump label used to jump to the currently executed statement or NULL
+    struct cprnths_string_t const * came_from;
+
+    // The jump label to use to jump to the next statement or NULL
+    struct cprnths_string_t const * going_to;
 };
 
 // A stack.

@@ -120,9 +120,12 @@ cprnths_exec(
             if (env->stack->current_frame->next_stmt == NULL) {
                 if (*++current == NULL)
                     break;
+                env->stack->current_frame->came_from = NULL;
             } else {
                 current = env->stack->current_frame->next_stmt;
                 env->stack->current_frame->next_stmt = NULL;
+                env->stack->current_frame->came_from = env->stack->current_frame->going_to;
+                env->stack->current_frame->going_to = NULL;
             }
         }
     }

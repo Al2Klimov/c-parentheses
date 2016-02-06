@@ -116,6 +116,8 @@ cprnths_stack_pushframe(
     s->current_frame->return_now = 0;
     s->current_frame->return_val = NULL;
     s->current_frame->next_stmt = NULL;
+    s->current_frame->came_from = NULL;
+    s->current_frame->going_to = NULL;
 
     return 0;
 }
