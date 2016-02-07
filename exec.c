@@ -39,6 +39,7 @@
 #include "expr.h"
 // cprnths_expr_t
 // cprnths_exprs_t
+// cprnths_expr_eval()
 
 #include "garbage_table.h"
 // cprnths_garbtab_create()
@@ -116,9 +117,7 @@ cprnths_exec(
     cprnths_error_t err;
     {
         struct cprnths_expr_t const *const *restrict current = (struct cprnths_expr_t const *const *)exprs->exprs;
-        while (!(
-            err = (*(*current)->cls->expr_eval)(*current, env, NULL)
-        ) && *++current != NULL);
+        while (!( err = cprnths_expr_eval(*current, env, NULL) ) && *++current != NULL);
     }
     return err;
 }
