@@ -33,6 +33,12 @@
 // cprnths_string_t
 
 
+// A string object.
+struct cprnths_obj_string_t {
+    struct cprnths_obj_t base;
+    struct cprnths_string_t *const value;
+};
+
 // Create a new reference to a new string.
 cprnths_error_t
 // (see error.h)

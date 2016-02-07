@@ -49,22 +49,20 @@
 // cprnths_obj_t
 // cprnths_class_t
 
+#include "obj_bool.h"
+// cprnths_obj_bool_t
 
-struct cpintern_obj_bool_t {
-    struct cprnths_obj_t base;
-    _Bool const value;
-};
 
 static
 _Bool
 cpintern_obj_bool_2bool(
     struct cprnths_obj_t const *restrict const obj
 ) {
-    return ((struct cpintern_obj_bool_t const *)obj)->value;
+    return ((struct cprnths_obj_bool_t const *)obj)->value;
 }
 
 struct cprnths_class_t const cprnths_class_bool = {
-    sizeof(struct cpintern_obj_bool_t),
+    sizeof(struct cprnths_obj_bool_t),
     NULL,
     NULL,
     &cpintern_obj_bool_2bool
@@ -75,7 +73,7 @@ cprnths_obj_bool_create(
     _Bool const value,
     struct cprnths_ref_t* *restrict const target
 ) {
-    struct cpintern_obj_bool_t *restrict const obj = malloc(sizeof(struct cpintern_obj_bool_t));
+    struct cprnths_obj_bool_t *restrict const obj = malloc(sizeof(struct cprnths_obj_bool_t));
     if (obj == NULL)
         return cprnths_error_nomem;
 
