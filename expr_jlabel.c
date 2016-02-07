@@ -180,25 +180,14 @@ cpintern_expr_jlabel_eval(
     struct cprnths_execenv_t *restrict const env,
     struct cprnths_ref_t* *restrict const ref
 ) {
-    /* TODO:
-    This function shall return whether a label was used to jump to its
-    enclosing statement right now. E.g.:
+    if (ref == NULL)
+        return 0;
 
-    GoTo('LolCat')
-    Assign(JLabel('LolCat'), #LolCat)
-    // #LolCat is True
-    Assign(JLabel('GrumpyCat'), #GrumpyCat)
-    // #GrumpyCat is False
-
-    As GoTo() isn't implemented right now, labels can't be used and
-    this function would never return True.
-    This MUST be changed as soon as GoTo() has been implemented!
-    */
-
-    (void)expr;
-    (void)env;
-
-    return ref == NULL ? 0 : cprnths_obj_bool_create(0, ref);
+    struct cprnths_string_t const *restrict const came_from = env->stack->current_frame->came_from;
+    struct cprnths_string_t const *restrict const label = ((struct cpintern_expr_jlabel_t const *)expr)->label;
+    return cprnths_obj_bool_create(came_from != NULL && (
+        came_from == label || cprnths_string_equal(came_from, label)
+    ), ref);
 }
 
 static
