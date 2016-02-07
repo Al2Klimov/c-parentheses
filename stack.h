@@ -40,6 +40,7 @@ struct cprnths_stack_t;
 
 #include "expr.h"
 // cprnths_expr_t
+// cprnths_jmptab_row_t
 
 #include "string.h"
 // cprnths_string_t
@@ -55,6 +56,9 @@ struct cprnths_stack_frame_t {
 
     // The value to return or NULL
     struct cprnths_ref_t* return_val;
+
+    // The local jump table (or NULL if empty)
+    struct cprnths_jmptab_row_t const * jmptab;
 
     // The statement to jump to after executing the current one or NULL
     struct cprnths_expr_t const *const * next_stmt;
@@ -106,8 +110,10 @@ cprnths_stack_create(
 cprnths_error_t
 // (see error.h)
 cprnths_stack_pushframe(
-    struct cprnths_stack_t*
+    struct cprnths_stack_t*,
     // not NULL
+    struct cprnths_jmptab_row_t const *
+    // the local jump table (or NULL if empty)
 );
 
 // Remove the last frame from a stack.

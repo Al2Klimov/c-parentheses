@@ -150,7 +150,7 @@ int main(int const argc, char* *const argv) {
     struct cprnths_execenv_t* env;
     if (!(
         cprnths_execenv_create(&env, 16u, 16u, 0u, 16u, 16u)
-        || cprnths_stack_pushframe(env->stack)
+        || cprnths_stack_pushframe(env->stack, exprs->jmptab)
         || cprnths_exec(env, exprs)
     ))
         return EXIT_SUCCESS;

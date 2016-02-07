@@ -25,6 +25,7 @@
 
 struct cprnths_expr_t;
 struct cprnths_exprs_t;
+struct cprnths_jmptab_row_t;
 
 
 #include "error.h"
