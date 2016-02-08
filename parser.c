@@ -367,3 +367,34 @@ Finish:
     *current_ = current;
     return err;
 }
+
+cprnths_error_t
+cprnths_parseutil_funccall_end(
+    char const * *restrict const current_,
+    char const *const end
+) {
+    char const *restrict current = *current_;
+    cprnths_error_t err;
+
+    if (current == end)
+        return cprnths_error_parse_eof;
+
+    if (*current == ')') {
+        err = 0;
+    } else {
+        if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
+            goto Finish;
+        if (current == end)
+            return cprnths_error_parse_eof;
+
+        if (*current != ')') {
+            err = cprnths_error_parse_malform;
+            goto Finish;
+        }
+    }
+    ++current;
+
+Finish:
+    *current_ = current;
+    return err;
+}
