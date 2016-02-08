@@ -171,5 +171,15 @@ cprnths_parseutil_funccall_start(
     // the expected function's name (not NULL)
 );
 
+// Parse the end of a function call.
+cprnths_error_t
+// (see error.h)
+cprnths_parseutil_funccall_end(
+    char const **,
+    // current position (not NULL)
+    char const *
+    // end of string (not NULL)
+);
+
 
 #endif

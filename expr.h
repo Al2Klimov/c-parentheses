@@ -107,6 +107,18 @@ struct cprnths_exprs_t {
 };
 
 
+// Evaluate an expression.
+cprnths_error_t
+// (see error.h)
+cprnths_expr_eval(
+    struct cprnths_expr_t const *,
+    // not NULL
+    struct cprnths_execenv_t*,
+    // the environment to evaluate the expression in (not NULL)
+    struct cprnths_ref_t**
+    // where to store the value/result? (or NULL)
+);
+
 // Destroy an expression.
 void
 cprnths_expr_destroy(

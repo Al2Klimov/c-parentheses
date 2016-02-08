@@ -31,6 +31,21 @@
 // cprnths_expr_t
 // cprnths_exprs_t
 
+#include "exec.h"
+// cprnths_execenv_t
+
+#include "reference.h"
+// cprnths_ref_t
+
+
+cprnths_error_t
+cprnths_expr_eval(
+    struct cprnths_expr_t const *restrict const expr,
+    struct cprnths_execenv_t *restrict const env,
+    struct cprnths_ref_t* *restrict const ref
+) {
+    return (*expr->cls->expr_eval)(expr, env, ref);
+}
 
 void
 cprnths_expr_destroy(

@@ -30,6 +30,12 @@
 // cprnths_error_t
 
 
+// A boolean object.
+struct cprnths_obj_bool_t {
+    struct cprnths_obj_t base;
+    _Bool const value;
+};
+
 // Create a new reference to a new boolean object.
 cprnths_error_t
 // (see error.h)

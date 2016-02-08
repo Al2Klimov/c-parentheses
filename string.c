@@ -41,10 +41,11 @@
 
 
 cprnths_error_t
-cprnths_string_create(
+cprnths_string_create_customds(
     struct cprnths_string_t* *restrict const s_,
-    char const *restrict const S,
-    size_t const l
+    size_t const l,
+    void (* const f)(void*, char*, size_t),
+    void *const v
 ) {
     struct cprnths_string_t *restrict const s = malloc(sizeof(struct cprnths_string_t));
     if (s == NULL)
@@ -59,10 +60,10 @@ cprnths_string_create(
     s->hash = 0u;
     ((char*)s->str)[l] = 0;
     if (l) {
-        memcpy((char*)s->str, S, l);
+        (*f)(v, (char*)s->str, l);
 
         // TODO: replace this with a "real" hash algo
-        unsigned char const *restrict p = (unsigned char const *)S;
+        unsigned char const *restrict p = (unsigned char const *)s->str;
         unsigned char const *const limit = p + l;
         do s->hash += *p;
         while (++p < limit);
@@ -70,6 +71,25 @@ cprnths_string_create(
 
     *s_ = s;
     return 0;
+}
+
+static
+void
+cpintern_string_copy_cbuf(
+    void *restrict const src,
+    char *restrict const tgt,
+    size_t const l
+) {
+    memcpy(tgt, src, l);
+}
+
+cprnths_error_t
+cprnths_string_create(
+    struct cprnths_string_t* *restrict const s,
+    char const *restrict const S,
+    size_t const l
+) {
+    return cprnths_string_create_customds(s, l, &cpintern_string_copy_cbuf, (void*)S);
 }
 
 cprnths_error_t

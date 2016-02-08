@@ -57,18 +57,16 @@
 #include "copy_table.h"
 // cprnths_copytab_t
 
+#include "obj_string.h"
+// cprnths_obj_string_t
 
-struct cpintern_obj_string_t {
-    struct cprnths_obj_t base;
-    struct cprnths_string_t *const value;
-};
 
 static
 void
 cpintern_obj_string_destroy(
     struct cprnths_obj_t *restrict const obj
 ) {
-    cprnths_string_destroy(((struct cpintern_obj_string_t*)obj)->value);
+    cprnths_string_destroy(((struct cprnths_obj_string_t*)obj)->value);
 }
 
 static
@@ -79,7 +77,7 @@ cpintern_obj_string_copy(
 ) {
     (void)copytab;
 
-    struct cprnths_string_t* *const value = (struct cprnths_string_t**)&((struct cpintern_obj_string_t*)obj)->value;
+    struct cprnths_string_t* *const value = (struct cprnths_string_t**)&((struct cprnths_obj_string_t*)obj)->value;
     return cprnths_string_copy(*value, value);
 }
 
@@ -88,11 +86,11 @@ _Bool
 cpintern_obj_string_2bool(
     struct cprnths_obj_t const *restrict const obj
 ) {
-    return ((struct cpintern_obj_string_t const *)obj)->value->length;
+    return ((struct cprnths_obj_string_t const *)obj)->value->length;
 }
 
 struct cprnths_class_t const cprnths_class_string = {
-    sizeof(struct cpintern_obj_string_t),
+    sizeof(struct cprnths_obj_string_t),
     &cpintern_obj_string_destroy,
     &cpintern_obj_string_copy,
     &cpintern_obj_string_2bool
@@ -103,7 +101,7 @@ cprnths_obj_string_create(
     struct cprnths_string_t const *restrict const value,
     struct cprnths_ref_t* *restrict const target
 ) {
-    struct cpintern_obj_string_t *restrict const obj = malloc(sizeof(struct cpintern_obj_string_t));
+    struct cprnths_obj_string_t *restrict const obj = malloc(sizeof(struct cprnths_obj_string_t));
     if (obj == NULL)
         return cprnths_error_nomem;
 

@@ -34,6 +34,7 @@
 // cprnths_expr_t
 // cprnths_exprcls_t
 // cprnths_expr_destroy()
+// cprnths_expr_eval()
 
 #include "parser.h"
 // cprnths_parseutil_is_wordchar()
@@ -317,9 +318,7 @@ cpintern_expr_assign_eval(
     {
         cprnths_error_t err;
         struct cpintern_expr_assign_t const *restrict const expr = (struct cpintern_expr_assign_t const *)expr_;
-        if (( err = (*expr->inner_expr->cls->expr_eval)(
-            expr->inner_expr, env, (struct cprnths_ref_t**)&ref
-        ) ))
+        if (( err = cprnths_expr_eval(expr->inner_expr, env, (struct cprnths_ref_t**)&ref) ))
             return err;
 
         struct cprnths_string_t* *restrict current;
