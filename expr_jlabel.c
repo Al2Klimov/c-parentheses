@@ -41,6 +41,7 @@
 
 #include "parser.h"
 // cprnths_parseutil_funccall_start()
+// cprnths_parseutil_funccall_end()
 // cprnths_parseutil_skip_spcomm()
 // cprnths_parseutil_string()
 // cprnths_jmptab_prep_t
@@ -100,25 +101,8 @@ cpintern_expr_jlabel_parse(
                     goto CleanUpExpr;
             }
 
-            if (current == end) {
-                err = cprnths_error_parse_eof;
+            if (( err = cprnths_parseutil_funccall_end((char const **)&current, end) ))
                 goto CleanUpLabel;
-            }
-
-            if (*current != ')') {
-                if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))
-                    goto CleanUpLabel;
-                if (current == end) {
-                    err = cprnths_error_parse_eof;
-                    goto CleanUpLabel;
-                }
-
-                if (*current != ')') {
-                    err = cprnths_error_parse_malform;
-                    goto CleanUpLabel;
-                }
-            }
-            ++current;
 
             if (jmptab_prep->used) {
                 struct cprnths_jmptab_prep_row_t const *const jmptab_prep_row_last = jmptab_prep->jmptab_prep;
