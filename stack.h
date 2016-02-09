@@ -23,6 +23,9 @@
 #define CPARENTHESES_INCLUDE_STACK 1
 
 
+struct cprnths_stack_t;
+
+
 #include <stddef.h>
 // size_t
 
@@ -35,6 +38,13 @@
 #include "error.h"
 // cprnths_error_t
 
+#include "expr.h"
+// cprnths_expr_t
+// cprnths_jmptab_row_t
+
+#include "string.h"
+// cprnths_string_t
+
 
 // A stack frame.
 struct cprnths_stack_frame_t {
@@ -46,6 +56,18 @@ struct cprnths_stack_frame_t {
 
     // The value to return or NULL
     struct cprnths_ref_t* return_val;
+
+    // The local jump table (or NULL if empty)
+    struct cprnths_jmptab_row_t const * jmptab;
+
+    // The statement to jump to after executing the current one or NULL
+    struct cprnths_expr_t const *const * next_stmt;
+
+    // The jump label used to jump to the currently executed statement or NULL
+    struct cprnths_string_t const * came_from;
+
+    // The jump label to use to jump to the next statement or NULL
+    struct cprnths_string_t const * going_to;
 };
 
 // A stack.
@@ -88,8 +110,10 @@ cprnths_stack_create(
 cprnths_error_t
 // (see error.h)
 cprnths_stack_pushframe(
-    struct cprnths_stack_t*
+    struct cprnths_stack_t*,
     // not NULL
+    struct cprnths_jmptab_row_t const *
+    // the local jump table (or NULL if empty)
 );
 
 // Remove the last frame from a stack.

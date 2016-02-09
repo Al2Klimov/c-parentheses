@@ -137,8 +137,11 @@ cprnths_error_t
 cpintern_expr_string_parse(
     char const * *restrict const current,
     char const *const end,
-    struct cprnths_expr_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_,
+    struct cprnths_jmptab_prep_t *restrict const jmptab_prep
 ) {
+    (void)jmptab_prep;
+
     struct cprnths_string_t *restrict value;
     {
         cprnths_error_t const err = cprnths_parseutil_string(

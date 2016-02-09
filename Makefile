@@ -21,7 +21,7 @@
 # GNU Makefile (designed for GCC on *nix)
 
 
-CSRCFILES = interpreter.c copy_table.c dict.c exec.c expr.c expr_assign.c expr_variable.c garbage_table.c io.c obj_bool.c obj_string.c object.c parser.c reference.c stack.c string.c
+CSRCFILES = interpreter.c copy_table.c dict.c exec.c expr.c expr_assign.c expr_goto.c expr_jlabel.c expr_variable.c garbage_table.c io.c obj_bool.c obj_string.c object.c parser.c reference.c stack.c string.c
 
 
 cprnthsi: $(CSRCFILES)

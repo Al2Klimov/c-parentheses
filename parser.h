@@ -18,9 +18,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Functions for parsing
+// Typedefs and functions for parsing
 #ifndef CPARENTHESES_INCLUDE_PARSER
 #define CPARENTHESES_INCLUDE_PARSER 1
+
+
+struct cprnths_jmptab_prep_t;
 
 
 #include <stddef.h>
@@ -40,6 +43,26 @@
 #include "string.h"
 // cprnths_string_t
 
+
+// This is for preparing the jump table.
+struct cprnths_jmptab_prep_row_t {
+    struct cprnths_string_t const * label;
+    // label of a statement (not NULL)
+    size_t stmt_offset;
+    // index of the statement
+};
+
+// This is for preparing the jump table.
+struct cprnths_jmptab_prep_t {
+    struct cprnths_jmptab_prep_row_t* jmptab_prep;
+    // labels to statements mapping
+    size_t available;
+    // .jmptab_prep's size
+    size_t used;
+    // .jmptab_prep's usage
+    size_t current_stmt_offset;
+    // index of the currently parsed statement
+};
 
 // Is a character in [A-Za-z0-9_] ?
 static inline
@@ -94,8 +117,10 @@ cprnths_parse_anyexpr(
     // current position (not NULL)
     char const *,
     // end of string (not NULL)
-    struct cprnths_expr_t**
+    struct cprnths_expr_t**,
     // where to store the result in case of success (not NULL)
+    struct cprnths_jmptab_prep_t*
+    // (see above, not NULL)
 );
 
 // Parse statement expressions.

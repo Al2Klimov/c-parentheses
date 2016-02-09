@@ -23,7 +23,9 @@
 #define CPARENTHESES_INCLUDE_EXPR 1
 
 
+struct cprnths_expr_t;
 struct cprnths_exprs_t;
+struct cprnths_jmptab_row_t;
 
 
 #include "error.h"
@@ -34,6 +36,12 @@ struct cprnths_exprs_t;
 
 #include "reference.h"
 // cprnths_ref_t
+
+#include "parser.h"
+// cprnths_jmptab_prep_t
+
+#include "string.h"
+// cprnths_string_t
 
 
 struct cprnths_exprcls_t;
@@ -54,8 +62,10 @@ struct cprnths_exprcls_t {
         // current position (not NULL, SHALL be changed in case of success)
         char const *,
         // end of string (not NULL)
-        struct cprnths_expr_t **
+        struct cprnths_expr_t**,
         // where to store the parsed expression? (not NULL)
+        struct cprnths_jmptab_prep_t*
+        // (see parser.h, not NULL)
     );
 
     // Evaluate an expression.
@@ -80,10 +90,20 @@ struct cprnths_exprcls_t {
     );
 };
 
+// A row of a jump table.
+struct cprnths_jmptab_row_t {
+    struct cprnths_string_t const * label;
+    // label of a statement
+    struct cprnths_expr_t const *const * stmt;
+    // the statement
+};
+
 // An array of expressions.
 struct cprnths_exprs_t {
-    // The array itself (or NULL if empty)
     struct cprnths_expr_t** exprs;
+    // The array itself (or NULL if empty)
+    struct cprnths_jmptab_row_t* jmptab;
+    // The jump table (or NULL if empty)
 };
 
 

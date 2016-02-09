@@ -40,6 +40,8 @@ typedef enum {
     // unexpected end of string
     cprnths_error_parse_nostmt,
     // unexpected (but valid) non-statement expression
+    cprnths_error_parse_double_jlabel,
+    // a jump label is used more than once
 
     // I/O errors:
     cprnths_error_io_open,

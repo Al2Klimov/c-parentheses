@@ -45,6 +45,9 @@
 #include "error.h"
 // cprnths_error_*
 
+#include "expr.h"
+// cprnths_jmptab_row_t
+
 
 cprnths_error_t
 cprnths_stack_create(
@@ -72,7 +75,8 @@ cprnths_stack_create(
 
 cprnths_error_t
 cprnths_stack_pushframe(
-    struct cprnths_stack_t *restrict const s
+    struct cprnths_stack_t *restrict const s,
+    struct cprnths_jmptab_row_t const *restrict const jmptab
 ) {
     if (!s->frames_free) {
         size_t const frames_total = s->frames_total + s->frames_chunksize;
@@ -115,6 +119,10 @@ cprnths_stack_pushframe(
 
     s->current_frame->return_now = 0;
     s->current_frame->return_val = NULL;
+    s->current_frame->jmptab = jmptab;
+    s->current_frame->next_stmt = NULL;
+    s->current_frame->came_from = NULL;
+    s->current_frame->going_to = NULL;
 
     return 0;
 }

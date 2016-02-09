@@ -117,7 +117,18 @@ cprnths_exec(
     cprnths_error_t err;
     {
         struct cprnths_expr_t const *const *restrict current = (struct cprnths_expr_t const *const *)exprs->exprs;
-        while (!( err = cprnths_expr_eval(*current, env, NULL) ) && *++current != NULL);
+        while (!( err = cprnths_expr_eval(*current, env, NULL) )) {
+            if (env->stack->current_frame->next_stmt == NULL) {
+                if (*++current == NULL)
+                    break;
+                env->stack->current_frame->came_from = NULL;
+            } else {
+                current = env->stack->current_frame->next_stmt;
+                env->stack->current_frame->next_stmt = NULL;
+                env->stack->current_frame->came_from = env->stack->current_frame->going_to;
+                env->stack->current_frame->going_to = NULL;
+            }
+        }
     }
     return err;
 }

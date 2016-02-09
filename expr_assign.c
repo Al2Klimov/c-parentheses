@@ -40,6 +40,7 @@
 // cprnths_parseutil_is_wordchar()
 // cprnths_parseutil_skip_spcomm()
 // cprnths_parse_anyexpr()
+// cprnths_jmptab_prep_t
 // cprnths_parseutil_funccall_start()
 
 #include "error.h"
@@ -80,7 +81,8 @@ cprnths_error_t
 cpintern_expr_assign_parse(
     char const * *restrict const current_,
     char const *const end,
-    struct cprnths_expr_t* *restrict const expr_
+    struct cprnths_expr_t* *restrict const expr_,
+    struct cprnths_jmptab_prep_t *restrict const jmptab_prep
 ) {
 #define SKIP_SPCOMM(x) {\
     if (( err = cprnths_parseutil_skip_spcomm((char const **)&current, end) ))\
@@ -117,7 +119,7 @@ cpintern_expr_assign_parse(
             goto Finish;
         }
 
-        switch ( err = cprnths_parse_anyexpr((char const **)&current, end, &expr->inner_expr) ) {
+        switch ( err = cprnths_parse_anyexpr((char const **)&current, end, &expr->inner_expr, jmptab_prep) ) {
             case 0:
                 break;
             case cprnths_error_parse_unknown:
