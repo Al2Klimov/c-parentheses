@@ -18,11 +18,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# GNU Makefile (designed for GCC on *nix)
+# GNU Makefile
+# designed for GCC (and GDB) on *nix, other tools/OSs MAY work as well
 
 
 CSRCFILES = interpreter.c copy_table.c dict.c exec.c expr.c expr_assign.c expr_goto.c expr_jlabel.c expr_variable.c garbage_table.c io.c obj_bool.c obj_string.c object.c parser.c reference.c stack.c string.c
+CCOPTS = -std=c99 -pedantic-errors -Wall -Wextra
 
 
 cprnthsi: $(CSRCFILES)
-	gcc -std=c99 -pedantic-errors -O3 -Wall -Wextra -o cprnthsi $(CSRCFILES)
+	gcc $(CCOPTS) -O3 -o cprnthsi $(CSRCFILES)
+
+cprnthsi-dbg: $(CSRCFILES)
+	gcc $(CCOPTS) -Og -g -o cprnthsi-dbg $(CSRCFILES)
