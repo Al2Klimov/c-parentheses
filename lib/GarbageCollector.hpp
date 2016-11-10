@@ -71,10 +71,18 @@ public:
 	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void delUnmanagedRefs(Object *, refs_amount_t = 1u);
 
+	bool // Whether some objects have been cleaned up
+	cleanUp(void);
+
 protected:
 	class ObjectInfo
 	{
 	public:
+		// Bitset:
+		// 1st (lowest) bit : marked as reachable
+		// 2nd bit          : has been preprocessed
+		typedef unsigned char cleanup_status_t;
+
 		std::map<
 			// An object this object references...
 			Object *,
@@ -86,7 +94,7 @@ protected:
 		refs_amount_t unmanagedRefs;
 
 		// Preallocated for the cleanup process
-		bool isReachable;
+		cleanup_status_t cleanupStatus;
 
 		ObjectInfo(void);
 		ObjectInfo(ObjectInfo const&);
@@ -166,12 +174,74 @@ void GarbageCollector::delUnmanagedRefs(Object * to, GarbageCollector::refs_amou
 }
 
 inline
-GarbageCollector::ObjectInfo::ObjectInfo(void) : unmanagedRefs(0u), isReachable(true)
+bool GarbageCollector::cleanUp(void)
+{
+	if (locksAmount)
+	{
+		return false;
+	}
+
+	{
+		bool done (true);
+		for (auto& trackedObject : trackedObjects)
+		{
+			trackedObject.second.cleanupStatus = trackedObject.second.unmanagedRefs ? 1u : 0u;
+			if (!trackedObject.second.cleanupStatus)
+			{
+				done = false;
+			}
+		}
+		if (done)
+		{
+			return false;
+		}
+	}
+
+	{
+		bool markedAll;
+		do
+		{
+			markedAll = true;
+			for (auto& trackedObject : trackedObjects)
+			{
+				if (trackedObject.second.cleanupStatus == (ObjectInfo::cleanup_status_t)1u)
+				{
+					for (auto& referencedObject : trackedObject.second.managedRefs)
+					{
+						trackedObjects.at(referencedObject.first).cleanupStatus |= (ObjectInfo::cleanup_status_t)1u;
+					}
+					trackedObject.second.cleanupStatus = 3u;
+					markedAll = false;
+				}
+			}
+		} while (!markedAll);
+	}
+
+	bool hasUnreachable (false);
+	for (auto trackedObject (trackedObjects.begin()); trackedObject != trackedObjects.end();)
+	{
+		if (trackedObject->second.cleanupStatus)
+		{
+			++trackedObject;
+		}
+		else
+		{
+			trackedObjects.erase(trackedObject);
+			trackedObject = trackedObjects.begin();
+			delete trackedObject->first;
+			hasUnreachable = true;
+		}
+	}
+	return hasUnreachable;
+}
+
+inline
+GarbageCollector::ObjectInfo::ObjectInfo(void) : unmanagedRefs(0u), cleanupStatus(3u)
 {}
 
 inline
 GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo const& origin)
-	: managedRefs(origin.managedRefs), unmanagedRefs(origin.unmanagedRefs), isReachable(origin.isReachable)
+	: managedRefs(origin.managedRefs), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
@@ -179,13 +249,13 @@ GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageC
 {
 	managedRefs = origin.managedRefs;
 	unmanagedRefs = origin.unmanagedRefs;
-	isReachable = origin.isReachable;
+	cleanupStatus = origin.cleanupStatus;
 	return *this;
 }
 
 inline
 GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo&& origin)
-	: managedRefs(std::move(origin.managedRefs)), unmanagedRefs(origin.unmanagedRefs), isReachable(origin.isReachable)
+	: managedRefs(std::move(origin.managedRefs)), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
@@ -193,7 +263,7 @@ GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageC
 {
 	managedRefs = std::move(origin.managedRefs);
 	unmanagedRefs = origin.unmanagedRefs;
-	isReachable = origin.isReachable;
+	cleanupStatus = origin.cleanupStatus;
 	return *this;
 }
 
