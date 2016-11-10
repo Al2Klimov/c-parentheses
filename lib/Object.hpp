@@ -33,6 +33,7 @@ namespace CParentheses
 
 #include "GarbageCollector.hpp"
 // CParentheses::GarbageCollector
+// CParentheses::GarbageCollectorLock
 
 
 namespace CParentheses
@@ -98,6 +99,8 @@ Object * Object::clone(void) const
 inline
 Object * Object::clone(CloneTracker& cloneTracker) const
 {
+	GarbageCollectorLock gcLock (*gc);
+
 	auto alreadyCopied (cloneTracker.get(this));
 	if (alreadyCopied != nullptr)
 	{
