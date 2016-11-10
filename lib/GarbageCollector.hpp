@@ -63,15 +63,10 @@ public:
 	// Track the given object
 	GarbageCollector& operator += (Object *);
 
-	void addManagedRef(Object *, Object *);
-	void addManagedRefs(Object *, Object *, refs_amount_t);
-	void addUnmanagedRef(Object *);
-	void addUnmanagedRefs(Object *, refs_amount_t);
-
-	void delManagedRef(Object *, Object *);
-	void delManagedRefs(Object *, Object *, refs_amount_t);
-	void delUnmanagedRef(Object *);
-	void delUnmanagedRefs(Object *, refs_amount_t);
+	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
+	void addUnmanagedRefs(Object *, refs_amount_t = 1u);
+	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
+	void delUnmanagedRefs(Object *, refs_amount_t = 1u);
 
 protected:
 	class ObjectInfo
@@ -118,12 +113,6 @@ GarbageCollector& GarbageCollector::operator += (Object * target)
 }
 
 inline
-void GarbageCollector::addManagedRef(Object * from, Object * to)
-{
-	addManagedRefs(from, to, 1u);
-}
-
-inline
 void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
 	auto& managedRefs (trackedObjects.at(from).managedRefs);
@@ -135,33 +124,15 @@ void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollect
 }
 
 inline
-void GarbageCollector::addUnmanagedRef(Object * to)
-{
-	addUnmanagedRefs(to, 1u);
-}
-
-inline
 void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
 	trackedObjects.at(to).unmanagedRefs += refsAmount;
 }
 
 inline
-void GarbageCollector::delManagedRef(Object * from, Object * to)
-{
-	delManagedRefs(from, to, 1u);
-}
-
-inline
 void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
 	addManagedRefs(from, to, -refsAmount);
-}
-
-inline
-void GarbageCollector::delUnmanagedRef(Object * to)
-{
-	delUnmanagedRefs(to, 1u);
 }
 
 inline
