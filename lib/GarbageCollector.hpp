@@ -63,8 +63,7 @@ public:
 	GarbageCollector& operator = (GarbageCollector&&) = delete;
 	~GarbageCollector(void);
 
-	// Track the given object
-	GarbageCollector& operator += (Object *);
+	void track(Object *);
 
 	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void addUnmanagedRefs(Object *, refs_amount_t = 1u);
@@ -138,10 +137,9 @@ GarbageCollector::~GarbageCollector(void)
 {}
 
 inline
-GarbageCollector& GarbageCollector::operator += (Object * target)
+void GarbageCollector::track(Object * target)
 {
 	trackedObjects.emplace(target, ObjectInfo());
-	return *this;
 }
 
 inline

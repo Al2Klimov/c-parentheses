@@ -78,7 +78,7 @@ protected:
 inline
 Object::Object(GarbageCollector * gc) : gc(gc)
 {
-	*gc += this;
+	gc->track(this);
 }
 
 inline
