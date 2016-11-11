@@ -35,7 +35,6 @@
 namespace CParentheses
 {
 	class GarbageCollector;
-	class GarbageCollectorLock;
 }
 
 
@@ -51,9 +50,26 @@ namespace CParentheses
 class GarbageCollector
 {
 // TODO: actually clean up
-	friend GarbageCollectorLock;
-
 public:
+	// Prevents a garbage collector from cleaning up any objects until destroyed
+	class Lock
+	{
+	public:
+		Lock(
+			// target GC
+			GarbageCollector&
+		);
+		Lock(Lock const&) = delete;
+		Lock& operator = (Lock const&) = delete;
+		Lock(Lock&&) = delete;
+		Lock& operator = (Lock&&) = delete;
+		~Lock(void);
+
+	protected:
+		// target GC
+		GarbageCollector& gc;
+	};
+
 	typedef std::uintmax_t refs_amount_t;
 
 	GarbageCollector(void);
@@ -106,25 +122,6 @@ protected:
 	std::map<Object *, ObjectInfo> trackedObjects;
 
 	std::uintmax_t locksAmount;
-};
-
-// Prevents a garbage collector from cleaning up any objects until destroyed
-class GarbageCollectorLock
-{
-public:
-	GarbageCollectorLock(
-		// target GC
-		GarbageCollector&
-	);
-	GarbageCollectorLock(GarbageCollectorLock const&) = delete;
-	GarbageCollectorLock& operator = (GarbageCollectorLock const&) = delete;
-	GarbageCollectorLock(GarbageCollectorLock&&) = delete;
-	GarbageCollectorLock& operator = (GarbageCollectorLock&&) = delete;
-	~GarbageCollectorLock(void);
-
-protected:
-	// target GC
-	GarbageCollector& gc;
 };
 
 
@@ -270,13 +267,13 @@ GarbageCollector::ObjectInfo::~ObjectInfo(void)
 {}
 
 inline
-GarbageCollectorLock::GarbageCollectorLock(GarbageCollector& gc) : gc(gc)
+GarbageCollector::Lock::Lock(GarbageCollector& gc) : gc(gc)
 {
 	++gc.locksAmount;
 }
 
 inline
-GarbageCollectorLock::~GarbageCollectorLock(void)
+GarbageCollector::Lock::~Lock(void)
 {
 	--gc.locksAmount;
 }
