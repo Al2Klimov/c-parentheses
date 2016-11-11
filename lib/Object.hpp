@@ -22,6 +22,11 @@
 #define CPARENTHESES_INCLUDE_OBJECT 1
 
 
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE
+#define CPARENTHESES_TOP_LEVEL_INCLUDE 'O'
+#endif
+
+
 namespace CParentheses
 {
 	class Object;
@@ -74,56 +79,15 @@ protected:
 };
 
 
-inline
-Object::Object(GarbageCollector * gc) : gc(gc)
-{
-	gc->track(this);
-}
-
-inline
-Object::Object(Object const& origin) : Object(origin.gc)
-{}
-
-inline
-Object::~Object(void)
-{}
-
-inline
-Object * Object::clone(void) const
-{
-	CloneTracker cloneTracker;
-	return clone(cloneTracker);
-}
-
-inline
-Object * Object::clone(CloneTracker& cloneTracker) const
-{
-	GarbageCollector::Lock gcLock (*gc);
-
-	auto alreadyCopied (cloneTracker.get(this));
-	if (alreadyCopied != nullptr)
-	{
-		return alreadyCopied;
-	}
-
-	auto copy (cloneSelf());
-	cloneTracker.add(this, copy);
-	copy->cloneRefs(cloneTracker);
-	return copy;
-}
-
-inline
-void Object::cloneRefs(CloneTracker&)
-{}
-
-inline
-Object::operator bool (void) const noexcept
-{
-	return false;
 }
 
 
-}
+#if CPARENTHESES_TOP_LEVEL_INCLUDE == 'O'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE
+#include "funcdefs/CloneTracker.hpp"
+#include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/Object.hpp"
+#endif
 
 
 #endif

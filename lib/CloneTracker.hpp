@@ -22,6 +22,11 @@
 #define CPARENTHESES_INCLUDE_CLONETRACKER 1
 
 
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE
+#define CPARENTHESES_TOP_LEVEL_INCLUDE 'C'
+#endif
+
+
 #include <map>
 // std::map
 
@@ -62,29 +67,16 @@ protected:
 	std::map<Object const * /* original */, Object * /* copy */> copiedObjects;
 };
 
-inline
-CloneTracker::CloneTracker(void)
-{}
-
-inline
-CloneTracker::~CloneTracker(void)
-{}
-
-inline
-void CloneTracker::add(Object const * original, Object * copy)
-{
-	copiedObjects.emplace(original, copy);
-}
-
-inline
-Object * CloneTracker::get(Object const * original) const noexcept
-{
-	auto copiedObject (copiedObjects.find(original));
-	return copiedObject != copiedObjects.end() ? copiedObject->second : nullptr;
-}
-
 
 }
+
+
+#if CPARENTHESES_TOP_LEVEL_INCLUDE == 'C'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE
+#include "funcdefs/CloneTracker.hpp"
+#include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/Object.hpp"
+#endif
 
 
 #endif

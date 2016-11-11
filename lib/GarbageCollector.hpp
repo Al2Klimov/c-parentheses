@@ -22,14 +22,16 @@
 #define CPARENTHESES_INCLUDE_GARBAGECOLLECTOR 1
 
 
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE
+#define CPARENTHESES_TOP_LEVEL_INCLUDE 'G'
+#endif
+
+
 #include <cstdint>
 // std::uintmax_t
 
 #include <map>
 // std::map
-
-#include <utility>
-// std::move
 
 
 namespace CParentheses
@@ -125,161 +127,15 @@ protected:
 };
 
 
-inline
-GarbageCollector::GarbageCollector(void) : locksAmount(0u)
-{}
-
-inline
-GarbageCollector::~GarbageCollector(void)
-{}
-
-inline
-void GarbageCollector::track(Object * target)
-{
-	trackedObjects.emplace(target, ObjectInfo());
-}
-
-inline
-void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
-{
-	auto& managedRefs (trackedObjects.at(from).managedRefs);
-	auto managedRef (managedRefs.emplace(to, refsAmount));
-	if (!(managedRef.second || (managedRef.first->second += refsAmount)))
-	{
-		managedRefs.erase(managedRef.first);
-	}
-}
-
-inline
-void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
-{
-	trackedObjects.at(to).unmanagedRefs += refsAmount;
-}
-
-inline
-void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
-{
-	addManagedRefs(from, to, -refsAmount);
-}
-
-inline
-void GarbageCollector::delUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
-{
-	addUnmanagedRefs(to, -refsAmount);
-}
-
-inline
-bool GarbageCollector::cleanUp(void)
-{
-	if (locksAmount)
-	{
-		return false;
-	}
-
-	{
-		bool done (true);
-		for (auto& trackedObject : trackedObjects)
-		{
-			trackedObject.second.cleanupStatus = trackedObject.second.unmanagedRefs ? 1u : 0u;
-			if (!trackedObject.second.cleanupStatus)
-			{
-				done = false;
-			}
-		}
-		if (done)
-		{
-			return false;
-		}
-	}
-
-	{
-		bool markedAll;
-		do
-		{
-			markedAll = true;
-			for (auto& trackedObject : trackedObjects)
-			{
-				if (trackedObject.second.cleanupStatus == (ObjectInfo::cleanup_status_t)1u)
-				{
-					for (auto& referencedObject : trackedObject.second.managedRefs)
-					{
-						trackedObjects.at(referencedObject.first).cleanupStatus |= (ObjectInfo::cleanup_status_t)1u;
-					}
-					trackedObject.second.cleanupStatus = 3u;
-					markedAll = false;
-				}
-			}
-		} while (!markedAll);
-	}
-
-	bool hasUnreachable (false);
-	for (auto trackedObject (trackedObjects.begin()); trackedObject != trackedObjects.end();)
-	{
-		if (trackedObject->second.cleanupStatus)
-		{
-			++trackedObject;
-		}
-		else
-		{
-			trackedObjects.erase(trackedObject);
-			trackedObject = trackedObjects.begin();
-			delete trackedObject->first;
-			hasUnreachable = true;
-		}
-	}
-	return hasUnreachable;
-}
-
-inline
-GarbageCollector::ObjectInfo::ObjectInfo(void) : unmanagedRefs(0u), cleanupStatus(3u)
-{}
-
-inline
-GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo const& origin)
-	: managedRefs(origin.managedRefs), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
-{}
-
-inline
-GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo const& origin)
-{
-	managedRefs = origin.managedRefs;
-	unmanagedRefs = origin.unmanagedRefs;
-	cleanupStatus = origin.cleanupStatus;
-	return *this;
-}
-
-inline
-GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo&& origin)
-	: managedRefs(std::move(origin.managedRefs)), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
-{}
-
-inline
-GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo&& origin)
-{
-	managedRefs = std::move(origin.managedRefs);
-	unmanagedRefs = origin.unmanagedRefs;
-	cleanupStatus = origin.cleanupStatus;
-	return *this;
-}
-
-inline
-GarbageCollector::ObjectInfo::~ObjectInfo(void)
-{}
-
-inline
-GarbageCollector::Lock::Lock(GarbageCollector& gc) : gc(gc)
-{
-	++gc.locksAmount;
-}
-
-inline
-GarbageCollector::Lock::~Lock(void)
-{
-	--gc.locksAmount;
 }
 
 
-}
+#if CPARENTHESES_TOP_LEVEL_INCLUDE == 'G'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE
+#include "funcdefs/CloneTracker.hpp"
+#include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/Object.hpp"
+#endif
 
 
 #endif
