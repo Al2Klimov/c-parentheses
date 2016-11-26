@@ -147,8 +147,7 @@ bool GarbageCollector::cleanUp(void)
 		else
 		{
 			delete trackedObject->first;
-			trackedObjects.erase(trackedObject);
-			trackedObject = trackedObjects.begin();
+			trackedObjects.erase(trackedObject++);
 			hasUnreachable = true;
 		}
 	}
