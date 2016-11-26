@@ -33,6 +33,9 @@
 #include <map>
 // std::map
 
+#include <stdexcept>
+// std::logic_error
+
 
 namespace CParentheses
 {
@@ -72,6 +75,11 @@ public:
 		GarbageCollector& gc;
 	};
 
+	class ReachableObjectsExist : public std::logic_error
+	{
+		using std::logic_error::logic_error;
+	};
+
 	typedef std::uintmax_t refs_amount_t;
 
 	GarbageCollector(void);
@@ -79,7 +87,7 @@ public:
 	GarbageCollector& operator = (GarbageCollector const&) = delete;
 	GarbageCollector(GarbageCollector&&) = delete;
 	GarbageCollector& operator = (GarbageCollector&&) = delete;
-	~GarbageCollector(void);
+	~GarbageCollector(void) noexcept(false);
 
 	void track(Object *);
 

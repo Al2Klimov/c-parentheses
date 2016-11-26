@@ -41,8 +41,17 @@ GarbageCollector::GarbageCollector(void) : locksAmount(0u)
 {}
 
 inline
-GarbageCollector::~GarbageCollector(void)
-{}
+GarbageCollector::~GarbageCollector(void) noexcept(false)
+{
+	cleanUp();
+	if (!trackedObjects.empty())
+	{
+		throw ReachableObjectsExist(
+			"The GarbageCollector is being destroyed, but there are still reachable objects depending on it."
+			" This will lead to segmentation faults and memory leaks!"
+		);
+	}
+}
 
 inline
 void GarbageCollector::track(Object * target)
