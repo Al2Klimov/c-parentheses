@@ -33,6 +33,9 @@
 #include <map>
 // std::map
 
+#include <set>
+// std::set
+
 #include <stdexcept>
 // std::logic_error
 
@@ -132,6 +135,7 @@ protected:
 	std::map<Object *, ObjectInfo> trackedObjects;
 
 	std::uintmax_t locksAmount;
+	std::set<Object *> protectedObjects;
 };
 
 

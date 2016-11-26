@@ -57,6 +57,10 @@ inline
 void GarbageCollector::track(Object * target)
 {
 	trackedObjects.emplace(target, ObjectInfo());
+	if (locksAmount)
+	{
+		protectedObjects.emplace(target);
+	}
 }
 
 inline
@@ -91,11 +95,6 @@ void GarbageCollector::delUnmanagedRefs(Object * to, GarbageCollector::refs_amou
 inline
 bool GarbageCollector::cleanUp(void)
 {
-	if (locksAmount)
-	{
-		return false;
-	}
-
 	{
 		bool done (true);
 		for (auto& trackedObject : trackedObjects)
@@ -106,10 +105,16 @@ bool GarbageCollector::cleanUp(void)
 				done = false;
 			}
 		}
+
 		if (done)
 		{
 			return false;
 		}
+	}
+
+	for (auto protectedObject : protectedObjects)
+	{
+		trackedObjects.at(protectedObject).cleanupStatus = 1u;
 	}
 
 	{
@@ -196,6 +201,10 @@ inline
 GarbageCollector::Lock::~Lock(void)
 {
 	--gc.locksAmount;
+	if (!gc.locksAmount)
+	{
+		gc.protectedObjects.clear();
+	}
 }
 
 
