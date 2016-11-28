@@ -138,7 +138,7 @@ bool GarbageCollector::cleanUp(void)
 	}
 
 	bool hasUnreachable (false);
-	for (auto trackedObject (trackedObjects.begin()); trackedObject != trackedObjects.end();)
+	for (auto trackedObject (trackedObjects.begin()), end (trackedObjects.end()); trackedObject != end;)
 	{
 		if (trackedObject->second.cleanupStatus)
 		{
