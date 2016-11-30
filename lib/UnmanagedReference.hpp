@@ -18,22 +18,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CPARENTHESES_INCLUDE_CLONETRACKER
-#define CPARENTHESES_INCLUDE_CLONETRACKER 1
+#ifndef CPARENTHESES_INCLUDE_UNMANAGEDREFERENCE
+#define CPARENTHESES_INCLUDE_UNMANAGEDREFERENCE 1
 
 
 #ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
-#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU 'C'
+#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU 'U'
 #endif
-
-
-#include <map>
-// std::map
 
 
 namespace CParentheses
 {
-	class CloneTracker;
+	class UnmanagedReference;
 }
 
 
@@ -45,33 +41,28 @@ namespace CParentheses
 {
 
 
-// Tracks which objects have already been cloned while cloning an objects chain
-// (this is required to copy diamond and circular references as expected)
-class CloneTracker
+// A reference to an object from something that is not being managed by any garbage collector
+class UnmanagedReference
 {
 public:
-	CloneTracker(void);
-	CloneTracker(CloneTracker const&) = delete;
-	CloneTracker& operator = (CloneTracker const&) = delete;
-	CloneTracker(CloneTracker&&) = delete;
-	CloneTracker& operator = (CloneTracker&&) = delete;
-	~CloneTracker(void);
+	UnmanagedReference(Object * = nullptr) noexcept;
+	UnmanagedReference(UnmanagedReference const&) noexcept;
+	UnmanagedReference& operator = (UnmanagedReference const&) noexcept;
+	UnmanagedReference(UnmanagedReference&&) noexcept;
+	UnmanagedReference& operator = (UnmanagedReference&&) noexcept;
+	~UnmanagedReference(void);
 
-	// Register a copied object
-	void add(Object const * /* original */, Object * /* copy */);
-
-	// Get the copy of the given original (or NULL if not copied yet)
-	Object * get(Object const *) const noexcept;
+	operator Object * (void);
 
 protected:
-	std::map<Object const * /* original */, Object * /* copy */> copiedObjects;
+	Object * referenced;
 };
 
 
 }
 
 
-#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU == 'C'
+#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU == 'U'
 #undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
 #include "funcdefs/CloneTracker.hpp"
 #include "funcdefs/GarbageCollector.hpp"
