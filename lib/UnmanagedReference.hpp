@@ -22,8 +22,8 @@
 #define CPARENTHESES_INCLUDE_UNMANAGEDREFERENCE 1
 
 
-#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
-#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU 'U'
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
+#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU 'U'
 #endif
 
 
@@ -62,10 +62,11 @@ protected:
 }
 
 
-#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU == 'U'
-#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
+#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU == 'U'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
 #include "funcdefs/CloneTracker.hpp"
 #include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/ManagedReference.hpp"
 #include "funcdefs/Object.hpp"
 #include "funcdefs/UnmanagedReference.hpp"
 #endif

@@ -66,11 +66,10 @@ void GarbageCollector::track(Object * target)
 inline
 void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	auto& managedRefs (trackedObjects.at(from).managedRefs);
-	auto managedRef (managedRefs.emplace(to, refsAmount));
-	if (!(managedRef.second || (managedRef.first->second += refsAmount)))
+	auto managedRef (trackedObjects.at(from).managedRefs.emplace(to, refsAmount));
+	if (!managedRef.second)
 	{
-		managedRefs.erase(managedRef.first);
+		managedRef.first->second += refsAmount;
 	}
 }
 
@@ -83,7 +82,12 @@ void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amou
 inline
 void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	addManagedRefs(from, to, -refsAmount);
+	auto& managedRefs (trackedObjects.at(from).managedRefs);
+	auto managedRef (managedRefs.find(to));
+	if (!(managedRef == managedRefs.end() || (managedRef->second -= refsAmount)))
+	{
+		managedRefs.erase(managedRef);
+	}
 }
 
 inline

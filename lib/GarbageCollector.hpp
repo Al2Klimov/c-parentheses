@@ -22,8 +22,8 @@
 #define CPARENTHESES_INCLUDE_GARBAGECOLLECTOR 1
 
 
-#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
-#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU 'G'
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
+#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU 'G'
 #endif
 
 
@@ -49,6 +49,9 @@ namespace CParentheses
 }
 
 
+#include "ManagedReference.hpp"
+// CParentheses::ManagedReference
+
 #include "Object.hpp"
 // CParentheses::Object
 
@@ -65,6 +68,7 @@ class GarbageCollector
 {
 // TODO: actually clean up
 
+	friend ManagedReference;
 	friend UnmanagedReference;
 
 public:
@@ -102,9 +106,6 @@ public:
 	~GarbageCollector(void) noexcept(false);
 
 	void track(Object *);
-
-	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
-	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
 
 	bool // Whether some objects have been cleaned up
 	cleanUp(void);
@@ -144,6 +145,8 @@ protected:
 	std::uintmax_t locksAmount;
 	std::set<Object *> protectedObjects;
 
+	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
+	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void addUnmanagedRefs(Object *, refs_amount_t = 1u);
 	void delUnmanagedRefs(Object *, refs_amount_t = 1u);
 };
@@ -152,10 +155,11 @@ protected:
 }
 
 
-#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU == 'G'
-#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
+#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU == 'G'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
 #include "funcdefs/CloneTracker.hpp"
 #include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/ManagedReference.hpp"
 #include "funcdefs/Object.hpp"
 #include "funcdefs/UnmanagedReference.hpp"
 #endif

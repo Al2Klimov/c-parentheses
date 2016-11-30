@@ -22,8 +22,8 @@
 #define CPARENTHESES_INCLUDE_OBJECT 1
 
 
-#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
-#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU 'O'
+#ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
+#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU 'O'
 #endif
 
 
@@ -39,6 +39,9 @@ namespace CParentheses
 #include "GarbageCollector.hpp"
 // CParentheses::GarbageCollector
 
+#include "ManagedReference.hpp"
+// CParentheses::ManagedReference
+
 #include "UnmanagedReference.hpp"
 // CParentheses::UnmanagedReference
 
@@ -50,6 +53,7 @@ namespace CParentheses
 // The root base class of runtime objects
 class Object
 {
+	friend ManagedReference;
 	friend UnmanagedReference;
 
 public:
@@ -87,10 +91,11 @@ protected:
 }
 
 
-#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU == 'O'
-#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGOU
+#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU == 'O'
+#undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
 #include "funcdefs/CloneTracker.hpp"
 #include "funcdefs/GarbageCollector.hpp"
+#include "funcdefs/ManagedReference.hpp"
 #include "funcdefs/Object.hpp"
 #include "funcdefs/UnmanagedReference.hpp"
 #endif

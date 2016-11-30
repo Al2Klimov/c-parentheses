@@ -18,22 +18,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CPARENTHESES_INCLUDE_CLONETRACKER
-#define CPARENTHESES_INCLUDE_CLONETRACKER 1
+#ifndef CPARENTHESES_INCLUDE_MANAGEDREFERENCE
+#define CPARENTHESES_INCLUDE_MANAGEDREFERENCE 1
 
 
 #ifndef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
-#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU 'C'
+#define CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU 'M'
 #endif
-
-
-#include <map>
-// std::map
 
 
 namespace CParentheses
 {
-	class CloneTracker;
+	class ManagedReference;
 }
 
 
@@ -45,33 +41,28 @@ namespace CParentheses
 {
 
 
-// Tracks which objects have already been cloned while cloning an objects chain
-// (this is required to copy diamond and circular references as expected)
-class CloneTracker
+// A reference to an object from another object
+class ManagedReference
 {
 public:
-	CloneTracker(void);
-	CloneTracker(CloneTracker const&) = delete;
-	CloneTracker& operator = (CloneTracker const&) = delete;
-	CloneTracker(CloneTracker&&) = delete;
-	CloneTracker& operator = (CloneTracker&&) = delete;
-	~CloneTracker(void);
+	ManagedReference(Object * /* referencing */, Object * /* referenced */ = nullptr);
+	ManagedReference(ManagedReference const&) noexcept;
+	ManagedReference& operator = (ManagedReference const&);
+	ManagedReference(ManagedReference&&) noexcept;
+	ManagedReference& operator = (ManagedReference&&) noexcept;
+	~ManagedReference(void);
 
-	// Register a copied object
-	void add(Object const * /* original */, Object * /* copy */);
-
-	// Get the copy of the given original (or NULL if not copied yet)
-	Object * get(Object const *) const noexcept;
+	operator Object * (void);
 
 protected:
-	std::map<Object const * /* original */, Object * /* copy */> copiedObjects;
+	Object *referencing, *referenced;
 };
 
 
 }
 
 
-#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU == 'C'
+#if CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU == 'M'
 #undef CPARENTHESES_TOP_LEVEL_INCLUDE_CGMOU
 #include "funcdefs/CloneTracker.hpp"
 #include "funcdefs/GarbageCollector.hpp"
