@@ -39,9 +39,6 @@
 #include <stdexcept>
 // std::logic_error
 
-#include <unordered_map>
-// std::unordered_map
-
 
 namespace CParentheses
 {
@@ -140,7 +137,7 @@ protected:
 		~ObjectInfo(void);
 	};
 
-	std::unordered_map<Object *, ObjectInfo> trackedObjects;
+	std::map<Object *, ObjectInfo> trackedObjects;
 
 	std::uintmax_t locksAmount;
 	std::set<Object *> protectedObjects;
