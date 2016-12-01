@@ -63,7 +63,7 @@ namespace CParentheses
 // Cleans up unneeded objects
 class GarbageCollector
 {
-// TODO: actually clean up
+// TODO: clean up circles from time to time
 
 	friend ManagedReference;
 	friend UnmanagedReference;
@@ -93,8 +93,6 @@ public:
 		using std::logic_error::logic_error;
 	};
 
-	typedef std::uintmax_t refs_amount_t;
-
 	GarbageCollector(void);
 	GarbageCollector(GarbageCollector const&) = delete;
 	GarbageCollector& operator = (GarbageCollector const&) = delete;
@@ -108,6 +106,8 @@ public:
 	cleanUp(void);
 
 protected:
+	typedef std::uintmax_t refs_amount_t;
+
 	class ObjectInfo
 	{
 	public:
@@ -121,10 +121,13 @@ protected:
 			Object *,
 			// ... that many times
 			refs_amount_t
-		> managedRefs;
+		> ourManagedRefs;
+
+		// Amount of references to this object from other objects
+		refs_amount_t theirManagedRefs;
 
 		// Amount of references to this object from things this GC doesn't manage
-		refs_amount_t unmanagedRefs;
+		refs_amount_t theirUnmanagedRefs;
 
 		// Preallocated for the cleanup process
 		cleanup_status_t cleanupStatus;
@@ -146,6 +149,10 @@ protected:
 	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void addUnmanagedRefs(Object *, refs_amount_t = 1u);
 	void delUnmanagedRefs(Object *, refs_amount_t = 1u);
+
+	typedef decltype(trackedObjects)::iterator consider_delete_target_t;
+
+	void considerDelete(consider_delete_target_t);
 };
 
 

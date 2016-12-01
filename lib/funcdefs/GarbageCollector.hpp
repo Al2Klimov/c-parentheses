@@ -66,34 +66,46 @@ void GarbageCollector::track(Object * target)
 inline
 void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	auto managedRef (trackedObjects.at(from).managedRefs.emplace(to, refsAmount));
-	if (!managedRef.second)
 	{
-		managedRef.first->second += refsAmount;
+		auto managedRef (trackedObjects.at(from).ourManagedRefs.emplace(to, refsAmount));
+		if (!managedRef.second)
+		{
+			managedRef.first->second += refsAmount;
+		}
 	}
+
+	trackedObjects.at(to).theirManagedRefs += refsAmount;
 }
 
 inline
 void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	trackedObjects.at(to).unmanagedRefs += refsAmount;
+	trackedObjects.at(to).theirUnmanagedRefs += refsAmount;
 }
 
 inline
 void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	auto& managedRefs (trackedObjects.at(from).managedRefs);
-	auto managedRef (managedRefs.find(to));
-	if (!(managedRef == managedRefs.end() || (managedRef->second -= refsAmount)))
 	{
-		managedRefs.erase(managedRef);
+		auto& managedRefs (trackedObjects.at(from).ourManagedRefs);
+		auto managedRef (managedRefs.find(to));
+		if (!(managedRef == managedRefs.end() || (managedRef->second -= refsAmount)))
+		{
+			managedRefs.erase(managedRef);
+		}
 	}
+
+	auto trackedObject (trackedObjects.find(to));
+	trackedObject->second.theirManagedRefs -= refsAmount;
+	considerDelete(trackedObject);
 }
 
 inline
 void GarbageCollector::delUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
 {
-	addUnmanagedRefs(to, -refsAmount);
+	auto trackedObject (trackedObjects.find(to));
+	trackedObject->second.theirUnmanagedRefs -= refsAmount;
+	considerDelete(trackedObject);
 }
 
 inline
@@ -103,7 +115,7 @@ bool GarbageCollector::cleanUp(void)
 		bool done (true);
 		for (auto& trackedObject : trackedObjects)
 		{
-			trackedObject.second.cleanupStatus = trackedObject.second.unmanagedRefs ? 1u : 0u;
+			trackedObject.second.cleanupStatus = trackedObject.second.theirUnmanagedRefs ? 1u : 0u;
 			if (!trackedObject.second.cleanupStatus)
 			{
 				done = false;
@@ -130,7 +142,7 @@ bool GarbageCollector::cleanUp(void)
 			{
 				if (trackedObject.second.cleanupStatus == (ObjectInfo::cleanup_status_t)1u)
 				{
-					for (auto& referencedObject : trackedObject.second.managedRefs)
+					for (auto& referencedObject : trackedObject.second.ourManagedRefs)
 					{
 						trackedObjects.at(referencedObject.first).cleanupStatus |= (ObjectInfo::cleanup_status_t)1u;
 					}
@@ -159,33 +171,51 @@ bool GarbageCollector::cleanUp(void)
 }
 
 inline
-GarbageCollector::ObjectInfo::ObjectInfo(void) : unmanagedRefs(0u), cleanupStatus(3u)
+void GarbageCollector::considerDelete(GarbageCollector::consider_delete_target_t target)
+{
+	{
+		auto& targetInfo (target->second);
+		if (targetInfo.theirManagedRefs || targetInfo.theirUnmanagedRefs)
+		{
+			return;
+		}
+	}
+
+	delete target->first;
+	trackedObjects.erase(target);
+}
+
+inline
+GarbageCollector::ObjectInfo::ObjectInfo(void)
+	: theirManagedRefs(0u), theirUnmanagedRefs(0u), cleanupStatus(3u)
 {}
 
 inline
 GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo const& origin)
-	: managedRefs(origin.managedRefs), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
+	: ourManagedRefs(origin.ourManagedRefs), theirManagedRefs(origin.theirManagedRefs), theirUnmanagedRefs(origin.theirUnmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
 GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo const& origin)
 {
-	managedRefs = origin.managedRefs;
-	unmanagedRefs = origin.unmanagedRefs;
+	ourManagedRefs = origin.ourManagedRefs;
+	theirManagedRefs = origin.theirManagedRefs;
+	theirUnmanagedRefs = origin.theirUnmanagedRefs;
 	cleanupStatus = origin.cleanupStatus;
 	return *this;
 }
 
 inline
 GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo&& origin)
-	: managedRefs(std::move(origin.managedRefs)), unmanagedRefs(origin.unmanagedRefs), cleanupStatus(origin.cleanupStatus)
+	: ourManagedRefs(std::move(origin.ourManagedRefs)), theirManagedRefs(origin.theirManagedRefs), theirUnmanagedRefs(origin.theirUnmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
 GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo&& origin)
 {
-	managedRefs = std::move(origin.managedRefs);
-	unmanagedRefs = origin.unmanagedRefs;
+	ourManagedRefs = std::move(origin.ourManagedRefs);
+	theirManagedRefs = origin.theirManagedRefs;
+	theirUnmanagedRefs = origin.theirUnmanagedRefs;
 	cleanupStatus = origin.cleanupStatus;
 	return *this;
 }
