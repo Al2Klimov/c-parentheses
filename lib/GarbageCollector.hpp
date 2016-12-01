@@ -140,10 +140,31 @@ protected:
 		~ObjectInfo(void);
 	};
 
+	// Indicates that a garbage collector is cleaning up until destroyed
+	class CleaningUpState
+	{
+	public:
+		CleaningUpState(
+			// target GC
+			GarbageCollector&
+		);
+		CleaningUpState(CleaningUpState const&) = delete;
+		CleaningUpState& operator = (CleaningUpState const&) = delete;
+		CleaningUpState(CleaningUpState&&) = delete;
+		CleaningUpState& operator = (CleaningUpState&&) = delete;
+		~CleaningUpState(void);
+
+	protected:
+		// target GC
+		GarbageCollector& gc;
+	};
+
 	std::map<Object *, ObjectInfo> trackedObjects;
 
 	std::uintmax_t locksAmount;
 	std::set<Object *> protectedObjects;
+
+	bool isCleaningUp;
 
 	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);

@@ -37,7 +37,8 @@ namespace CParentheses
 
 
 inline
-GarbageCollector::GarbageCollector(void) : locksAmount(0u)
+GarbageCollector::GarbageCollector(void)
+	: locksAmount(0u), isCleaningUp(false)
 {}
 
 inline
@@ -89,7 +90,7 @@ void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollect
 	{
 		auto& managedRefs (trackedObjects.at(from).ourManagedRefs);
 		auto managedRef (managedRefs.find(to));
-		if (!(managedRef == managedRefs.end() || (managedRef->second -= refsAmount)))
+		if (!(managedRef->second -= refsAmount))
 		{
 			managedRefs.erase(managedRef);
 		}
@@ -154,6 +155,7 @@ bool GarbageCollector::cleanUp(void)
 	}
 
 	bool hasUnreachable (false);
+	CleaningUpState cleaningUpState (*this);
 	for (auto trackedObject (trackedObjects.begin()), end (trackedObjects.end()); trackedObject != end;)
 	{
 		if (trackedObject->second.cleanupStatus)
@@ -238,6 +240,18 @@ GarbageCollector::Lock::~Lock(void)
 	{
 		gc.protectedObjects.clear();
 	}
+}
+
+inline
+GarbageCollector::CleaningUpState::CleaningUpState(GarbageCollector& gc) : gc(gc)
+{
+	gc.isCleaningUp = true;
+}
+
+inline
+GarbageCollector::CleaningUpState::~CleaningUpState(void)
+{
+	gc.isCleaningUp = false;
 }
 
 

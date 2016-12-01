@@ -87,7 +87,7 @@ ManagedReference& ManagedReference::operator = (ManagedReference&& rhs) noexcept
 inline
 ManagedReference::~ManagedReference(void)
 {
-	if (referenced != nullptr)
+	if (!(referenced == nullptr || referenced->gc->isCleaningUp))
 	{
 		referenced->gc->delManagedRefs(referencing, referenced);
 	}
