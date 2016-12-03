@@ -73,7 +73,7 @@ void GarbageCollector::track(Object * target)
 }
 
 inline
-void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
+void GarbageCollector::addManagedRefs(Object * from, Object * to, refs_amount_t refsAmount)
 {
 	{
 		auto managedRef (trackedObjects.at(from).ourManagedRefs.emplace(to, refsAmount));
@@ -89,7 +89,7 @@ void GarbageCollector::addManagedRefs(Object * from, Object * to, GarbageCollect
 }
 
 inline
-void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
+void GarbageCollector::addUnmanagedRefs(Object * to, refs_amount_t refsAmount)
 {
 	trackedObjects.at(to).theirUnmanagedRefs += refsAmount;
 
@@ -97,7 +97,7 @@ void GarbageCollector::addUnmanagedRefs(Object * to, GarbageCollector::refs_amou
 }
 
 inline
-void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollector::refs_amount_t refsAmount)
+void GarbageCollector::delManagedRefs(Object * from, Object * to, refs_amount_t refsAmount)
 {
 	{
 		auto& managedRefs (trackedObjects.at(from).ourManagedRefs);
@@ -116,7 +116,7 @@ void GarbageCollector::delManagedRefs(Object * from, Object * to, GarbageCollect
 }
 
 inline
-void GarbageCollector::delUnmanagedRefs(Object * to, GarbageCollector::refs_amount_t refsAmount)
+void GarbageCollector::delUnmanagedRefs(Object * to, refs_amount_t refsAmount)
 {
 	auto trackedObject (trackedObjects.find(to));
 	trackedObject->second.theirUnmanagedRefs -= refsAmount;
@@ -209,7 +209,7 @@ void GarbageCollector::onRefAdd(void)
 }
 
 inline
-void GarbageCollector::considerDelete(GarbageCollector::consider_delete_target_t target)
+void GarbageCollector::considerDelete(consider_delete_target_t target)
 {
 	{
 		auto& targetInfo (target->second);
@@ -229,12 +229,12 @@ GarbageCollector::ObjectInfo::ObjectInfo(void)
 {}
 
 inline
-GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo const& origin)
+GarbageCollector::ObjectInfo::ObjectInfo(ObjectInfo const& origin)
 	: ourManagedRefs(origin.ourManagedRefs), theirManagedRefs(origin.theirManagedRefs), theirUnmanagedRefs(origin.theirUnmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
-GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo const& origin)
+GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (ObjectInfo const& origin)
 {
 	ourManagedRefs = origin.ourManagedRefs;
 	theirManagedRefs = origin.theirManagedRefs;
@@ -244,12 +244,12 @@ GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageC
 }
 
 inline
-GarbageCollector::ObjectInfo::ObjectInfo(GarbageCollector::ObjectInfo&& origin)
+GarbageCollector::ObjectInfo::ObjectInfo(ObjectInfo&& origin)
 	: ourManagedRefs(std::move(origin.ourManagedRefs)), theirManagedRefs(origin.theirManagedRefs), theirUnmanagedRefs(origin.theirUnmanagedRefs), cleanupStatus(origin.cleanupStatus)
 {}
 
 inline
-GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (GarbageCollector::ObjectInfo&& origin)
+GarbageCollector::ObjectInfo& GarbageCollector::ObjectInfo::operator = (ObjectInfo&& origin)
 {
 	ourManagedRefs = std::move(origin.ourManagedRefs);
 	theirManagedRefs = origin.theirManagedRefs;
@@ -299,13 +299,13 @@ GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(T x) n
 
 template<class T, T base>
 inline
-GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(GarbageCollector::LogarithmicallyRaising<T, base> const& rhs) noexcept
+GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(LogarithmicallyRaising<T, base> const& rhs) noexcept
 	: x(x), y(y)
 {}
 
 template<class T, T base>
 inline
-GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (GarbageCollector::LogarithmicallyRaising<T, base> const& rhs) noexcept
+GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (LogarithmicallyRaising<T, base> const& rhs) noexcept
 {
 	x = rhs.x;
 	y = rhs.y;
@@ -314,13 +314,13 @@ GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::Logarithmic
 
 template<class T, T base>
 inline
-GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(GarbageCollector::LogarithmicallyRaising<T, base>&& rhs) noexcept
+GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(LogarithmicallyRaising<T, base>&& rhs) noexcept
 	: x(x), y(y)
 {}
 
 template<class T, T base>
 inline
-GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (GarbageCollector::LogarithmicallyRaising<T, base>&& rhs) noexcept
+GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (LogarithmicallyRaising<T, base>&& rhs) noexcept
 {
 	x = rhs.x;
 	y = rhs.y;

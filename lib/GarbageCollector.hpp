@@ -67,29 +67,8 @@ class GarbageCollector
 	friend UnmanagedReference;
 
 public:
-	// Prevents a garbage collector from cleaning up any objects until destroyed
-	class Lock
-	{
-	public:
-		Lock(
-			// target GC
-			GarbageCollector&
-		);
-		Lock(Lock const&) = delete;
-		Lock& operator = (Lock const&) = delete;
-		Lock(Lock&&) = delete;
-		Lock& operator = (Lock&&) = delete;
-		~Lock(void);
-
-	protected:
-		// target GC
-		GarbageCollector& gc;
-	};
-
-	class ReachableObjectsExist : public std::logic_error
-	{
-		using std::logic_error::logic_error;
-	};
+	class Lock;
+	class ReachableObjectsExist;
 
 	GarbageCollector(void);
 	GarbageCollector(GarbageCollector const&) = delete;
@@ -107,78 +86,11 @@ protected:
 	typedef std::uintmax_t refs_amount_t;
 	typedef long double ref_del_series_count_t;
 
-	class ObjectInfo
-	{
-	public:
-		// Bitset:
-		// 1st (lowest) bit : marked as reachable
-		// 2nd bit          : has been preprocessed
-		typedef unsigned char cleanup_status_t;
-
-		std::map<
-			// An object this object references...
-			Object *,
-			// ... that many times
-			refs_amount_t
-		> ourManagedRefs;
-
-		// Amount of references to this object from other objects
-		refs_amount_t theirManagedRefs;
-
-		// Amount of references to this object from things this GC doesn't manage
-		refs_amount_t theirUnmanagedRefs;
-
-		// Preallocated for the cleanup process
-		cleanup_status_t cleanupStatus;
-
-		ObjectInfo(void);
-		ObjectInfo(ObjectInfo const&);
-		ObjectInfo& operator = (ObjectInfo const&);
-		ObjectInfo(ObjectInfo&&);
-		ObjectInfo& operator = (ObjectInfo&&);
-		~ObjectInfo(void);
-	};
-
-	// Indicates that a garbage collector is cleaning up until destroyed
-	class CleaningUpState
-	{
-	public:
-		CleaningUpState(
-			// target GC
-			GarbageCollector&
-		);
-		CleaningUpState(CleaningUpState const&) = delete;
-		CleaningUpState& operator = (CleaningUpState const&) = delete;
-		CleaningUpState(CleaningUpState&&) = delete;
-		CleaningUpState& operator = (CleaningUpState&&) = delete;
-		~CleaningUpState(void);
-
-	protected:
-		// target GC
-		GarbageCollector& gc;
-	};
+	class ObjectInfo;
+	class CleaningUpState;
 
 	template<class T, T base>
-	// y = round(log(x + 1) / log(base))
-	class LogarithmicallyRaising
-	{
-	public:
-		LogarithmicallyRaising(T /* x */ = 0.0F) noexcept;
-		LogarithmicallyRaising(LogarithmicallyRaising const&) noexcept;
-		LogarithmicallyRaising& operator = (LogarithmicallyRaising const&) noexcept;
-		LogarithmicallyRaising(LogarithmicallyRaising&&) noexcept;
-		LogarithmicallyRaising& operator = (LogarithmicallyRaising&&) noexcept;
-		~LogarithmicallyRaising(void);
-
-		T getX(void) const noexcept;
-		T getY(void) const noexcept;
-		void setX(T) noexcept;
-
-	protected:
-		static T const maxSafeInt, logBase;
-
-		T x, y;
-	};
+	class LogarithmicallyRaising;
 
 	std::map<Object *, ObjectInfo> trackedObjects;
 
@@ -200,6 +112,103 @@ protected:
 	typedef decltype(trackedObjects)::iterator consider_delete_target_t;
 
 	void considerDelete(consider_delete_target_t);
+};
+
+// Prevents a garbage collector from cleaning up any objects until destroyed
+class GarbageCollector::Lock
+{
+public:
+	Lock(
+		// target GC
+		GarbageCollector&
+	);
+	Lock(Lock const&) = delete;
+	Lock& operator = (Lock const&) = delete;
+	Lock(Lock&&) = delete;
+	Lock& operator = (Lock&&) = delete;
+	~Lock(void);
+
+protected:
+	// target GC
+	GarbageCollector& gc;
+};
+
+class GarbageCollector::ReachableObjectsExist : public std::logic_error
+{
+	using std::logic_error::logic_error;
+};
+
+class GarbageCollector::ObjectInfo
+{
+public:
+	// Bitset:
+	// 1st (lowest) bit : marked as reachable
+	// 2nd bit          : has been preprocessed
+	typedef unsigned char cleanup_status_t;
+
+	std::map<
+		// An object this object references...
+		Object *,
+		// ... that many times
+		refs_amount_t
+	> ourManagedRefs;
+
+	// Amount of references to this object from other objects
+	refs_amount_t theirManagedRefs;
+
+	// Amount of references to this object from things this GC doesn't manage
+	refs_amount_t theirUnmanagedRefs;
+
+	// Preallocated for the cleanup process
+	cleanup_status_t cleanupStatus;
+
+	ObjectInfo(void);
+	ObjectInfo(ObjectInfo const&);
+	ObjectInfo& operator = (ObjectInfo const&);
+	ObjectInfo(ObjectInfo&&);
+	ObjectInfo& operator = (ObjectInfo&&);
+	~ObjectInfo(void);
+};
+
+// Indicates that a garbage collector is cleaning up until destroyed
+class GarbageCollector::CleaningUpState
+{
+public:
+	CleaningUpState(
+		// target GC
+		GarbageCollector&
+	);
+	CleaningUpState(CleaningUpState const&) = delete;
+	CleaningUpState& operator = (CleaningUpState const&) = delete;
+	CleaningUpState(CleaningUpState&&) = delete;
+	CleaningUpState& operator = (CleaningUpState&&) = delete;
+	~CleaningUpState(void);
+
+protected:
+	// target GC
+	GarbageCollector& gc;
+};
+
+template<class T, T base>
+// y = round(log(x + 1) / log(base))
+class GarbageCollector::LogarithmicallyRaising
+{
+public:
+	LogarithmicallyRaising(T /* x */ = 0.0F) noexcept;
+	LogarithmicallyRaising(LogarithmicallyRaising const&) noexcept;
+	LogarithmicallyRaising& operator = (LogarithmicallyRaising const&) noexcept;
+	LogarithmicallyRaising(LogarithmicallyRaising&&) noexcept;
+	LogarithmicallyRaising& operator = (LogarithmicallyRaising&&) noexcept;
+	~LogarithmicallyRaising(void);
+
+	T getX(void) const noexcept;
+	T getY(void) const noexcept;
+	void setX(T) noexcept;
+
+protected:
+	static T const maxSafeInt, logBase;
+
+	T x, y;
 };
 
 
