@@ -290,20 +290,20 @@ GarbageCollector::CleaningUpState::~CleaningUpState(void)
 	gc.isCleaningUp = false;
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(T x) noexcept
 {
 	setX(x);
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(LogarithmicallyRaising<T, base> const& rhs) noexcept
 	: x(x), y(y)
 {}
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (LogarithmicallyRaising<T, base> const& rhs) noexcept
 {
@@ -312,13 +312,13 @@ GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::Logarithmic
 	return *this;
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>::LogarithmicallyRaising(LogarithmicallyRaising<T, base>&& rhs) noexcept
 	: x(x), y(y)
 {}
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::LogarithmicallyRaising<T, base>::operator = (LogarithmicallyRaising<T, base>&& rhs) noexcept
 {
@@ -327,26 +327,26 @@ GarbageCollector::LogarithmicallyRaising<T, base>& GarbageCollector::Logarithmic
 	return *this;
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 GarbageCollector::LogarithmicallyRaising<T, base>::~LogarithmicallyRaising(void)
 {}
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 T GarbageCollector::LogarithmicallyRaising<T, base>::getX(void) const noexcept
 {
 	return x;
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 T GarbageCollector::LogarithmicallyRaising<T, base>::getY(void) const noexcept
 {
 	return y;
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 inline
 void GarbageCollector::LogarithmicallyRaising<T, base>::setX(T x) noexcept
 {
@@ -354,14 +354,14 @@ void GarbageCollector::LogarithmicallyRaising<T, base>::setX(T x) noexcept
 	y = std::round(std::log(x + (T)1.0F) / logBase);
 }
 
-template<class T, T base>
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
 T const GarbageCollector::LogarithmicallyRaising<T, base>::maxSafeInt = std::pow(
 	(T)std::numeric_limits<T>::radix,
 	(T)std::numeric_limits<T>::digits
 ) - (T)1.0F;
 
-template<class T, T base>
-T const GarbageCollector::LogarithmicallyRaising<T, base>::logBase = std::log(base);
+template<class T, GarbageCollector::logarithmically_raising_base_t base>
+T const GarbageCollector::LogarithmicallyRaising<T, base>::logBase = std::log((T)base);
 
 
 }

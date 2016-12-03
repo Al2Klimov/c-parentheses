@@ -89,8 +89,29 @@ protected:
 	class ObjectInfo;
 	class CleaningUpState;
 
-	template<class T, T base>
-	class LogarithmicallyRaising;
+	typedef std::uintmax_t logarithmically_raising_base_t;
+
+	template<class T, logarithmically_raising_base_t base>
+	// y = round(log(x + 1) / log(base))
+	class LogarithmicallyRaising
+	{
+	public:
+		LogarithmicallyRaising(T /* x */ = 0.0F) noexcept;
+		LogarithmicallyRaising(LogarithmicallyRaising const&) noexcept;
+		LogarithmicallyRaising& operator = (LogarithmicallyRaising const&) noexcept;
+		LogarithmicallyRaising(LogarithmicallyRaising&&) noexcept;
+		LogarithmicallyRaising& operator = (LogarithmicallyRaising&&) noexcept;
+		~LogarithmicallyRaising(void);
+
+		T getX(void) const noexcept;
+		T getY(void) const noexcept;
+		void setX(T) noexcept;
+
+	protected:
+		static T const maxSafeInt, logBase;
+
+		T x, y;
+	};
 
 	std::map<Object *, ObjectInfo> trackedObjects;
 
@@ -101,7 +122,7 @@ protected:
 
 	bool refDelSeriesRunning;
 	ref_del_series_count_t refDelSeriesCount;
-	LogarithmicallyRaising<ref_del_series_count_t, 2.0F> refDelSeriesUntilGC;
+	LogarithmicallyRaising<ref_del_series_count_t, 2u> refDelSeriesUntilGC;
 
 	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
@@ -187,28 +208,6 @@ public:
 protected:
 	// target GC
 	GarbageCollector& gc;
-};
-
-template<class T, T base>
-// y = round(log(x + 1) / log(base))
-class GarbageCollector::LogarithmicallyRaising
-{
-public:
-	LogarithmicallyRaising(T /* x */ = 0.0F) noexcept;
-	LogarithmicallyRaising(LogarithmicallyRaising const&) noexcept;
-	LogarithmicallyRaising& operator = (LogarithmicallyRaising const&) noexcept;
-	LogarithmicallyRaising(LogarithmicallyRaising&&) noexcept;
-	LogarithmicallyRaising& operator = (LogarithmicallyRaising&&) noexcept;
-	~LogarithmicallyRaising(void);
-
-	T getX(void) const noexcept;
-	T getY(void) const noexcept;
-	void setX(T) noexcept;
-
-protected:
-	static T const maxSafeInt, logBase;
-
-	T x, y;
 };
 
 
