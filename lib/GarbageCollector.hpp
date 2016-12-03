@@ -63,8 +63,6 @@ namespace CParentheses
 // Cleans up unneeded objects
 class GarbageCollector
 {
-// TODO: clean up circles from time to time
-
 	friend ManagedReference;
 	friend UnmanagedReference;
 
@@ -107,6 +105,7 @@ public:
 
 protected:
 	typedef std::uintmax_t refs_amount_t;
+	typedef long double ref_del_series_count_t;
 
 	class ObjectInfo
 	{
@@ -159,6 +158,28 @@ protected:
 		GarbageCollector& gc;
 	};
 
+	template<class T, T base>
+	// y = round(log(x + 1) / log(base))
+	class LogarithmicallyRaising
+	{
+	public:
+		LogarithmicallyRaising(T /* x */ = 0.0F) noexcept;
+		LogarithmicallyRaising(LogarithmicallyRaising const&) noexcept;
+		LogarithmicallyRaising& operator = (LogarithmicallyRaising const&) noexcept;
+		LogarithmicallyRaising(LogarithmicallyRaising&&) noexcept;
+		LogarithmicallyRaising& operator = (LogarithmicallyRaising&&) noexcept;
+		~LogarithmicallyRaising(void);
+
+		T getX(void) const noexcept;
+		T getY(void) const noexcept;
+		void setX(T) noexcept;
+
+	protected:
+		static T const maxSafeInt, logBase;
+
+		T x, y;
+	};
+
 	std::map<Object *, ObjectInfo> trackedObjects;
 
 	std::uintmax_t locksAmount;
@@ -166,10 +187,15 @@ protected:
 
 	bool isCleaningUp;
 
+	bool refDelSeriesRunning;
+	ref_del_series_count_t refDelSeriesCount;
+	LogarithmicallyRaising<ref_del_series_count_t, 2.0F> refDelSeriesUntilGC;
+
 	void addManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void delManagedRefs(Object *, Object *, refs_amount_t = 1u);
 	void addUnmanagedRefs(Object *, refs_amount_t = 1u);
 	void delUnmanagedRefs(Object *, refs_amount_t = 1u);
+	void onRefAdd(void);
 
 	typedef decltype(trackedObjects)::iterator consider_delete_target_t;
 
